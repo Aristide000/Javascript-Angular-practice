@@ -1,0 +1,565 @@
+/* =========================
+   ROOT
+========================= */
+.landing-root {
+  min-height: 100vh;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+  overflow-x: visible; /* allow vertical scrolling */
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 60px;
+  background: transparent;
+}
+
+.logo {
+  font-weight: bold;
+  letter-spacing: 2px;
+  line-height: 1.2;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.nav-links li {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.nav-links li:hover {
+  opacity: 1;
+}
+
+/* =========================
+   HERO SECTION
+========================= */
+.hero {
+  position: relative;
+  z-index: 2;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 80px;
+  max-width: 900px;
+}
+
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 140%;
+  height: 150%;
+
+  background-image: url('../../assets/download (3).jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  transform: translate(-50%, -50%);
+  filter: blur(15px) brightness(0.6);
+
+  z-index: -1;
+}
+
+
+/* =========================
+   HERO TEXT
+========================= */
+.hero h1 {
+  font-size: 90px;
+  font-weight: 300;
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+
+.hero h1 span {
+  color: #ffb000;
+  font-style: italic;
+}
+
+.hero p {
+  max-width: 500px;
+  opacity: 0.75;
+  margin-bottom: 40px;
+  font-size: 16px;
+}
+
+/* =========================
+   HERO BUTTON
+========================= */
+.hero button {
+  width: fit-content;
+  padding: 14px 40px;
+  background: #ff6a00;
+  border: none;
+  border-radius: 30px;
+  color: black;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.hero button:hover {
+  transform: translateY(-2px);
+  background: #ffa000;
+}
+
+
+.hero-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hero-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 28px;
+  transform: translateX(20px);
+}
+
+
+.hero-content h1 {
+  font-size: 90px;
+  font-weight: 300;
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+
+.hero-content h1 span {
+  color: #ffb000;
+  font-style: italic;
+}
+
+.hero-description {
+  max-width: 500px;
+  opacity: 0.8;
+  margin-bottom: 40px;
+  font-size: 16px;
+}
+
+/* BUTTON */
+.hero-content button {
+  padding: 14px 40px;
+  background: #ff6a00;
+  border: none;
+  border-radius: 30px;
+  color: black;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.hero-content button:hover {
+  transform: translateY(-2px);
+  background: #ffa000;
+}
+
+/* =========================
+   PREMIUM HERO CARD
+========================= */
+.glass-card {
+  position: relative;
+  padding: 32px 28px;
+  border-radius: 22px;
+
+  /* Premium gradient glass */
+  background: linear-gradient(
+      160deg,
+      rgba(255,255,255,0.12),
+      rgba(255,255,255,0.02)
+    );
+
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  /* Depth */
+  box-shadow:
+    0 25px 60px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.18);
+
+      overflow: hidden;
+
+  color: white;
+  text-align: left;
+  font-weight: 500;
+
+  transition:
+    transform 0.45s ease,
+    box-shadow 0.45s ease,
+    background 0.45s ease;
+}
+
+/* Subtle light reflection */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.15),
+    transparent 80%
+  );
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Hover effect */
+.glass-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.glass-card h4 {
+  margin-bottom: 6px;
+}
+
+.glass-card span {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+/* =========================
+   FEATURE BIG CARD
+========================= */
+.feature-card {
+  grid-column: 3 / 4;
+  grid-row: 1 / span 2;
+  overflow: hidden;
+  min-height: 420px;
+  min-width: 250px;
+  padding: 32px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(255,255,255,0.22);
+  background:
+    linear-gradient(
+      160deg,
+      rgba(255, 180, 80, 0.35),
+      rgba(183, 38, 2, 0)
+    );
+    backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+
+  padding: 32px;
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+
+     display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+/* Header */
+.feature-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,0.05),
+      rgba(0,0,0,0.35)
+    );
+
+  pointer-events: none;
+}
+
+/* Big Stat */
+.feature-stat h1 {
+  font-size: 64px;
+  font-weight: 300;
+  margin: 20px 0 6px;
+}
+
+.feature-stat p {
+  font-size: 14px;
+  opacity: 0.8;
+  max-width: 240px;
+}
+
+/* Image strip */
+.feature-images {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.feature-images img {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  object-fit: cover;
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* =========================
+   FEATURE CARD CAROUSEL
+========================= */
+.feature-carousel {
+  overflow: hidden;
+  margin-top: 24px;
+}
+
+/* Moving track */
+.carousel-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: infinite-carousel 20s linear infinite;
+}
+
+/* Small cards */
+.preview-card {
+   position: relative;
+  min-width: 88px;
+  height: 88px;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  border: 1px solid rgba(255,255,255,0.3);
+  flex-shrink: 0;
+  color: white;
+  z-index: 2;
+}
+
+.preview-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--bg-img);
+  background-size: cover;
+  background-position: center;
+  filter: blur(14px) brightness(0.9);
+  transform: scale(1.25);
+  z-index: 0;
+}
+
+.preview-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 1;
+}
+
+/* Infinite animation */
+@keyframes carousel-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+
+/* =========================
+   ABOUT SECTION
+========================= */
+.about {
+  min-height: 100vh;
+  color: white;
+  padding: 120px 80px;
+
+  max-width: 1100px;
+  margin: 0 auto;
+
+  /* New background */
+  background-image: url('../../assets/A Black Cover Design, Inc_.jpg'); /* put your image path here */
+  background-size: cover;        /* make it fill the section */
+  background-position: center;   /* center the image */
+  background-repeat: no-repeat;  /* avoid tiling */
+
+  /* Optional: add overlay for readability */
+  position: relative;             /* needed for overlay */
+}
+
+.about::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.7); /* dark overlay to make text readable */
+  z-index: -1;
+
+}
+
+/* Add blur effect */
+.about {
+  backdrop-filter: blur(10px); /* Adjust the blur intensity */
+  -webkit-backdrop-filter: blur(10px); /* For Safari support */
+}
+
+.about h2 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.about p {
+  max-width: 600px;
+  opacity: 0.8;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 1024px) {
+  .hero h1 {
+    font-size: 70px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 20px 30px;
+  }
+
+  .hero {
+    padding: 0 30px;
+  }
+
+  .hero h1 {
+    font-size: 50px;
+  }
+
+  .about {
+    padding: 80px 30px;
+  }
+
+  .about h2 {
+    font-size: 36px;
+  }
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* =========================
+   PREVIEW CARD (SMALL)
+========================= */
+.preview-card {
+  min-width: 88px;
+  height: 88px;
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.22),
+      rgba(255, 255, 255, 0.06)
+    );
+
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+
+  border: 1px solid rgba(255, 255, 255, 0.28);
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+  flex-shrink: 0;
+}
+
+/* =========================
+   CAROUSEL CONTAINER
+========================= */
+.feature-carousel {
+  margin-top: 26px;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Moving track */
+.carousel-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+
+  animation: infinite-carousel 20s linear infinite;
+}
+
+/* Pause on hover (optional but premium) */
+.feature-carousel:hover .carousel-track {
+  animation-play-state: paused;
+}
+
+/* Seamless motion */
+@keyframes infinite-carousel {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.preview-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
