@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 import { LoginFormComponent } from './login-form/login-form.component';
-import { UserListComponent } from './user-list/user-list.component';
+import { HeroComponent } from './user-list/hero.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'hero', pathMatch: 'full' },
   { path: 'login', component: LoginFormComponent },
-  { path: 'users', component: UserListComponent }
+  { path: 'hero', component: HeroComponent }
 ];
+

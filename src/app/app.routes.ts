@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { UserListComponent } from './user-list/user-list.component';
+import { HeroComponent } from './user-list/hero.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: UserListComponent
+    component: HeroComponent
   },
   {
     path: '**',

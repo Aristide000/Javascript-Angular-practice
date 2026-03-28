@@ -1,0 +1,545 @@
+/* =========================
+   HERO SECTION
+========================= */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  padding: 0 80px;
+
+  display: flex;
+  align-items: center;
+
+  background: #0b0e13;
+  color: #f5f5f5;
+
+  /* IMPORTANT */
+  overflow: hidden;
+}
+
+/* =========================
+   BACKGROUND ATMOSPHERE
+========================= */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-blob {
+  position: absolute;
+  width: 40vmax;
+  height: 40vmax;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.6;
+  mix-blend-mode: normal;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.blob-1 {
+  background: #945d15;
+  top: -20%;
+  left: -10%;
+}
+
+.blob-2 {
+  background: #6a3f0c;
+  top: 20%;
+  right: -15%;
+}
+
+.blob-3 {
+  background: #301c07;
+  bottom: -25%;
+  left: 20%;
+}
+
+/* =========================
+   HERO NAVBAR
+========================= */
+.hero-nav {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+
+  padding: 0 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  z-index: 5;
+}
+
+/* =========================
+   LOGO
+========================= */
+.logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logo-main {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.logo-sub {
+  font-size: 10px;
+  opacity: 0.7;
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+}
+
+/* =========================
+   NAV LINKS
+========================= */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 36px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  position: relative;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.75);
+  transition: color 0.3s ease;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(255, 176, 0, 0.2),
+    rgb(255, 174, 0),
+    rgba(255, 176, 0, 0.2)
+  );
+
+  box-shadow: 0 0 12px rgba(255, 176, 0, 0.6);
+  transition: width 0.35s ease;
+}
+
+.nav-links a:hover {
+  color: #ffb000;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+.nav-links a.active {
+  color: #ffb000;
+}
+
+/* =========================
+   HERO CONTENT
+========================= */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+.hero-name {
+  font-size: 82px;
+  line-height: 1.08;
+  font-weight: 300;
+  letter-spacing: -2px;
+  max-width: 680px;
+  margin-bottom: 24px;
+}
+
+.hero-line {
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 460px;
+  opacity: 0.75;
+}
+
+/* =========================
+   PORTFOLIO LABEL
+========================= */
+.hero-portfolio {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 6px 18px;
+  background-color: #b97f22;
+  overflow: hidden;
+}
+
+.portfolio-text {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #111;
+}
+
+/* =========================
+   RIGHT NOTICE
+========================= */
+.hero-notice {
+  position: absolute;
+  right: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 420px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  z-index: 2;
+  pointer-events: none;
+}
+
+.notice-line {
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.66);
+  opacity: 0;
+  font-weight: 300;
+}
+
+/* =========================
+   SCROLL HINT (FIXED ORDER)
+========================= */
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  flex-direction: column-reverse;
+  z-index: 3;
+}
+
+.scroll-text {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.scroll-line {
+  width: 2px;
+  height: 48px;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 176, 0, 0),
+    rgba(255, 174, 0, 1),
+    rgba(255, 176, 0, 0)
+  );
+
+  animation: scrollPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0% { opacity: 0; transform: translateY(-10px); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(14px); }
+}
+
+/* ===============================
+   SECTION 2 — PHILOSOPHY
+================================ */
+.philosophy {
+  position: relative;
+  min-height: 100vh;
+  background: #0e1219;
+  color: #f5f5f5;
+
+  display: flex;
+  align-items: center;
+
+  /* CRITICAL FOR PIN */
+  overflow: visible;
+}
+
+.philosophy-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 120px 80px;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* =========================
+   SECTION SEPARATOR (doorway)
+   A subtle animated divider that transitions like moving into a new room
+========================= */
+.section-separator {
+  position: relative;
+  width: 100%;
+  height: 92px;
+  background: linear-gradient(180deg, rgba(11,14,19,0.0), rgba(11,14,19,0.75));
+  display: block;
+  pointer-events: none;
+  z-index: 2;
+  /* create a soft line and an overlay for vibe change */
+  --sep-line-color: rgba(255,176,0,0.18);
+}
+
+.section-separator::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--sep-line-width, 64%);
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, transparent, var(--sep-line-color), transparent);
+  box-shadow: 0 8px 32px rgba(255,137,0,0.06);
+  filter: blur(var(--sep-blur, 8px));
+  transition: transform 0.6s ease, width 0.6s ease, background 0.6s ease, opacity 0.6s ease;
+  opacity: 1;
+}
+
+.section-separator::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11,14,19,0.0), rgba(8,10,12,0.9));
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* Header for the section */
+.philosophy-header {
+  max-width: 1100px;
+  margin: 48px auto 12px;
+  padding: 0 80px;
+  text-align: left;
+}
+
+.philosophy-header .eyebrow {
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 8px;
+}
+
+.philosophy-header .philosophy-title {
+  font-size: 40px;
+  margin: 0 0 8px;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+  position: relative;
+}
+
+.philosophy-header .philosophy-title::after {
+  content: '';
+  display: block;
+  width: 72px;
+  height: 6px;
+  border-radius: 4px;
+  margin-top: 14px;
+  background: linear-gradient(90deg, rgba(255,176,0,0.95), rgba(255,122,0,0.95));
+  box-shadow: 0 6px 18px rgba(255,122,0,0.12);
+}
+
+.philosophy-item h2 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.philosophy-item p {
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.7;
+}
+
+/* =========================
+   PHILOSOPHY CARDS (crisp edged)
+========================= */
+.philosophy-item.card {
+  position: relative;
+  padding: 36px 30px;
+  border-radius: 0;
+  box-shadow: 0 14px 30px rgba(2,6,23,0.55);
+  overflow: hidden;
+  min-height: 220px;
+  display: block;
+  background-color: #070707;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  will-change: transform;
+}
+
+.philosophy-item.card .card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  filter: none;
+  opacity: 1;
+  transform: none;
+  transition: transform 0.6s cubic-bezier(.2,.9,.2,1), filter 0.4s ease, opacity 0.4s ease;
+}
+
+.philosophy-item.card .card-content {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  padding-top: 40px;
+}
+
+/* hover visuals: accent bar, sheen and subtle movement */
+.philosophy-item.card::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 36px;
+  height: 4px;
+  background: linear-gradient(90deg,#ffb000,#ff7a00);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: transform 0.32s cubic-bezier(.2,.9,.2,1), opacity 0.32s ease;
+  z-index: 4;
+}
+
+.philosophy-item.card::before {
+  content: '';
+  position: absolute;
+  left: -40%;
+  top: -10%;
+  width: 60%;
+  height: 220%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+  transform: translateX(-100%) skewX(-12deg);
+  transition: transform 0.9s ease, opacity 0.6s ease;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+}
+
+.philosophy-item.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 70px rgba(2,6,23,0.72);
+  cursor: pointer;
+}
+
+.philosophy-item.card:hover::after {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.philosophy-item.card:hover::before {
+  transform: translateX(14%) skewX(-12deg);
+  opacity: 1;
+}
+
+.philosophy-item.card:hover .card-bg {
+  transform: scale(1.035) translateY(-6px);
+  filter: brightness(1.06) saturate(1.05);
+}
+
+.philosophy-item.card .card-content {
+  transition: transform 0.36s cubic-bezier(.2,.9,.2,1), color 0.28s ease;
+}
+
+.philosophy-item.card:hover .card-content {
+  transform: translateY(-6px);
+}
+
+.philosophy-item.card h2 { color: #fff; margin: 0 0 8px; font-size: 20px; }
+.philosophy-item.card p { color: rgba(255,255,255,0.9); opacity: 0.95; margin: 0; }
+
+/* crisp gradient themes (no blur) */
+.philosophy-item.card-1 .card-bg {
+  background: linear-gradient(180deg,#0b0b0b 0%, #0b0b0b 55%, #1a0f06 100%);
+}
+.philosophy-item.card-2 .card-bg {
+  background: linear-gradient(180deg,#070708 0%, #070708 55%, #0b1940 100%);
+}
+.philosophy-item.card-3 .card-bg {
+  background: linear-gradient(180deg,#060606 0%, #060606 55%, #05322b 100%);
+}
+
+/* small numeric index in corner */
+.card-number {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* remove hover lift for a clean professional look */
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .hero {
+    padding: 0 32px;
+  }
+
+  .hero-name {
+    font-size: 56px;
+  }
+
+  .hero-line {
+    font-size: 16px;
+  }
+
+  .hero-notice {
+    display: none;
+  }
+
+  .philosophy-inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .philosophy-item.card {
+    padding: 28px;
+    border-radius: 14px;
+    min-height: auto;
+  }
+
+  .philosophy-header {
+    padding: 0 32px;
+    margin: 28px auto 8px;
+  }
+
+  .philosophy-header .philosophy-title {
+    font-size: 28px;
+  }
+}
+
+/* footer/indicator removed per user request */
+
+
