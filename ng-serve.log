@@ -1,0 +1,2262 @@
+[33m>[39m Building...
+[32m√[39m Building...
+Application bundle generation failed. [10.258 seconds]
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "@"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2236:0:
+[37m      2236 │ [32m@[37m
+           ╵ [32m^[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "0%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2239:2:
+[37m      2239 │   [32m0%[37m, 100% { transform: translateY(0); }
+           ╵   [32m~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "50%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2240:2:
+[37m      2240 │   [32m50%[37m      { transform: translateY(-2px); }
+           ╵   [32m~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'setupLocalTime' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:67:11:
+[37m      67 │       this.[32msetupLocalTime[37m();
+         ╵            [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'clearSolariTimers' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:92:9:
+[37m      92 │     this.[32mclearSolariTimers[37m();
+         ╵          [32m~~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'animateBackground' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:373:9:
+[37m      373 │     this.[32manimateBackground[37m();
+          ╵          [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'prefersReducedMotion' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:382:23:
+[37m      382 │     if (loader && this.[32mprefersReducedMotion[37m()) {
+          ╵                        [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'prefersReducedMotion' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:467:17:
+[37m      467 │         if (this.[32mprefersReducedMotion[37m()) { this.showSolariTarget(...
+          ╵                  [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'showSolariTarget' does not exist on type 'HeroComponent'. Did you mean 'solariTarget'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:467:48:
+[37m      467 │ ...this.prefersReducedMotion()) { this.[32mshowSolariTarget[37m(); return; }
+          ╵                                        [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTarget' is declared here.
+
+    src/app/user-list/hero.component.ts:34:19:
+[37m      34 │   private readonly [32msolariTarget[37m = 'PORTFOLIO';
+         ╵                    [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'queueSolariTimer' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:468:13:
+[37m      468 │         this.[32mqueueSolariTimer[37m(() => this.playSolariIntroSequence(...
+          ╵              [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'injectSolariKeyframes' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:487:7:
+[37m      487 │   this.[32minjectSolariKeyframes[37m(); // ← add this as first line
+          ╵        [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'prefersReducedMotion' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:499:13:
+[37m      499 │     if (this.[32mprefersReducedMotion[37m()) this.showSolariTarget();
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'showSolariTarget' does not exist on type 'HeroComponent'. Did you mean 'solariTarget'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:499:42:
+[37m      499 │     if (this.prefersReducedMotion()) this.[32mshowSolariTarget[37m();
+          ╵                                           [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTarget' is declared here.
+
+    src/app/user-list/hero.component.ts:34:19:
+[37m      34 │   private readonly [32msolariTarget[37m = 'PORTFOLIO';
+         ╵                    [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'resetSolariTile' does not exist on type 'HeroComponent'. Did you mean 'solariTiles'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:536:11:
+[37m      536 │       this.[32mresetSolariTile[37m(created, '.');
+          ╵            [32m~~~~~~~~~~~~~~~[0m
+
+  'solariTiles' is declared here.
+
+    src/app/user-list/hero.component.ts:50:10:
+[37m      50 │   private [32msolariTiles[37m: SolariTile[] = [];
+         ╵           [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'prefersReducedMotion' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:555:15:
+[37m      555 │       if (this.[32mprefersReducedMotion[37m()) { this.showSolariTarget();...
+          ╵                [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'showSolariTarget' does not exist on type 'HeroComponent'. Did you mean 'solariTarget'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:555:46:
+[37m      555 │ ...this.prefersReducedMotion()) { this.[32mshowSolariTarget[37m(); return; }
+          ╵                                        [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTarget' is declared here.
+
+    src/app/user-list/hero.component.ts:34:19:
+[37m      34 │   private readonly [32msolariTarget[37m = 'PORTFOLIO';
+         ╵                    [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'prefersReducedMotion' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:594:56:
+[37m      594 │ ...his.solariIntroInProgress || this.[32mprefersReducedMotion[37m()) return;
+          ╵                                      [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'clearSolariTimers' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:626:9:
+[37m      626 │     this.[32mclearSolariTimers[37m();
+          ╵          [32m~~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'resetSolariBoard' does not exist on type 'HeroComponent'. Did you mean 'setupSolariBoard'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:627:9:
+[37m      627 │     this.[32mresetSolariBoard[37m();
+          ╵          [32m~~~~~~~~~~~~~~~~[0m
+
+  'setupSolariBoard' is declared here.
+
+    src/app/user-list/hero.component.ts:486:9:
+[37m      486 │  private [32msetupSolariBoard[37m(): void {
+          ╵          [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'clearSolariTimers' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:638:9:
+[37m      638 │     this.[32mclearSolariTimers[37m();
+          ╵          [32m~~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'resetSolariBoard' does not exist on type 'HeroComponent'. Did you mean 'setupSolariBoard'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:639:9:
+[37m      639 │     this.[32mresetSolariBoard[37m('.');
+          ╵          [32m~~~~~~~~~~~~~~~~[0m
+
+  'setupSolariBoard' is declared here.
+
+    src/app/user-list/hero.component.ts:486:9:
+[37m      486 │  private [32msetupSolariBoard[37m(): void {
+          ╵          [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'queueSolariTimer' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:650:13:
+[37m      650 │         this.[32mqueueSolariTimer[37m(() => {
+          ╵              [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'flipSolariTile' does not exist on type 'HeroComponent'. Did you mean 'solariTiles'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:652:15:
+[37m      652 │           this.[32mflipSolariTile[37m(this.solariTiles[index], character,...
+          ╵                [32m~~~~~~~~~~~~~~[0m
+
+  'solariTiles' is declared here.
+
+    src/app/user-list/hero.component.ts:50:10:
+[37m      50 │   private [32msolariTiles[37m: SolariTile[] = [];
+         ╵           [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'queueSolariTimer' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:659:13:
+[37m      659 │         this.[32mqueueSolariTimer[37m(() => {
+          ╵              [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'queueSolariTimer' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:697:28:
+[37m      697 │       if (tile.busy) { this.[32mqueueSolariTimer[37m(tryFlip, 16); return; }
+          ╵                             [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'flipSolariTile' does not exist on type 'HeroComponent'. Did you mean 'solariTiles'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:698:11:
+[37m      698 │       this.[32mflipSolariTile[37m(tile, char, runId);
+          ╵            [32m~~~~~~~~~~~~~~[0m
+
+  'solariTiles' is declared here.
+
+    src/app/user-list/hero.component.ts:50:10:
+[37m      50 │   private [32msolariTiles[37m: SolariTile[] = [];
+         ╵           [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'queueSolariTimer' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:700:24:
+[37m      700 │       if (!isLast) this.[32mqueueSolariTimer[37m(next, gap(step) + this.s...
+          ╵                         [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'queueSolariTimer' does not exist on type 'HeroComponent'. Did you mean 'solariTimers'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:706:7:
+[37m      706 │   this.[32mqueueSolariTimer[37m(next, startDelay);
+          ╵        [32m~~~~~~~~~~~~~~~~[0m
+
+  'solariTimers' is declared here.
+
+    src/app/user-list/hero.component.ts:51:10:
+[37m      51 │   private [32msolariTimers[37m = new Set<number>();
+         ╵           [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2391: Function implementation is missing or not immediately following the declaration.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:709:6:
+[37m      709 │       [32mstepLoop[37m();
+          ╵       [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7010: 'stepLoop', which lacks return-type annotation, implicitly has an 'any' return type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:709:6:
+[37m      709 │       [32mstepLoop[37m();
+          ╵       [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:712:4:
+[37m      712 │     [32mthis[37m.queueSolariTimer(() => startLoop(), startDelay);
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'startLoop'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:712:32:
+[37m      712 │     this.queueSolariTimer(() => [32mstartLoop[37m(), startDelay);
+          ╵                                 [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'startDelay'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:712:45:
+[37m      712 │     this.queueSolariTimer(() => startLoop(), [32mstartDelay[37m);
+          ╵                                              [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:713:2:
+[37m      713 │   [32m}[37m
+          ╵   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:0:
+[37m      715 │ [32mprivate[37m flipSolariTile(tile: SolariTile, newChar: string, runId: ...
+          ╵ [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'flipSolariTile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:8:
+[37m      715 │ private [32mflipSolariTile[37m(tile: SolariTile, newChar: string, runId: ...
+          ╵         [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:23:
+[37m      715 │ private flipSolariTile([32mtile[37m: SolariTile, newChar: string, runId: ...
+          ╵                        [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:27:
+[37m      715 │ private flipSolariTile(tile[32m:[37m SolariTile, newChar: string, runId: ...
+          ╵                            [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'SolariTile' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:29:
+[37m      715 │ private flipSolariTile(tile: [32mSolariTile[37m, newChar: string, runId: ...
+          ╵                              [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:41:
+[37m      715 │ ...olariTile(tile: SolariTile, [32mnewChar[37m: string, runId: number): v...
+          ╵                                [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:48:
+[37m      715 │ ...ariTile(tile: SolariTile, newChar[32m:[37m string, runId: number): void {
+          ╵                                     [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'string' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:50:
+[37m      715 │ ...ariTile(tile: SolariTile, newChar: [32mstring[37m, runId: number): void {
+          ╵                                       [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'runId'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:58:
+[37m      715 │ ...ariTile(tile: SolariTile, newChar: string, [32mrunId[37m: number): void {
+          ╵                                               [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:63:
+[37m      715 │ ...ariTile(tile: SolariTile, newChar: string, runId[32m:[37m number): void {
+          ╵                                                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'number' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:65:
+[37m      715 │ ...ariTile(tile: SolariTile, newChar: string, runId: [32mnumber[37m): void {
+          ╵                                                      [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:72:
+[37m      715 │ ...ariTile(tile: SolariTile, newChar: string, runId: number)[32m:[37m void {
+          ╵                                                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2873: This kind of expression is always falsy.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:74:
+[37m      715 │ ...ariTile(tile: SolariTile, newChar: string, runId: number): [32mvoid {[37m
+          ╵                                                               [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2349: This expression is not callable.
+  Type '{ if(): any; }' has no call signatures.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:715:79:
+[37m      715 │ ...ariTile(tile: SolariTile, newChar: string, runId: number): void [32m{[37m
+          ╵                                                                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1138: Parameter declaration expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:716:6:
+[37m      716 │   if ([32m([37mrunId !== 0 && runId !== this.solariRunId) || this.isDestr...
+          ╵       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'runId'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:716:7:
+[37m      716 │   if (([32mrunId[37m !== 0 && runId !== this.solariRunId) || this.isDestr...
+          ╵        [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'runId'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:716:22:
+[37m      716 │   if ((runId !== 0 && [32mrunId[37m !== this.solariRunId) || this.isDestr...
+          ╵                       [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:716:32:
+[37m      716 │   if ((runId !== 0 && runId !== [32mthis[37m.solariRunId) || this.isDestr...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:716:53:
+[37m      716 │ ...!== 0 && runId !== this.solariRunId) || [32mthis[37m.isDestroyed) return;
+          ╵                                            [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:716:69:
+[37m      716 │ ...!== 0 && runId !== this.solariRunId) || this.isDestroyed[32m)[37m return;
+          ╵                                                            [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:718:6:
+[37m      718 │   if ([32mtile[37m.busy) {
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:719:4:
+[37m      719 │     [32mthis[37m.queueSolariTimer(() => this.flipSolariTile(tile, newChar...
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:719:32:
+[37m      719 │     this.queueSolariTimer(() => [32mthis[37m.flipSolariTile(tile, newChar...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:719:52:
+[37m      719 │ ...SolariTimer(() => this.flipSolariTile([32mtile[37m, newChar, runId), 16);
+          ╵                                          [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:719:58:
+[37m      719 │ ...SolariTimer(() => this.flipSolariTile(tile, [32mnewChar[37m, runId), 16);
+          ╵                                                [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'runId'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:719:67:
+[37m      719 │ ...SolariTimer(() => this.flipSolariTile(tile, newChar, [32mrunId[37m), 16);
+          ╵                                                         [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:723:6:
+[37m      723 │   if ([32mtile[37m.current === newChar) {
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:723:23:
+[37m      723 │   if (tile.current === [32mnewChar[37m) {
+          ╵                        [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:724:4:
+[37m      724 │     [32mthis[37m.updateSolariPlaceholderState(tile, newChar);
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:724:38:
+[37m      724 │     this.updateSolariPlaceholderState([32mtile[37m, newChar);
+          ╵                                       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:724:44:
+[37m      724 │     this.updateSolariPlaceholderState(tile, [32mnewChar[37m);
+          ╵                                             [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:728:2:
+[37m      728 │   [32mtile[37m.busy = true;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:729:18:
+[37m      729 │   const oldChar = [32mtile[37m.current;
+          ╵                   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:730:2:
+[37m      730 │   [32mtile[37m.current  = newChar;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:730:18:
+[37m      730 │   tile.current  = [32mnewChar[37m;
+          ╵                   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:731:2:
+[37m      731 │   [32mthis[37m.updateSolariPlaceholderState(tile, newChar);
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:731:36:
+[37m      731 │   this.updateSolariPlaceholderState([32mtile[37m, newChar);
+          ╵                                     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:731:42:
+[37m      731 │   this.updateSolariPlaceholderState(tile, [32mnewChar[37m);
+          ╵                                           [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:734:2:
+[37m      734 │   [32mtile[37m.htop.textContent = newChar;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:734:26:
+[37m      734 │   tile.htop.textContent = [32mnewChar[37m;
+          ╵                           [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:735:2:
+[37m      735 │   [32mtile[37m.hbot.textContent = oldChar;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:738:2:
+[37m      738 │   [32mtile[37m.ftopc.textContent    = oldChar;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:739:2:
+[37m      739 │   [32mtile[37m.ftop.style.animation = 'none';
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:740:2:
+[37m      740 │   [32mtile[37m.fbot.style.animation = 'none';
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:741:7:
+[37m      741 │   void [32mtile[37m.ftop.offsetWidth;                                    ...
+          ╵        [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:742:2:
+[37m      742 │   [32mtile[37m.ftop.style.animation = `solariFlapDown ${this.solariFlipMs...
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:742:48:
+[37m      742 │ ...nimation = `solariFlapDown ${[32mthis[37m.solariFlipMs}ms ease-in forw...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:745:2:
+[37m      745 │   [32mtile[37m.fbotc.textContent = newChar;
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:745:27:
+[37m      745 │   tile.fbotc.textContent = [32mnewChar[37m;
+          ╵                            [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:746:2:
+[37m      746 │   [32mthis[37m.queueSolariTimer(() => {
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:747:8:
+[37m      747 │     if ([32mthis[37m.isDestroyed) return;
+          ╵         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:748:9:
+[37m      748 │     void [32mtile[37m.fbot.offsetWidth;
+          ╵          [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:749:4:
+[37m      749 │     [32mtile[37m.fbot.style.animation = `solariFlapUp ${this.solariFlipMs...
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:749:48:
+[37m      749 │ ....animation = `solariFlapUp ${[32mthis[37m.solariFlipMs}ms ease-out for...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:750:16:
+[37m      750 │   }, Math.round([32mthis[37m.solariFlipMs * 0.40));
+          ╵                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:753:2:
+[37m      753 │   [32mthis[37m.queueSolariTimer(() => {
+          ╵   [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:754:8:
+[37m      754 │     if ([32mthis[37m.isDestroyed) return;
+          ╵         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:755:4:
+[37m      755 │     [32mtile[37m.hbot.textContent     = newChar;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:755:32:
+[37m      755 │     tile.hbot.textContent     = [32mnewChar[37m;
+          ╵                                 [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:756:4:
+[37m      756 │     [32mtile[37m.ftop.style.animation = 'none';
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:757:4:
+[37m      757 │     [32mtile[37m.fbot.style.animation = 'none';
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:758:9:
+[37m      758 │     void [32mtile[37m.ftop.offsetWidth;
+          ╵          [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:759:4:
+[37m      759 │     [32mtile[37m.ftop.style.transform  = '';
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:760:4:
+[37m      760 │     [32mtile[37m.fbot.style.transform  = 'rotateX(90deg)';
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:761:4:
+[37m      761 │     [32mtile[37m.ftopc.textContent     = newChar;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:761:33:
+[37m      761 │     tile.ftopc.textContent     = [32mnewChar[37m;
+          ╵                                  [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:762:4:
+[37m      762 │     [32mtile[37m.fbotc.textContent     = newChar;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:762:33:
+[37m      762 │     tile.fbotc.textContent     = [32mnewChar[37m;
+          ╵                                  [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:763:4:
+[37m      763 │     [32mtile[37m.el.classList.remove('is-flipping');
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:764:4:
+[37m      764 │     [32mthis[37m.updateSolariPlaceholderState(tile, newChar);
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:764:38:
+[37m      764 │     this.updateSolariPlaceholderState([32mtile[37m, newChar);
+          ╵                                       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'newChar'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:764:44:
+[37m      764 │     this.updateSolariPlaceholderState(tile, [32mnewChar[37m);
+          ╵                                             [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:765:4:
+[37m      765 │     [32mtile[37m.busy = false;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:766:5:
+[37m      766 │   }, [32mthis[37m.solariFlipMs * 2 + 20);
+          ╵      [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:767:0:
+[37m      767 │ [32m}[37m
+          ╵ [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:769:2:
+[37m      769 │   [32mprivate[37m resetSolariBoard(character = '.'): void {
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'resetSolariBoard'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:769:10:
+[37m      769 │   private [32mresetSolariBoard[37m(character = '.'): void {
+          ╵           [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:769:27:
+[37m      769 │   private resetSolariBoard([32mcharacter[37m = '.'): void {
+          ╵                            [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:769:43:
+[37m      769 │   private resetSolariBoard(character = '.')[32m:[37m void {
+          ╵                                            [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:770:8:
+[37m      770 │     this[32m.[37msolariTiles.forEach(tile => this.resetSolariTile(tile, c...
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'tile' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:770:29:
+[37m      770 │     this.solariTiles.forEach([32mtile[37m => this.resetSolariTile(tile, c...
+          ╵                              [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:770:37:
+[37m      770 │ ....solariTiles.forEach(tile => [32mthis[37m.resetSolariTile(tile, charac...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:770:64:
+[37m      770 │ ...lariTiles.forEach(tile => this.resetSolariTile(tile, [32mcharacter[37m));
+          ╵                                                         [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:770:75:
+[37m      770 │ ...lariTiles.forEach(tile => this.resetSolariTile(tile, character))[32m;[37m
+          ╵                                                                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:773:2:
+[37m      773 │   [32mprivate[37m showSolariTarget(): void {
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'showSolariTarget'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:773:10:
+[37m      773 │   private [32mshowSolariTarget[37m(): void {
+          ╵           [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:773:28:
+[37m      773 │   private showSolariTarget()[32m:[37m void {
+          ╵                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:774:8:
+[37m      774 │     this[32m.[37mclearSolariTimers();
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:774:28:
+[37m      774 │     this.clearSolariTimers()[32m;[37m
+          ╵                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:775:8:
+[37m      775 │     this[32m.[37msolariRunId += 1;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:775:25:
+[37m      775 │     this.solariRunId += 1[32m;[37m
+          ╵                          [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:776:8:
+[37m      776 │     this[32m.[37msolariIntroInProgress = false;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:776:38:
+[37m      776 │     this.solariIntroInProgress = false[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:777:8:
+[37m      777 │     this[32m.[37msolariTarget.split('').forEach((letter, index) => {
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'letter' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:777:41:
+[37m      777 │     this.solariTarget.split('').forEach(([32mletter[37m, index) => {
+          ╵                                          [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'index' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:777:49:
+[37m      777 │     this.solariTarget.split('').forEach((letter, [32mindex[37m) => {
+          ╵                                                  [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:778:19:
+[37m      778 │       const tile = [32mthis[37m.solariTiles[index];
+          ╵                    [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:780:6:
+[37m      780 │       [32mthis[37m.resetSolariTile(tile, letter);
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:781:6:
+[37m      781 │     })[32m;[37m
+          ╵       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:2:
+[37m      784 │   [32mprivate[37m resetSolariTile(tile: SolariTile, character: string): v...
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'resetSolariTile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:10:
+[37m      784 │   private [32mresetSolariTile[37m(tile: SolariTile, character: string): v...
+          ╵           [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:26:
+[37m      784 │   private resetSolariTile([32mtile[37m: SolariTile, character: string): v...
+          ╵                           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:30:
+[37m      784 │   private resetSolariTile(tile[32m:[37m SolariTile, character: string): v...
+          ╵                               [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'SolariTile' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:32:
+[37m      784 │ ...vate resetSolariTile(tile: [32mSolariTile[37m, character: string): void {
+          ╵                               [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:44:
+[37m      784 │ ...vate resetSolariTile(tile: SolariTile, [32mcharacter[37m: string): void {
+          ╵                                           [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:53:
+[37m      784 │ ...vate resetSolariTile(tile: SolariTile, character[32m:[37m string): void {
+          ╵                                                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'string' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:55:
+[37m      784 │ ...vate resetSolariTile(tile: SolariTile, character: [32mstring[37m): void {
+          ╵                                                      [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:784:62:
+[37m      784 │ ...vate resetSolariTile(tile: SolariTile, character: string)[32m:[37m void {
+          ╵                                                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:785:8:
+[37m      785 │     this[32m.[37mstopSolariGlitch(tile, false);
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:785:26:
+[37m      785 │     this.stopSolariGlitch([32mtile[37m, false);
+          ╵                           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:785:38:
+[37m      785 │     this.stopSolariGlitch(tile, false)[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:786:4:
+[37m      786 │     [32mtile[37m.current           = character;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:786:8:
+[37m      786 │     tile[32m.[37mcurrent           = character;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:786:29:
+[37m      786 │     tile.current           = [32mcharacter[37m;
+          ╵                              [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:786:38:
+[37m      786 │     tile.current           = character[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:787:4:
+[37m      787 │     [32mtile[37m.htop.textContent  = character;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:787:8:
+[37m      787 │     tile[32m.[37mhtop.textContent  = character;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:787:29:
+[37m      787 │     tile.htop.textContent  = [32mcharacter[37m;
+          ╵                              [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:787:38:
+[37m      787 │     tile.htop.textContent  = character[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:788:4:
+[37m      788 │     [32mtile[37m.hbot.textContent  = character;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:788:8:
+[37m      788 │     tile[32m.[37mhbot.textContent  = character;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:788:29:
+[37m      788 │     tile.hbot.textContent  = [32mcharacter[37m;
+          ╵                              [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:788:38:
+[37m      788 │     tile.hbot.textContent  = character[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:789:4:
+[37m      789 │     [32mtile[37m.ftopc.textContent = character;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:789:8:
+[37m      789 │     tile[32m.[37mftopc.textContent = character;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:789:29:
+[37m      789 │     tile.ftopc.textContent = [32mcharacter[37m;
+          ╵                              [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:789:38:
+[37m      789 │     tile.ftopc.textContent = character[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:790:4:
+[37m      790 │     [32mtile[37m.fbotc.textContent = character;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:790:8:
+[37m      790 │     tile[32m.[37mfbotc.textContent = character;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:790:29:
+[37m      790 │     tile.fbotc.textContent = [32mcharacter[37m;
+          ╵                              [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:790:38:
+[37m      790 │     tile.fbotc.textContent = character[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:791:4:
+[37m      791 │     [32mtile[37m.ftop.style.animation = 'none';
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:791:8:
+[37m      791 │     tile[32m.[37mftop.style.animation = 'none';
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:791:38:
+[37m      791 │     tile.ftop.style.animation = 'none'[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:792:4:
+[37m      792 │     [32mtile[37m.fbot.style.animation = 'none';
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:792:8:
+[37m      792 │     tile[32m.[37mfbot.style.animation = 'none';
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:792:38:
+[37m      792 │     tile.fbot.style.animation = 'none'[32m;[37m
+          ╵                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:793:4:
+[37m      793 │     [32mtile[37m.ftop.style.transform = '';
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:793:8:
+[37m      793 │     tile[32m.[37mftop.style.transform = '';
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:793:34:
+[37m      793 │     tile.ftop.style.transform = ''[32m;[37m
+          ╵                                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:794:4:
+[37m      794 │     [32mtile[37m.fbot.style.transform = 'rotateX(90deg)';
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:794:8:
+[37m      794 │     tile[32m.[37mfbot.style.transform = 'rotateX(90deg)';
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:794:48:
+[37m      794 │     tile.fbot.style.transform = 'rotateX(90deg)'[32m;[37m
+          ╵                                                 [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:795:4:
+[37m      795 │     [32mtile[37m.el.classList.remove('is-flipping');
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:795:8:
+[37m      795 │     tile[32m.[37mel.classList.remove('is-flipping');
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:795:43:
+[37m      795 │     tile.el.classList.remove('is-flipping')[32m;[37m
+          ╵                                            [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:796:8:
+[37m      796 │     this[32m.[37mupdateSolariPlaceholderState(tile, character);
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:796:38:
+[37m      796 │     this.updateSolariPlaceholderState([32mtile[37m, character);
+          ╵                                       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:796:44:
+[37m      796 │     this.updateSolariPlaceholderState(tile, [32mcharacter[37m);
+          ╵                                             [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:796:54:
+[37m      796 │     this.updateSolariPlaceholderState(tile, character)[32m;[37m
+          ╵                                                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:797:4:
+[37m      797 │     [32mtile[37m.busy = false;
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:797:8:
+[37m      797 │     tile[32m.[37mbusy = false;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:797:21:
+[37m      797 │     tile.busy = false[32m;[37m
+          ╵                      [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:2:
+[37m      800 │   [32mprivate[37m updateSolariPlaceholderState(tile: SolariTile, characte...
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'updateSolariPlaceholderState'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:10:
+[37m      800 │   private [32mupdateSolariPlaceholderState[37m(tile: SolariTile, characte...
+          ╵           [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tile'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:39:
+[37m      800 │ ...updateSolariPlaceholderState([32mtile[37m: SolariTile, character: stri...
+          ╵                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:43:
+[37m      800 │ ...dateSolariPlaceholderState(tile[32m:[37m SolariTile, character: string...
+          ╵                                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'SolariTile' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:45:
+[37m      800 │ ...lariPlaceholderState(tile: [32mSolariTile[37m, character: string): void {
+          ╵                               [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:57:
+[37m      800 │ ...lariPlaceholderState(tile: SolariTile, [32mcharacter[37m: string): void {
+          ╵                                           [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:66:
+[37m      800 │ ...lariPlaceholderState(tile: SolariTile, character[32m:[37m string): void {
+          ╵                                                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'string' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:68:
+[37m      800 │ ...lariPlaceholderState(tile: SolariTile, character: [32mstring[37m): void {
+          ╵                                                      [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:800:75:
+[37m      800 │ ...lariPlaceholderState(tile: SolariTile, character: string)[32m:[37m void {
+          ╵                                                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS18004: No value exists in scope for the shorthand property 'tile'. Either declare one or provide an initializer.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:801:4:
+[37m      801 │     [32mtile[37m.el.classList.toggle('is-dot', character.trim() === '' ||...
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:801:8:
+[37m      801 │     tile[32m.[37mel.classList.toggle('is-dot', character.trim() === '' ||...
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:801:39:
+[37m      801 │ ...classList.toggle('is-dot', [32mcharacter[37m.trim() === '' || characte...
+          ╵                               [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'character'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:801:66:
+[37m      801 │ ...t.toggle('is-dot', character.trim() === '' || [32mcharacter[37m === '.');
+          ╵                                                  [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:801:84:
+[37m      801 │ ...t.toggle('is-dot', character.trim() === '' || character === '.')[32m;[37m
+          ╵                                                                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:2:
+[37m      804 │   [32mprivate[37m queueSolariTimer(callback: () => void, delay: number): ...
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'queueSolariTimer'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:10:
+[37m      804 │   private [32mqueueSolariTimer[37m(callback: () => void, delay: number): ...
+          ╵           [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'callback'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:27:
+[37m      804 │   private queueSolariTimer([32mcallback[37m: () => void, delay: number): ...
+          ╵                            [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:35:
+[37m      804 │ ...ivate queueSolariTimer(callback[32m:[37m () => void, delay: number): v...
+          ╵                                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1109: Expression expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:47:
+[37m      804 │ ...ate queueSolariTimer(callback: () => void[32m,[37m delay: number): void {
+          ╵                                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'delay'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:49:
+[37m      804 │ ...ate queueSolariTimer(callback: () => void, [32mdelay[37m: number): void {
+          ╵                                               [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:54:
+[37m      804 │ ...ate queueSolariTimer(callback: () => void, delay[32m:[37m number): void {
+          ╵                                                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'number' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:56:
+[37m      804 │ ...ate queueSolariTimer(callback: () => void, delay: [32mnumber[37m): void {
+          ╵                                                      [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:804:63:
+[37m      804 │ ...ate queueSolariTimer(callback: () => void, delay: number)[32m:[37m void {
+          ╵                                                             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:805:10:
+[37m      805 │     const [32mtimer[37m = window.setTimeout(() => {
+          ╵           [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'timer'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:805:10:
+[37m      805 │     const [32mtimer[37m = window.setTimeout(() => {
+          ╵           [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:806:6:
+[37m      806 │       [32mthis[37m.solariTimers.delete(timer);
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'timer'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:806:31:
+[37m      806 │       this.solariTimers.delete([32mtimer[37m);
+          ╵                                [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'callback'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:807:6:
+[37m      807 │       [32mcallback[37m();
+          ╵       [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'delay'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:808:7:
+[37m      808 │     }, [32mdelay[37m);
+          ╵        [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:808:13:
+[37m      808 │     }, delay)[32m;[37m
+          ╵              [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:809:8:
+[37m      809 │     this[32m.[37msolariTimers.add(timer);
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'timer'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:809:26:
+[37m      809 │     this.solariTimers.add([32mtimer[37m);
+          ╵                           [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:809:32:
+[37m      809 │     this.solariTimers.add(timer)[32m;[37m
+          ╵                                 [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:812:2:
+[37m      812 │   [32mprivate[37m clearSolariTimers(): void {
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'clearSolariTimers'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:812:10:
+[37m      812 │   private [32mclearSolariTimers[37m(): void {
+          ╵           [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:812:29:
+[37m      812 │   private clearSolariTimers()[32m:[37m void {
+          ╵                              [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:813:8:
+[37m      813 │     this[32m.[37msolariTimers.forEach(timer => window.clearTimeout(timer));
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'timer' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:813:30:
+[37m      813 │     this.solariTimers.forEach([32mtimer[37m => window.clearTimeout(timer));
+          ╵                               [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:813:66:
+[37m      813 │     this.solariTimers.forEach(timer => window.clearTimeout(timer))[32m;[37m
+          ╵                                                                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:814:8:
+[37m      814 │     this[32m.[37msolariTimers.clear();
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:814:29:
+[37m      814 │     this.solariTimers.clear()[32m;[37m
+          ╵                              [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:815:8:
+[37m      815 │     this[32m.[37msolariTiles.forEach(tile => {
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'tile' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:815:29:
+[37m      815 │     this.solariTiles.forEach([32mtile[37m => {
+          ╵                              [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:816:6:
+[37m      816 │       [32mthis[37m.stopSolariGlitch(tile, false);
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:818:6:
+[37m      818 │     })[32m;[37m
+          ╵       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:821:2:
+[37m      821 │   [32mprivate[37m prefersReducedMotion(): boolean {
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'prefersReducedMotion'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:821:10:
+[37m      821 │   private [32mprefersReducedMotion[37m(): boolean {
+          ╵           [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:821:32:
+[37m      821 │   private prefersReducedMotion()[32m:[37m boolean {
+          ╵                                 [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1434: Unexpected keyword or identifier.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:821:34:
+[37m      821 │   private prefersReducedMotion(): [32mboolean[37m {
+          ╵                                   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2693: 'boolean' only refers to a type, but is being used as a value here.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:821:34:
+[37m      821 │   private prefersReducedMotion(): [32mboolean[37m {
+          ╵                                   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:826:2:
+[37m      826 │   [32mprivate[37m setupLocalTime(): void {
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'setupLocalTime'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:826:10:
+[37m      826 │   private [32msetupLocalTime[37m(): void {
+          ╵           [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:826:26:
+[37m      826 │   private setupLocalTime()[32m:[37m void {
+          ╵                           [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:827:10:
+[37m      827 │     const [32mel[37m = document.querySelector<HTMLElement>('.local-time-v...
+          ╵           [32m~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'el'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:827:10:
+[37m      827 │     const [32mel[37m = document.querySelector<HTMLElement>('.local-time-v...
+          ╵           [32m~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:827:71:
+[37m      827 │ ...st el = document.querySelector<HTMLElement>('.local-time-value')[32m;[37m
+          ╵                                                                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1003: Identifier expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:828:8:
+[37m      828 │     if ([32m![37mel) return;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter '(Missing)' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:828:8:
+[37m      828 │     if ([32m[37m!el) return;
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'el' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:828:9:
+[37m      828 │     if (![32mel[37m) return;
+          ╵          [32m~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: '{' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:828:13:
+[37m      828 │     if (!el) [32mreturn[37m;
+          ╵              [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:828:19:
+[37m      828 │     if (!el) return[32m;[37m
+          ╵                    [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:830:10:
+[37m      830 │     const [32mpad[37m  = (n: number) => String(n).padStart(2, '0');
+          ╵           [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'pad'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:830:10:
+[37m      830 │     const [32mpad[37m  = (n: number) => String(n).padStart(2, '0');
+          ╵           [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:830:58:
+[37m      830 │     const pad  = (n: number) => String(n).padStart(2, '0')[32m;[37m
+          ╵                                                           [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:831:10:
+[37m      831 │     const [32mtick[37m = () => {
+          ╵           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tick'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:831:10:
+[37m      831 │     const [32mtick[37m = () => {
+          ╵           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'el'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:833:6:
+[37m      833 │       [32mel[37m.textContent = `${pad(t.getHours())}:${pad(t.getMinutes()...
+          ╵       [32m~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'pad'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:833:26:
+[37m      833 │       el.textContent = `${[32mpad[37m(t.getHours())}:${pad(t.getMinutes()...
+          ╵                           [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'pad'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:833:47:
+[37m      833 │ ...ent = `${pad(t.getHours())}:${[32mpad[37m(t.getMinutes())}:${pad(t.get...
+          ╵                                  [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'pad'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:833:70:
+[37m      833 │ ...ad(t.getHours())}:${pad(t.getMinutes())}:${[32mpad[37m(t.getSeconds())}`;
+          ╵                                               [32m~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:834:5:
+[37m      834 │     }[32m;[37m
+          ╵      [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:838:4:
+[37m      838 │     [32mconst[37m msToNextSecond = 1000 - (Date.now() % 1000);
+          ╵     [32m~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:838:10:
+[37m      838 │     const [32mmsToNextSecond[37m = 1000 - (Date.now() % 1000);
+          ╵           [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'msToNextSecond'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:838:10:
+[37m      838 │     const [32mmsToNextSecond[37m = 1000 - (Date.now() % 1000);
+          ╵           [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:838:53:
+[37m      838 │     const msToNextSecond = 1000 - (Date.now() % 1000)[32m;[37m
+          ╵                                                      [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:839:8:
+[37m      839 │     this[32m.[37mlocalTimeAligner = window.setTimeout(() => {
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tick'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:840:6:
+[37m      840 │       [32mtick[37m();
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:841:6:
+[37m      841 │       [32mthis[37m.localTimeTimer  = window.setInterval(tick, 1000);
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'tick'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:841:48:
+[37m      841 │       this.localTimeTimer  = window.setInterval([32mtick[37m, 1000);
+          ╵                                                 [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:842:6:
+[37m      842 │       [32mthis[37m.localTimeAligner = null;
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'msToNextSecond'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:843:7:
+[37m      843 │     }, [32mmsToNextSecond[37m);
+          ╵        [32m~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:843:22:
+[37m      843 │     }, msToNextSecond)[32m;[37m
+          ╵                       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ':' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:845:8:
+[37m      845 │     this[32m.[37mcleanupFns.push(() => {
+          ╵         [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:846:10:
+[37m      846 │       if ([32mthis[37m.localTimeAligner !== null) {
+          ╵           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:847:28:
+[37m      847 │         window.clearTimeout([32mthis[37m.localTimeAligner);
+          ╵                             [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:848:8:
+[37m      848 │         [32mthis[37m.localTimeAligner = null;
+          ╵         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:850:10:
+[37m      850 │       if ([32mthis[37m.localTimeTimer !== null) {
+          ╵           [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:851:29:
+[37m      851 │         window.clearInterval([32mthis[37m.localTimeTimer);
+          ╵                              [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:852:8:
+[37m      852 │         [32mthis[37m.localTimeTimer = null;
+          ╵         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:854:6:
+[37m      854 │     })[32m;[37m
+          ╵       [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:857:2:
+[37m      857 │   [32mprivate[37m animateBackground(): void {
+          ╵   [32m~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'animateBackground'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:857:10:
+[37m      857 │   private [32manimateBackground[37m(): void {
+          ╵           [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:857:29:
+[37m      857 │   private animateBackground()[32m:[37m void {
+          ╵                              [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:858:12:
+[37m      858 │     if (this[32m.[37mperfLite) {
+          ╵             [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:858:21:
+[37m      858 │     if (this.perfLite[32m)[37m {
+          ╵                      [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1136: Property assignment expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:858:23:
+[37m      858 │     if (this.perfLite) [32m{[37m
+          ╵                        [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:865:4:
+[37m      865 │     [32mthis[37m.track(gsap.to('.blob-1', { x: 56,  y: 42,  duration: 36,...
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:866:4:
+[37m      866 │     [32mthis[37m.track(gsap.to('.blob-2', { x: -66, y: 48,  duration: 44,...
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2532: Object is possibly 'undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:867:4:
+[37m      867 │     [32mthis[37m.track(gsap.to('.blob-3', { x: 60,  y: -56, duration: 52,...
+          ╵     [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:868:2:
+[37m      868 │   [32m}[37m
+          ╵   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mUnexpected "."[0m
+
+    src/app/user-list/hero.component.ts:868:10:
+[37m      868 │     this: [32m.[37msolariTiles.forEach(tile => this.resetSolariTile(tile,...
+          ╵           [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1128: Declaration or statement expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:869:0:
+[37m      869 │ [32m}[37m
+          ╵ [32m^[0m
+
+[39m[22m
+Watch mode enabled. Watching for file changes...
+[33m>[39m Changes detected. Rebuilding...
+[32m√[39m Changes detected. Rebuilding...
+Application bundle generation failed. [2.597 seconds]
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "@"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2236:0:
+[37m      2236 │ [32m@[37m
+           ╵ [32m^[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "0%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2239:2:
+[37m      2239 │   [32m0%[37m, 100% { transform: translateY(0); }
+           ╵   [32m~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "50%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2240:2:
+[37m      2240 │   [32m50%[37m      { transform: translateY(-2px); }
+           ╵   [32m~~~[0m
+
+[39m[22m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'injectSolariKeyframes' does not exist on type 'HeroComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/user-list/hero.component.ts:487:7:
+[37m      487 │   this.[32minjectSolariKeyframes[37m(); // ← add this as first line
+          ╵        [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m
+[33m>[39m Changes detected. Rebuilding...
+[32m√[39m Changes detected. Rebuilding...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m         [2m | [22m[36m185.65 kB[39m[2m | [22m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m       [2m | [22m[36m759 bytes[39m[2m | [22m
+[32mpolyfills.js[39m       [2m | [22m[2mpolyfills[22m    [2m | [22m [36m95 bytes[39m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m186.50 kB[22m
+
+Application bundle generation complete. [0.950 seconds]
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "@"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2236:0:
+[37m      2236 │ [32m@[37m
+           ╵ [32m^[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "0%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2239:2:
+[37m      2239 │   [32m0%[37m, 100% { transform: translateY(0); }
+           ╵   [32m~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "50%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2240:2:
+[37m      2240 │   [32m50%[37m      { transform: translateY(-2px); }
+           ╵   [32m~~~[0m
+
+[39m[22m
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m4200[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[33m>[39m Changes detected. Rebuilding...
+[32m√[39m Changes detected. Rebuilding...
+
+No output file changes.
+
+Application bundle generation complete. [0.668 seconds]
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "@"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2236:0:
+[37m      2236 │ [32m@[37m
+           ╵ [32m^[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "0%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2239:2:
+[37m      2239 │   [32m0%[37m, 100% { transform: translateY(0); }
+           ╵   [32m~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "50%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2240:2:
+[37m      2240 │   [32m50%[37m      { transform: translateY(-2px); }
+           ╵   [32m~~~[0m
+
+[39m[22m
+[33m>[39m Changes detected. Rebuilding...
+[32m√[39m Changes detected. Rebuilding...
+
+No output file changes.
+
+Application bundle generation complete. [0.691 seconds]
+
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "@"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2236:0:
+[37m      2236 │ [32m@[37m
+           ╵ [32m^[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "0%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2239:2:
+[37m      2239 │   [32m0%[37m, 100% { transform: translateY(0); }
+           ╵   [32m~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mUnexpected "50%"[0m [1m[35m[plugin angular-compiler][0m [css-syntax-error]
+
+    src/app/user-list/hero.component.css:2240:2:
+[37m      2240 │   [32m50%[37m      { transform: translateY(-2px); }
+           ╵   [32m~~~[0m
+
+[39m[22m
+[33m>[39m Changes detected. Rebuilding...
+[32m√[39m Changes detected. Rebuilding...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m[2m | [22m [1mRaw size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m [2m | [22m[36m185.68 kB[39m[2m | [22m
+
+Application bundle generation complete. [0.601 seconds]
+
+Component update sent to client(s).

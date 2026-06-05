@@ -16,6 +16,7 @@
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@angular/router": "^20.0.0",
+    "@studio-freight/lenis": "^1.0.42",
     "gsap": "^3.14.2",
     "particles.js": "^2.0.0",
     "rxjs": "~7.8.0",
