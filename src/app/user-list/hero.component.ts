@@ -102,91 +102,309 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     if (!section || !box) return;
 
-    const label = box.querySelector<HTMLElement>('.about-box-label');
+    const platform   = box.querySelector<HTMLElement>('.about-platform');
+    const label      = box.querySelector<HTMLElement>('.about-box-label');
     const labelInner = box.querySelector<HTMLElement>('.about-box-label-inner');
-    const titleLetters = Array.from(
-      box.querySelectorAll<HTMLElement>('.about-title-letter')
-    );
+    const titleWord  = box.querySelector<HTMLElement>('.about-title-word');
+    const toggle     = box.querySelector<HTMLButtonElement>('.about-panel-toggle');
 
     let revealed = false;
+    let revealTimeline: gsap.core.Timeline | null = null;
+    let isFullScreen = false;
+    let panelToggleTimeline: gsap.core.Timeline | null = null;
 
-    const entryObserver = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting && !revealed) {
-            gsap.to(box, {
-              opacity : 1,
-              duration: 0.45,
-              ease    : 'power2.out',
-            });
-          }
-        }
-      },
-      { threshold: 0.1 }
-    );
+    const setPlatformState = (expanded: boolean): void => {
+      if (!platform) return;
+      const states = this.getAboutPlatformStates(box, labelInner);
+      const targetState = expanded
+        ? (isFullScreen ? states.fullscreen : states.expanded)
+        : states.compact;
+      gsap.set(platform, {
+        ...targetState,
+      });
+      if (toggle) gsap.set(toggle, this.getAboutTogglePlacement(box, targetState));
+    };
 
-    const expandObserver = new IntersectionObserver(
+    const revealObserver = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting && !revealed) {
             revealed = true;
-            this.revealAboutPlaceholder(box, label, labelInner, titleLetters);
+            revealTimeline = this.revealAboutPlatform(
+              box,
+              platform,
+              label,
+              labelInner,
+              titleWord,
+              toggle
+            );
 
-            expandObserver.disconnect();
+            revealObserver.disconnect();
           }
         }
       },
-      { threshold: 0.6 }
+      { threshold: 0.42 }
     );
 
     gsap.set(box, {
       opacity  : 0,
       clipPath : 'inset(0px 0px 0px 0px)',
     });
+    setPlatformState(false);
+    if (platform) {
+      gsap.set(platform, {
+        autoAlpha                 : 1,
+        '--about-platform-bg'     : '#0b0e13',
+        '--about-platform-wash'   : 'rgba(0, 0, 0, 0)',
+        '--about-platform-border' : 'rgba(255, 255, 255, 0)',
+        '--about-platform-shadow' : 'rgba(0, 0, 0, 0)',
+      });
+    }
     if (label) gsap.set(label, { autoAlpha: 1 });
-    if (labelInner) gsap.set(labelInner, { autoAlpha: 0, y: 18, scale: 0.96 });
-    if (titleLetters.length) gsap.set(titleLetters, { autoAlpha: 0, yPercent: 115 });
+    if (labelInner) gsap.set(labelInner, { opacity: 0, y: 20, scale: 1 });
+    if (toggle) gsap.set(toggle, { autoAlpha: 0, scale: 0.96, pointerEvents: 'none' });
+    if (titleWord) {
+      gsap.set(titleWord, {
+        color     : '#f3eee5',
+        textShadow: '0 0 26px rgba(255, 232, 187, 0.22), 0 18px 46px rgba(0, 0, 0, 0.34)',
+      });
+    }
 
-    entryObserver.observe(section);
-    expandObserver.observe(section);
+    const onResize = (): void => {
+      setPlatformState(revealed);
+    };
+
+    const onTogglePanel = (): void => {
+      if (!revealed || !platform || !toggle) return;
+
+      isFullScreen = !isFullScreen;
+      const states = this.getAboutPlatformStates(box, labelInner);
+      const targetState = isFullScreen ? states.fullscreen : states.expanded;
+
+      toggle.classList.toggle('is-fullscreen', isFullScreen);
+      toggle.setAttribute('aria-label', isFullScreen ? 'Collapse about panel' : 'Expand about panel');
+      toggle.setAttribute('aria-pressed', String(isFullScreen));
+
+      try { panelToggleTimeline?.kill(); } catch (_) {}
+      panelToggleTimeline = gsap.timeline({ defaults: { duration: 0.7, ease: 'power3.inOut' } });
+      panelToggleTimeline
+        .to(platform, { ...targetState }, 0)
+        .to(toggle, { ...this.getAboutTogglePlacement(box, targetState) }, 0);
+    };
+
+    window.addEventListener('resize', onResize);
+    if (toggle) toggle.addEventListener('click', onTogglePanel);
+    revealObserver.observe(section);
 
     this.cleanupFns.push(() => {
-      entryObserver.disconnect();
-      expandObserver.disconnect();
+      revealObserver.disconnect();
+      window.removeEventListener('resize', onResize);
+      if (toggle) toggle.removeEventListener('click', onTogglePanel);
+      try { revealTimeline?.kill(); } catch (_) {}
+      try { panelToggleTimeline?.kill(); } catch (_) {}
     });
   }
 
-  private revealAboutPlaceholder(
+  private revealAboutPlatform(
     box: HTMLElement,
+    platform: HTMLElement | null,
     label: HTMLElement | null,
     labelInner: HTMLElement | null,
-    titleLetters: HTMLElement[]
-  ): void {
-    const speed = this.perfLite ? 0.72 : 1;
-    const tl = this.track(gsap.timeline());
+    titleWord: HTMLElement | null,
+    toggle: HTMLButtonElement | null
+  ): gsap.core.Timeline {
+    const speed  = 1;
+    const states = this.getAboutPlatformStates(box, labelInner);
+    const tl     = this.track(gsap.timeline({ defaults: { ease: 'power3.out' } }));
 
     tl.set(box, { opacity: 1 }, 0);
+    if (platform) {
+      tl.set(platform, {
+        ...states.compact,
+        autoAlpha                 : 1,
+        '--about-platform-bg'     : '#0b0e13',
+        '--about-platform-wash'   : 'rgba(0, 0, 0, 0)',
+        '--about-platform-border' : 'rgba(255, 255, 255, 0)',
+        '--about-platform-shadow' : 'rgba(0, 0, 0, 0)',
+      }, 0);
+    }
     if (label) tl.set(label, { autoAlpha: 1 }, 0);
 
+    if (this.prefersReducedMotion()) {
+      if (platform) {
+        tl.set(platform, {
+          ...states.expanded,
+          autoAlpha                 : 1,
+          '--about-platform-bg'     : '#f3eee5',
+          '--about-platform-wash'   : 'rgba(255, 176, 0, 0.08)',
+          '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
+          '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
+        }, 0);
+      }
+      if (toggle) {
+        tl.set(toggle, {
+          ...this.getAboutTogglePlacement(box, states.expanded),
+          autoAlpha    : 1,
+          scale        : 1,
+          pointerEvents: 'auto',
+        }, 0);
+      }
+      if (label) tl.set(label, { autoAlpha: 0 }, 0);
+      return tl;
+    }
+
+    // ── Phase 1: label fades in ───────────────────────────────────────────────
     if (labelInner) {
       tl.to(labelInner, {
-        autoAlpha: 1,
-        y        : 0,
-        scale    : 1,
-        duration : 0.42 * speed,
-        ease     : 'power3.out',
+        opacity : 1,
+        y       : 0,
+        duration: 0.72 * speed,
+        ease    : 'power3.out',
       }, 0);
     }
 
-    if (titleLetters.length) {
-      tl.to(titleLetters, {
-        autoAlpha: 1,
-        yPercent : 0,
-        duration : 0.42 * speed,
-        stagger  : 0.018 * speed,
-        ease     : 'power3.out',
-      }, 0.05 * speed);
+    // ── Phase 2: platform warms up (dark → slightly lighter) ─────────────────
+    if (platform) {
+      tl.to(platform, {
+        '--about-platform-bg'     : '#211f1a',
+        '--about-platform-border' : 'rgba(255, 255, 255, 0.14)',
+        '--about-platform-shadow' : 'rgba(0, 0, 0, 0.12)',
+        duration                  : 0.46 * speed,
+        ease                      : 'none',
+      }, 0.88 * speed);
+
+      // ── Phase 3: platform flips to light ───────────────────────────────────
+      tl.to(platform, {
+        '--about-platform-bg'     : '#f3eee5',
+        '--about-platform-wash'   : 'rgba(255, 176, 0, 0.08)',
+        '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
+        '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
+        duration                  : 0.9 * speed,
+        ease                      : 'sine.inOut',
+      }, 1.18 * speed);
     }
+
+    // ── Phase 4: title word colour shifts ─────────────────────────────────────
+    if (titleWord) {
+      tl.to(titleWord, {
+        color     : '#18120a',
+        textShadow: '0 1px 0 rgba(255, 255, 255, 0.55), 0 18px 46px rgba(0, 0, 0, 0.14)',
+        duration  : 0.62 * speed,
+        ease      : 'power2.out',
+      }, 1.16 * speed);
+    }
+
+    // ── Phase 5: label exits upward — shorter, accelerates out ───────────────
+    if (labelInner) {
+      tl.to(labelInner, {
+        opacity : 0,
+        y       : -14,          // exits upward so it feels purposeful
+        duration: 0.44 * speed, // was 0.58 — snappier exit
+        ease    : 'power2.in',  // accelerates out (was power3.inOut — sluggish start)
+      }, 2.02 * speed);         // was 2.16 — starts a beat earlier
+    }
+
+    // ── Phase 6: expand — overlaps label exit so there's zero dead gap ────────
+    if (platform) {
+      tl.to(platform, {
+        ...states.expanded,
+        '--about-platform-bg'     : '#f3eee5',
+        '--about-platform-wash'   : 'rgba(255, 176, 0, 0.08)',
+        '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
+        '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
+        duration                  : 0.88 * speed, // was 1.18 — tighter
+        ease                      : 'power3.inOut', // was expo.inOut — starts moving immediately
+      }, 2.32 * speed);          // was 2.88 — bridges dead gap; overlaps label exit
+    }
+
+    if (label) tl.set(label, { autoAlpha: 0 }, '>');
+    if (toggle) {
+      tl.set(toggle, {
+        ...this.getAboutTogglePlacement(box, states.expanded),
+        pointerEvents: 'auto',
+      }, '>-0.08');
+      tl.to(toggle, {
+        autoAlpha: 1,
+        scale    : 1,
+        duration : 0.24 * speed,
+        ease     : 'power2.out',
+      }, '>');
+    }
+
+    return tl;
+  }
+
+  private getAboutPlatformStates(box: HTMLElement, _labelInner: HTMLElement | null) {
+    const boxRect      = box.getBoundingClientRect();
+    const compactPadX  = Math.min(Math.max(window.innerWidth * 0.03, 26), 62);
+    const compactPadY  = Math.min(Math.max(window.innerHeight * 0.024, 22), 44);
+    const safeWidth    = Math.max(0, boxRect.width - 32);
+    const safeHeight   = Math.max(0, boxRect.height - 32);
+
+    // Derive from boxRect proportions — never read from a possibly-hidden
+    // labelInner whose getBoundingClientRect() returns wrong values when the
+    // element has opacity:0 / a y-transform applied.
+    const labelWidth   = Math.min(boxRect.width  * 0.64, 960);
+    const labelHeight  = Math.min(boxRect.height * 0.22, 220);
+
+    const compactWidth   = Math.min(safeWidth,  labelWidth  + compactPadX * 2);
+    const compactHeight  = Math.min(safeHeight, labelHeight + compactPadY * 2);
+    const expandedInsetX = Math.min(Math.max(window.innerWidth  * 0.035, 12), 68);
+    const expandedInsetY = Math.min(Math.max(window.innerHeight * 0.05, 36), 62);
+
+    return {
+      compact: {
+        left        : '50%',
+        top         : '50%',
+        right       : 'auto',
+        bottom      : 'auto',
+        xPercent    : -50,
+        yPercent    : -50,
+        width       : compactWidth,
+        height      : compactHeight,
+        clipPath    : 'none',
+        borderRadius: 24,
+        transformOrigin: '50% 50%',
+      },
+      expanded: {
+        left        : '50%',
+        top         : '50%',
+        right       : 'auto',
+        bottom      : 'auto',
+        xPercent    : -50,
+        yPercent    : -50,
+        width       : Math.max(0, boxRect.width - expandedInsetX * 2),
+        height      : Math.max(0, boxRect.height - expandedInsetY * 2),
+        clipPath    : 'none',
+        borderRadius: 24,
+        transformOrigin: '50% 50%',
+      },
+      fullscreen: {
+        left        : '50%',
+        top         : '50%',
+        right       : 'auto',
+        bottom      : 'auto',
+        xPercent    : -50,
+        yPercent    : -50,
+        width       : Math.max(0, boxRect.width),
+        height      : Math.max(0, boxRect.height),
+        clipPath    : 'none',
+        borderRadius: 0,
+        transformOrigin: '50% 50%',
+      },
+    };
+  }
+
+  private getAboutTogglePlacement(
+    box: HTMLElement,
+    panelState: { width: number; height: number }
+  ): { top: number; right: number } {
+    const boxRect = box.getBoundingClientRect();
+    const inset = window.innerWidth <= 700 ? 14 : 18;
+    return {
+      top  : Math.max(12, (boxRect.height - panelState.height) / 2 + inset),
+      right: Math.max(12, (boxRect.width - panelState.width) / 2 + inset),
+    };
   }
 
   // ---------------------------------------------------------------------------
@@ -480,7 +698,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   }
 
   // ---------------------------------------------------------------------------
-  // Solari board — unchanged
+  // Solari board
   // ---------------------------------------------------------------------------
 
   private injectSolariKeyframes(): void {
@@ -699,7 +917,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     const gap = (step: number): number => {
       const p = step / totalFlips;
-      return 80 + Math.pow(p, 2.4) * 300; // starts ~80 ms, curves up to ~380 ms
+      return 80 + Math.pow(p, 2.4) * 300;
     };
 
     let step = 0;
@@ -738,46 +956,42 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-  tile.busy = true;
-  const oldChar = tile.current;
-  tile.current  = newChar;
-  this.updateSolariPlaceholderState(tile, newChar);
+    tile.busy = true;
+    const oldChar = tile.current;
+    tile.current  = newChar;
+    this.updateSolariPlaceholderState(tile, newChar);
 
-  // Static halves: top reveals newChar as the top flap falls; bot holds old until bot flap rises
-  tile.htop.textContent = newChar;
-  tile.hbot.textContent = oldChar;
+    tile.htop.textContent = newChar;
+    tile.hbot.textContent = oldChar;
 
-  // Top flap: shows old char, rotates DOWN (0 → -90°)
-  tile.ftopc.textContent    = oldChar;
-  tile.ftop.style.animation = 'none';
-  tile.fbot.style.animation = 'none';
-  void tile.ftop.offsetWidth;                                                         // force reflow
-  tile.ftop.style.animation = `solariFlapDown ${this.solariFlipMs}ms ease-in forwards`;
-
-  // Bottom flap: shows new char, rotates UP (90 → 0°), staggered start
-  tile.fbotc.textContent = newChar;
-  this.queueSolariTimer(() => {
-    if (this.isDestroyed) return;
-    void tile.fbot.offsetWidth;
-    tile.fbot.style.animation = `solariFlapUp ${this.solariFlipMs}ms ease-out forwards`;
-  }, Math.round(this.solariFlipMs * 0.40));
-
-  // Settle: snap static bot to newChar, reset flap transforms for next flip
-  this.queueSolariTimer(() => {
-    if (this.isDestroyed) return;
-    tile.hbot.textContent     = newChar;
+    tile.ftopc.textContent    = oldChar;
     tile.ftop.style.animation = 'none';
     tile.fbot.style.animation = 'none';
     void tile.ftop.offsetWidth;
-    tile.ftop.style.transform  = '';
-    tile.fbot.style.transform  = 'rotateX(90deg)';
-    tile.ftopc.textContent     = newChar;
-    tile.fbotc.textContent     = newChar;
-    tile.el.classList.remove('is-flipping');
-    this.updateSolariPlaceholderState(tile, newChar);
-    tile.busy = false;
-  }, this.solariFlipMs * 2 + 20);
-}
+    tile.ftop.style.animation = `solariFlapDown ${this.solariFlipMs}ms ease-in forwards`;
+
+    tile.fbotc.textContent = newChar;
+    this.queueSolariTimer(() => {
+      if (this.isDestroyed) return;
+      void tile.fbot.offsetWidth;
+      tile.fbot.style.animation = `solariFlapUp ${this.solariFlipMs}ms ease-out forwards`;
+    }, Math.round(this.solariFlipMs * 0.40));
+
+    this.queueSolariTimer(() => {
+      if (this.isDestroyed) return;
+      tile.hbot.textContent     = newChar;
+      tile.ftop.style.animation = 'none';
+      tile.fbot.style.animation = 'none';
+      void tile.ftop.offsetWidth;
+      tile.ftop.style.transform  = '';
+      tile.fbot.style.transform  = 'rotateX(90deg)';
+      tile.ftopc.textContent     = newChar;
+      tile.fbotc.textContent     = newChar;
+      tile.el.classList.remove('is-flipping');
+      this.updateSolariPlaceholderState(tile, newChar);
+      tile.busy = false;
+    }, this.solariFlipMs * 2 + 20);
+  }
 
   private resetSolariBoard(character = '.'): void {
     this.solariTiles.forEach(tile => this.resetSolariTile(tile, character));
