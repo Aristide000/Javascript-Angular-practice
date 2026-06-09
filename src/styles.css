@@ -2,11 +2,57 @@
   --ui-scrollbar-size: 10px;
   --ui-scrollbar-active: rgba(255, 176, 0, 0.62);
   --ui-scrollbar-active-hover: rgba(255, 176, 0, 0.86);
+  --film-grain-opacity: 0.028;
+  --film-grain-size: 64px;
+  --film-grain-blend-mode: soft-light;
+  --film-grain-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.65' intercept='-.32'/%3E%3CfeFuncG type='linear' slope='1.65' intercept='-.32'/%3E%3CfeFuncB type='linear' slope='1.65' intercept='-.32'/%3E%3CfeFuncA type='table' tableValues='0 .42'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='72' height='72' filter='url(%23grain)' opacity='.86'/%3E%3C/svg%3E");
+}
+
+html,
+body {
+  min-height: 100%;
+  height: auto;
+  overflow-x: hidden;
 }
 
 body {
   scrollbar-width: thin;
   scrollbar-color: var(--ui-scrollbar-active) transparent;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: -100%;
+  z-index: 2147483647;
+  pointer-events: none;
+  opacity: var(--film-grain-opacity);
+  mix-blend-mode: var(--film-grain-blend-mode);
+  background-image: var(--film-grain-texture);
+  background-size: var(--film-grain-size) var(--film-grain-size);
+  background-repeat: repeat;
+  transform: translate3d(0, 0, 0);
+  animation: globalFilmGrain 620ms steps(2, end) infinite;
+  will-change: transform;
+}
+
+@keyframes globalFilmGrain {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  10%      { transform: translate3d(-6%, -9%, 0); }
+  20%      { transform: translate3d(7%, -5%, 0); }
+  30%      { transform: translate3d(-4%, 8%, 0); }
+  40%      { transform: translate3d(9%, 4%, 0); }
+  50%      { transform: translate3d(-8%, 6%, 0); }
+  60%      { transform: translate3d(5%, -7%, 0); }
+  70%      { transform: translate3d(-9%, -3%, 0); }
+  80%      { transform: translate3d(6%, 9%, 0); }
+  90%      { transform: translate3d(-3%, 5%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
 }
 
 body::-webkit-scrollbar {

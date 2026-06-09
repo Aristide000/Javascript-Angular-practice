@@ -21,6 +21,15 @@ interface SolariTile {
   glitchTimer: number | null;
 }
 
+interface AboutParticleNode {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  phase: number;
+}
+
 @Component({
   selector: 'app-hero',
   standalone: true,
@@ -36,6 +45,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly solariChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   private readonly solariGlitchChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%*+!?';
   private readonly solariFlipMs = 105;
+  private readonly solariMisfireChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*?';
 
   private get solariFlipTotal(): number {
     return this.solariFlipMs * 2 + 25;
@@ -103,15 +113,111 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (!section || !box) return;
 
     const platform   = box.querySelector<HTMLElement>('.about-platform');
+    const contentMask = box.querySelector<HTMLElement>('.about-content-mask');
     const label      = box.querySelector<HTMLElement>('.about-box-label');
     const labelInner = box.querySelector<HTMLElement>('.about-box-label-inner');
     const titleWord  = box.querySelector<HTMLElement>('.about-title-word');
     const toggle     = box.querySelector<HTMLButtonElement>('.about-panel-toggle');
+    const portrait   = box.querySelector<HTMLElement>('.about-portrait');
+    const description = box.querySelector<HTMLElement>('.about-description');
+    const particles  = box.querySelector<HTMLCanvasElement>('.about-particles-canvas');
+    const cornerMarker = box.querySelector<HTMLElement>('.about-corner-marker');
+    const cornerMarkerLabel = cornerMarker?.querySelector<HTMLElement>('span') ?? null;
+    const progressRail = box.querySelector<HTMLElement>('.about-progress-rail');
+    const progressTicks = progressRail
+      ? Array.from(progressRail.querySelectorAll<HTMLElement>('.about-progress-tick'))
+      : [];
+    const revealTextItems = description
+      ? Array.from(description.querySelectorAll<HTMLElement>('h2, p, h3, .about-subsection-list li, .about-dark-card-list li'))
+      : [];
+    const keywordItems = description
+      ? Array.from(description.querySelectorAll<HTMLElement>('.about-keyword'))
+      : [];
+    const darkSections = description
+      ? Array.from(description.querySelectorAll<HTMLElement>('[data-about-theme="dark"]'))
+      : [];
+    const stopParticles = particles ? this.setupAboutParticleNetwork(particles) : null;
 
     let revealed = false;
+    let aboutContentReady = false;
+    let activeAboutTheme: 'light' | 'dark' = 'light';
     let revealTimeline: gsap.core.Timeline | null = null;
     let isFullScreen = false;
     let panelToggleTimeline: gsap.core.Timeline | null = null;
+    let platformThemeTween: gsap.core.Tween | null = null;
+    let particleThemeTween: gsap.core.Tween | null = null;
+
+    revealTextItems.forEach((item, index) => {
+      item.classList.add('about-text-reveal');
+      item.style.setProperty('--about-text-delay', `${Math.min(index * 46, 230)}ms`);
+    });
+    keywordItems.forEach((item, index) => {
+      item.style.setProperty('--about-keyword-delay', `${Math.min(index * 22, 180)}ms`);
+    });
+
+    const clamp01 = (value: number): number => Math.min(Math.max(value, 0), 1);
+    const getAboutStoryProgress = (): number => {
+      const maxScroll = Math.max(1, section.offsetHeight - window.innerHeight);
+      return clamp01(-section.getBoundingClientRect().top / maxScroll);
+    };
+
+    const getCurrentPanelState = () => {
+      const states = this.getAboutPlatformStates(box, labelInner);
+      return isFullScreen ? states.fullscreen : states.expanded;
+    };
+
+    const setAboutPlatformTheme = (theme: 'light' | 'dark'): void => {
+      if (!platform || activeAboutTheme === theme) return;
+
+      activeAboutTheme = theme;
+      box.classList.toggle('is-dark-theme', theme === 'dark');
+
+      const target = theme === 'dark'
+        ? {
+            '--about-platform-bg'    : '#101010',
+            '--about-platform-wash'  : 'rgba(56, 176, 255, 0.08)',
+            '--about-platform-border': 'rgba(255, 255, 255, 0.18)',
+            '--about-platform-shadow': 'rgba(0, 0, 0, 0.68)',
+          }
+          : {
+            '--about-platform-bg'    : '#f3eee5',
+            '--about-platform-wash'  : 'rgba(255, 176, 0, 0.08)',
+            '--about-platform-border': 'rgba(255, 255, 255, 0.72)',
+            '--about-platform-shadow': 'rgba(0, 0, 0, 0.42)',
+          };
+      const duration = this.prefersReducedMotion() ? 0 : 0.58;
+
+      try { platformThemeTween?.kill(); } catch (_) {}
+      platformThemeTween = gsap.to(platform, {
+        ...target,
+        duration,
+        ease     : 'power2.inOut',
+        overwrite: 'auto',
+      });
+
+      if (particles) {
+        try { particleThemeTween?.kill(); } catch (_) {}
+        particleThemeTween = gsap.to(particles, {
+          opacity  : theme === 'dark' ? 0.18 : this.getAboutParticleOpacity(box),
+          duration,
+          ease     : 'power2.inOut',
+          overwrite: 'auto',
+        });
+      }
+    };
+
+    const updateAboutPlatformTheme = (): void => {
+      if (!aboutContentReady || !description || darkSections.length === 0) return;
+
+      const rootRect = description.getBoundingClientRect();
+      const focusY = rootRect.top + rootRect.height * 0.42;
+      const isDarkActive = darkSections.some((darkSection) => {
+        const rect = darkSection.getBoundingClientRect();
+        return rect.top <= focusY && rect.bottom >= focusY;
+      });
+
+      setAboutPlatformTheme(isDarkActive ? 'dark' : 'light');
+    };
 
     const setPlatformState = (expanded: boolean): void => {
       if (!platform) return;
@@ -122,7 +228,98 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       gsap.set(platform, {
         ...targetState,
       });
+      if (contentMask) {
+        gsap.set(contentMask, {
+          ...targetState,
+        });
+      }
       if (toggle) gsap.set(toggle, this.getAboutTogglePlacement(box, targetState));
+      if (cornerMarker) {
+        gsap.set(cornerMarker, this.getAboutCornerMarkerPlacement(box, targetState));
+      }
+      if (progressRail) {
+        gsap.set(progressRail, this.getAboutProgressRailPlacement(box, targetState));
+      }
+      if (particles) gsap.set(particles, targetState);
+      if (portrait && expanded) {
+        gsap.set(portrait, this.getAboutPortraitPlacement(box, targetState));
+      }
+      if (description && expanded) {
+        gsap.set(description, this.getAboutDescriptionPlacement(box, targetState));
+      }
+    };
+
+    const updateAboutProgress = (): void => {
+      if (!progressRail || progressTicks.length === 0) return;
+
+      const storyProgress = getAboutStoryProgress();
+
+      progressRail.style.setProperty('--about-progress', storyProgress.toFixed(4));
+      progressTicks.forEach((tick, index) => {
+        tick.classList.toggle('is-active', index === 0);
+        tick.classList.remove('is-passed');
+      });
+    };
+
+    const updateAboutStoryScroll = (): void => {
+      if (!revealed || !aboutContentReady) return;
+
+      const panelState = getCurrentPanelState();
+
+      if (cornerMarkerLabel) {
+        cornerMarkerLabel.textContent = '// ABOUT';
+      }
+      if (cornerMarker) {
+        gsap.set(cornerMarker, {
+          ...this.getAboutCornerMarkerPlacement(box, panelState),
+          autoAlpha: 1,
+          y        : 0,
+        });
+      }
+      if (portrait) {
+        gsap.set(portrait, {
+          ...this.getAboutPortraitPlacement(box, panelState),
+          y      : 0,
+          opacity: 1,
+        });
+      }
+      if (description) {
+        gsap.set(description, {
+          ...this.getAboutDescriptionPlacement(box, panelState),
+          y            : 0,
+          opacity      : 1,
+          pointerEvents: 'auto',
+        });
+      }
+    };
+
+    const updateAboutTextReveal = (): void => {
+      if (!revealed || !aboutContentReady || !description || revealTextItems.length === 0) return;
+
+      const rootRect = description.getBoundingClientRect();
+      const triggerY = rootRect.top + rootRect.height * 0.84;
+      const resetY = rootRect.top + rootRect.height * 0.02;
+
+      revealTextItems.forEach((item) => {
+        const itemRect = item.getBoundingClientRect();
+        if (itemRect.top < triggerY && itemRect.bottom > resetY) {
+          item.classList.add('is-visible');
+        }
+      });
+
+      this.updateAboutKeywordLabels(description, keywordItems);
+    };
+
+    const onWindowScroll = (): void => {
+      updateAboutStoryScroll();
+      updateAboutProgress();
+      updateAboutTextReveal();
+      updateAboutPlatformTheme();
+    };
+
+    const onDescriptionScroll = (): void => {
+      updateAboutTextReveal();
+      updateAboutPlatformTheme();
     };
 
     const revealObserver = new IntersectionObserver(
@@ -136,14 +333,27 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
               label,
               labelInner,
               titleWord,
-              toggle
+              toggle,
+              portrait,
+              description,
+              particles,
+              cornerMarker,
+              progressRail,
+              contentMask
             );
+            revealTimeline.eventCallback('onComplete', () => {
+              aboutContentReady = true;
+              updateAboutStoryScroll();
+              updateAboutProgress();
+              updateAboutTextReveal();
+              updateAboutPlatformTheme();
+            });
 
             revealObserver.disconnect();
           }
         }
       },
-      { threshold: 0.42 }
+      { threshold: 0.16 }
     );
 
     gsap.set(box, {
@@ -151,6 +361,13 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       clipPath : 'inset(0px 0px 0px 0px)',
     });
     setPlatformState(false);
+    if (contentMask) {
+      const states = this.getAboutPlatformStates(box, labelInner);
+      gsap.set(contentMask, {
+        ...states.compact,
+        autoAlpha: 1,
+      });
+    }
     if (platform) {
       gsap.set(platform, {
         autoAlpha                 : 1,
@@ -163,6 +380,42 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (label) gsap.set(label, { autoAlpha: 1 });
     if (labelInner) gsap.set(labelInner, { opacity: 0, y: 20, scale: 1 });
     if (toggle) gsap.set(toggle, { autoAlpha: 0, scale: 0.96, pointerEvents: 'none' });
+    if (particles) gsap.set(particles, { opacity: 0 });
+    if (cornerMarker) {
+      const states = this.getAboutPlatformStates(box, labelInner);
+      cornerMarker.setAttribute('data-panel-state', 'collapsed');
+      gsap.set(cornerMarker, {
+        ...this.getAboutCornerMarkerPlacement(box, states.expanded),
+        autoAlpha: 0,
+        y: 10,
+      });
+    }
+    if (progressRail) {
+      const states = this.getAboutPlatformStates(box, labelInner);
+      gsap.set(progressRail, {
+        ...this.getAboutProgressRailPlacement(box, states.expanded),
+        autoAlpha: 0,
+        y: 8,
+      });
+      progressRail.style.setProperty('--about-progress', '0');
+    }
+    if (portrait) {
+      const states = this.getAboutPlatformStates(box, labelInner);
+      gsap.set(portrait, {
+        ...this.getAboutPortraitPlacement(box, states.expanded),
+        opacity: 0,
+        y      : 22,
+      });
+    }
+    if (description) {
+      const states = this.getAboutPlatformStates(box, labelInner);
+      gsap.set(description, {
+        ...this.getAboutDescriptionPlacement(box, states.expanded),
+        opacity: 0,
+        y      : 26,
+        pointerEvents: 'none',
+      });
+    }
     if (titleWord) {
       gsap.set(titleWord, {
         color     : '#f3eee5',
@@ -172,6 +425,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     const onResize = (): void => {
       setPlatformState(revealed);
+      updateAboutStoryScroll();
+      updateAboutProgress();
+      updateAboutTextReveal();
+      updateAboutPlatformTheme();
     };
 
     const onTogglePanel = (): void => {
@@ -184,24 +441,80 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       toggle.classList.toggle('is-fullscreen', isFullScreen);
       toggle.setAttribute('aria-label', isFullScreen ? 'Collapse about panel' : 'Expand about panel');
       toggle.setAttribute('aria-pressed', String(isFullScreen));
+      if (cornerMarker) {
+        cornerMarker.classList.toggle('is-fullscreen', isFullScreen);
+        cornerMarker.setAttribute('data-panel-state', isFullScreen ? 'expanded' : 'collapsed');
+      }
 
       try { panelToggleTimeline?.kill(); } catch (_) {}
       panelToggleTimeline = gsap.timeline({ defaults: { duration: 0.7, ease: 'power3.inOut' } });
       panelToggleTimeline
         .to(platform, { ...targetState }, 0)
         .to(toggle, { ...this.getAboutTogglePlacement(box, targetState) }, 0);
+      if (contentMask) {
+        panelToggleTimeline.to(contentMask, { ...targetState }, 0);
+      }
+      if (cornerMarker) {
+        panelToggleTimeline.to(cornerMarker, this.getAboutCornerMarkerPlacement(box, targetState), 0);
+      }
+      if (progressRail) {
+        panelToggleTimeline.to(progressRail, this.getAboutProgressRailPlacement(box, targetState), 0);
+      }
+      if (particles) {
+        panelToggleTimeline.to(particles, { ...targetState }, 0);
+      }
+      if (portrait) {
+        panelToggleTimeline.to(portrait, {
+          ...this.getAboutPortraitPlacement(box, targetState),
+          y: 0,
+        }, 0);
+      }
+      if (description) {
+        panelToggleTimeline.to(description, {
+          ...this.getAboutDescriptionPlacement(box, targetState),
+          y: 0,
+        }, 0);
+      }
+      panelToggleTimeline.eventCallback('onComplete', updateAboutStoryScroll);
     };
 
     window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', onWindowScroll, { passive: true });
+    if (description) description.addEventListener('scroll', onDescriptionScroll, { passive: true });
     if (toggle) toggle.addEventListener('click', onTogglePanel);
     revealObserver.observe(section);
+    updateAboutProgress();
+    updateAboutTextReveal();
 
     this.cleanupFns.push(() => {
       revealObserver.disconnect();
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', onWindowScroll);
+      if (description) description.removeEventListener('scroll', onDescriptionScroll);
       if (toggle) toggle.removeEventListener('click', onTogglePanel);
       try { revealTimeline?.kill(); } catch (_) {}
       try { panelToggleTimeline?.kill(); } catch (_) {}
+      try { platformThemeTween?.kill(); } catch (_) {}
+      try { particleThemeTween?.kill(); } catch (_) {}
+      if (stopParticles) stopParticles();
+    });
+  }
+
+  private updateAboutKeywordLabels(
+    description: HTMLElement,
+    keywordItems: HTMLElement[]
+  ): void {
+    if (keywordItems.length === 0) return;
+
+    const rootRect = description.getBoundingClientRect();
+    const activationY = rootRect.top + rootRect.height * 0.72;
+    const resetY = rootRect.top + rootRect.height * 0.08;
+
+    keywordItems.forEach((item) => {
+      const itemRect = item.getBoundingClientRect();
+      if (itemRect.top < activationY && itemRect.bottom > resetY) {
+        item.classList.add('is-labelled');
+      }
     });
   }
 
@@ -211,7 +524,13 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     label: HTMLElement | null,
     labelInner: HTMLElement | null,
     titleWord: HTMLElement | null,
-    toggle: HTMLButtonElement | null
+    toggle: HTMLButtonElement | null,
+    portrait: HTMLElement | null,
+    description: HTMLElement | null,
+    particles: HTMLCanvasElement | null,
+    cornerMarker: HTMLElement | null,
+    progressRail: HTMLElement | null,
+    contentMask: HTMLElement | null
   ): gsap.core.Timeline {
     const speed  = 1;
     const states = this.getAboutPlatformStates(box, labelInner);
@@ -228,6 +547,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         '--about-platform-shadow' : 'rgba(0, 0, 0, 0)',
       }, 0);
     }
+    if (contentMask) {
+      tl.set(contentMask, {
+        ...states.compact,
+        autoAlpha: 1,
+      }, 0);
+    }
     if (label) tl.set(label, { autoAlpha: 1 }, 0);
 
     if (this.prefersReducedMotion()) {
@@ -241,12 +566,53 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
           '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
         }, 0);
       }
+      if (contentMask) {
+        tl.set(contentMask, {
+          ...states.expanded,
+          autoAlpha: 1,
+        }, 0);
+      }
       if (toggle) {
         tl.set(toggle, {
           ...this.getAboutTogglePlacement(box, states.expanded),
           autoAlpha    : 1,
           scale        : 1,
           pointerEvents: 'auto',
+        }, 0);
+      }
+      if (portrait) {
+        tl.set(portrait, {
+          ...this.getAboutPortraitPlacement(box, states.expanded),
+          opacity: 1,
+          y      : 0,
+        }, 0);
+      }
+      if (description) {
+        tl.set(description, {
+          ...this.getAboutDescriptionPlacement(box, states.expanded),
+          opacity: 1,
+          y      : 0,
+          pointerEvents: 'auto',
+        }, 0);
+      }
+      if (particles) {
+        tl.set(particles, {
+          ...states.expanded,
+          opacity: this.getAboutParticleOpacity(box),
+        }, 0);
+      }
+      if (cornerMarker) {
+        tl.set(cornerMarker, {
+          ...this.getAboutCornerMarkerPlacement(box, states.expanded),
+          autoAlpha: 1,
+          y: 0,
+        }, 0);
+      }
+      if (progressRail) {
+        tl.set(progressRail, {
+          ...this.getAboutProgressRailPlacement(box, states.expanded),
+          autoAlpha: 1,
+          y: 0,
         }, 0);
       }
       if (label) tl.set(label, { autoAlpha: 0 }, 0);
@@ -316,19 +682,85 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         ease                      : 'power3.inOut', // was expo.inOut — starts moving immediately
       }, 2.32 * speed);          // was 2.88 — bridges dead gap; overlaps label exit
     }
+    if (contentMask) {
+      tl.to(contentMask, {
+        ...states.expanded,
+        duration: 0.88 * speed,
+        ease    : 'power3.inOut',
+      }, 2.32 * speed);
+    }
 
-    if (label) tl.set(label, { autoAlpha: 0 }, '>');
+    if (particles) {
+      tl.to(particles, {
+        ...states.expanded,
+        opacity : this.getAboutParticleOpacity(box),
+        duration: 0.88 * speed,
+        ease    : 'power3.inOut',
+      }, 2.32 * speed);
+    }
+
+    const expandStart = 2.32 * speed;
+    const expandDuration = 0.88 * speed;
+    const contentStart = expandStart + expandDuration - 0.02 * speed;
+
+    if (label) tl.set(label, { autoAlpha: 0 }, contentStart);
+    if (cornerMarker) {
+      tl.set(cornerMarker, this.getAboutCornerMarkerPlacement(box, states.expanded), contentStart);
+      tl.to(cornerMarker, {
+        autoAlpha: 1,
+        y        : 0,
+        duration : 0.38 * speed,
+        ease     : 'power2.out',
+      }, contentStart + 0.08 * speed);
+    }
+    if (progressRail) {
+      tl.set(progressRail, this.getAboutProgressRailPlacement(box, states.expanded), contentStart);
+      tl.to(progressRail, {
+        autoAlpha: 1,
+        y        : 0,
+        duration : 0.34 * speed,
+        ease     : 'power2.out',
+      }, contentStart + 0.16 * speed);
+    }
+    if (portrait) {
+      tl.set(portrait, {
+        ...this.getAboutPortraitPlacement(box, states.expanded),
+        opacity: 0,
+        y      : 22,
+      }, contentStart);
+      tl.to(portrait, {
+        opacity : 1,
+        y       : 0,
+        duration: 0.54 * speed,
+        ease    : 'power3.out',
+      }, contentStart + 0.08 * speed);
+    }
+    if (description) {
+      tl.set(description, {
+        ...this.getAboutDescriptionPlacement(box, states.expanded),
+        opacity      : 0,
+        y            : 26,
+        pointerEvents: 'none',
+      }, contentStart);
+      tl.to(description, {
+        opacity      : 1,
+        y            : 0,
+        pointerEvents: 'auto',
+        duration     : 0.62 * speed,
+        ease         : 'power3.out',
+      }, contentStart + 0.16 * speed);
+    }
     if (toggle) {
       tl.set(toggle, {
         ...this.getAboutTogglePlacement(box, states.expanded),
         pointerEvents: 'auto',
-      }, '>-0.08');
+      }, contentStart + 0.42 * speed);
       tl.to(toggle, {
         autoAlpha: 1,
         scale    : 1,
         duration : 0.24 * speed,
         ease     : 'power2.out',
-      }, '>');
+      }, contentStart + 0.42 * speed);
     }
 
     return tl;
@@ -396,14 +828,338 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   }
 
   private getAboutTogglePlacement(
-    box: HTMLElement,
-    panelState: { width: number; height: number }
+    _box: HTMLElement,
+    _panelState: { width: number; height: number }
   ): { top: number; right: number } {
-    const boxRect = box.getBoundingClientRect();
     const inset = window.innerWidth <= 700 ? 14 : 18;
     return {
-      top  : Math.max(12, (boxRect.height - panelState.height) / 2 + inset),
-      right: Math.max(12, (boxRect.width - panelState.width) / 2 + inset),
+      top  : Math.max(12, inset),
+      right: Math.max(12, inset),
+    };
+  }
+
+  private getAboutCornerMarkerPlacement(
+    _box: HTMLElement,
+    panelState: { width: number; height: number }
+  ): { top: number; left: number; width: number } {
+    const isMobile = window.innerWidth <= 760;
+    const clamp = (value: number, min: number, max: number): number =>
+      Math.min(Math.max(value, min), max);
+
+    const inset = isMobile
+      ? clamp(panelState.width * 0.065, 18, 24)
+      : clamp(panelState.width * 0.095, 34, 170);
+    const topInset = isMobile
+      ? clamp(panelState.height * 0.04, 18, 28)
+      : clamp(panelState.height * 0.047, 26, 42);
+    const width = isMobile
+      ? Math.max(180, panelState.width - inset * 2)
+      : clamp(panelState.width * 0.245, 260, 430);
+
+    return {
+      top  : Math.max(18, topInset),
+      left : Math.max(18, inset),
+      width,
+    };
+  }
+
+  private getAboutProgressRailPlacement(
+    _box: HTMLElement,
+    panelState: { width: number; height: number }
+  ): { top: number; right: number; height: number } {
+    const isMobile = window.innerWidth <= 760;
+    const clamp = (value: number, min: number, max: number): number =>
+      Math.min(Math.max(value, min), max);
+
+    const rightInset = isMobile
+      ? clamp(panelState.width * 0.035, 12, 18)
+      : clamp(panelState.width * 0.038, 26, 54);
+    const topInset = isMobile
+      ? clamp(panelState.height * 0.24, 118, 170)
+      : clamp(panelState.height * 0.28, 156, 230);
+    const height = isMobile
+      ? clamp(panelState.height * 0.4, 180, 260)
+      : clamp(panelState.height * 0.48, 230, 390);
+
+    return {
+      top   : Math.max(24, topInset),
+      right : Math.max(12, rightInset),
+      height,
+    };
+  }
+
+  private getAboutParticleOpacity(box: HTMLElement): number {
+    const rawOpacity = window.getComputedStyle(box)
+      .getPropertyValue('--about-particles-opacity')
+      .trim();
+    const opacity = Number.parseFloat(rawOpacity);
+
+    if (!Number.isFinite(opacity)) return this.perfLite ? 0.42 : 0.58;
+    return Math.min(Math.max(opacity, 0), 1);
+  }
+
+  private getAboutPortraitPlacement(
+    _box: HTMLElement,
+    panelState: { width: number; height: number }
+  ): { width: number; maxHeight: number } {
+    const isMobile = window.innerWidth <= 900;
+
+    if (isMobile) {
+      return {
+        width    : Math.min(panelState.width * 0.72, 430),
+        maxHeight: Math.min(panelState.height * 0.46, 500),
+      };
+    }
+
+    return {
+      width    : Math.min(panelState.width * 0.36, panelState.height * 0.74, 560),
+      maxHeight: Math.min(panelState.height * 0.86, 760),
+    };
+  }
+
+  private getAboutDescriptionPlacement(
+    _box: HTMLElement,
+    panelState: { width: number; height: number }
+  ): {
+    left: number;
+    top: number;
+    width: number;
+    maxHeight: number;
+    '--about-pinned-panel-height': string;
+    '--about-pinned-sticky-top': string;
+  } {
+    const isMobile = window.innerWidth <= 900;
+
+    const padX = isMobile
+      ? Math.max(18, panelState.width * 0.055)
+      : Math.min(Math.max(panelState.width * 0.055, 44), 78);
+    const topPad = isMobile
+      ? Math.max(54, panelState.height * 0.09)
+      : Math.max(64, panelState.height * 0.11);
+    const bottomPad = isMobile
+      ? Math.max(28, panelState.height * 0.05)
+      : 0;
+    const maxHeight = Math.max(320, panelState.height - topPad - bottomPad);
+    const pinnedPanelHeight = `${maxHeight}px`;
+    const pinnedStickyTop = isMobile
+      ? '0px'
+      : `${Math.min(Math.max(topPad + 28, 72), 112)}px`;
+
+    if (!isMobile) {
+      return {
+        left     : 0,
+        top      : topPad,
+        width    : Math.max(320, panelState.width),
+        maxHeight,
+        '--about-pinned-panel-height': pinnedPanelHeight,
+        '--about-pinned-sticky-top'  : pinnedStickyTop,
+      };
+    }
+
+    return {
+      left     : padX,
+      top      : topPad,
+      width    : Math.max(260, panelState.width - padX * 2),
+      maxHeight,
+      '--about-pinned-panel-height': pinnedPanelHeight,
+      '--about-pinned-sticky-top'  : pinnedStickyTop,
+    };
+  }
+
+  private setupAboutParticleNetwork(canvas: HTMLCanvasElement): () => void {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return () => {};
+
+    const nodes: AboutParticleNode[] = [];
+    const pointer = { x: 0, y: 0, active: false };
+    const reducedMotion = this.prefersReducedMotion();
+    const maxNodes = this.perfLite ? 56 : 112;
+    const minNodes = this.perfLite ? 24 : 34;
+    const density = this.perfLite ? 22000 : 15500;
+    const linkDistance = this.perfLite ? 104 : 128;
+    const pointerRadius = this.perfLite ? 92 : 126;
+    const motionScale = reducedMotion ? 0 : (this.perfLite ? 0.62 : 1.15);
+
+    let raf = 0;
+    let disposed = false;
+    let cssWidth = 0;
+    let cssHeight = 0;
+    let dpr = 1;
+
+    const random = (min: number, max: number): number => min + Math.random() * (max - min);
+    const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
+
+    const makeNode = (width: number, height: number): AboutParticleNode => ({
+      x    : random(0, width),
+      y    : random(0, height),
+      vx   : random(-0.28, 0.28),
+      vy   : random(-0.24, 0.24),
+      size : random(1.05, 2.25),
+      phase: random(0, Math.PI * 2),
+    });
+
+    const fitNodeCount = (): void => {
+      const target = Math.min(
+        maxNodes,
+        Math.max(minNodes, Math.round((cssWidth * cssHeight) / density))
+      );
+
+      while (nodes.length < target) nodes.push(makeNode(cssWidth, cssHeight));
+      if (nodes.length > target) nodes.splice(target);
+    };
+
+    const resizeCanvas = (): boolean => {
+      const rect = canvas.getBoundingClientRect();
+      const nextWidth = Math.max(1, rect.width);
+      const nextHeight = Math.max(1, rect.height);
+      const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      if (nextWidth < 2 || nextHeight < 2) return false;
+
+      const changed =
+        Math.abs(nextWidth - cssWidth) > 0.5 ||
+        Math.abs(nextHeight - cssHeight) > 0.5 ||
+        nextDpr !== dpr;
+
+      if (!changed) return true;
+
+      const prevWidth = cssWidth || nextWidth;
+      const prevHeight = cssHeight || nextHeight;
+      cssWidth = nextWidth;
+      cssHeight = nextHeight;
+      dpr = nextDpr;
+
+      canvas.width = Math.max(1, Math.round(cssWidth * dpr));
+      canvas.height = Math.max(1, Math.round(cssHeight * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const scaleX = cssWidth / prevWidth;
+      const scaleY = cssHeight / prevHeight;
+      nodes.forEach((node) => {
+        node.x = clamp(node.x * scaleX, 0, cssWidth);
+        node.y = clamp(node.y * scaleY, 0, cssHeight);
+      });
+
+      fitNodeCount();
+      return true;
+    };
+
+    const updateNodes = (): void => {
+      if (motionScale === 0) return;
+
+      nodes.forEach((node) => {
+        node.x += node.vx * motionScale;
+        node.y += node.vy * motionScale;
+        node.phase += 0.014 * motionScale;
+
+        if (pointer.active) {
+          const dx = node.x - pointer.x;
+          const dy = node.y - pointer.y;
+          const distance = Math.hypot(dx, dy);
+
+          if (distance > 0 && distance < pointerRadius) {
+            const force = (1 - distance / pointerRadius) * 0.7;
+            node.x += (dx / distance) * force;
+            node.y += (dy / distance) * force;
+          }
+        }
+
+        if (node.x <= 0 || node.x >= cssWidth) node.vx *= -1;
+        if (node.y <= 0 || node.y >= cssHeight) node.vy *= -1;
+        node.x = clamp(node.x, 0, cssWidth);
+        node.y = clamp(node.y, 0, cssHeight);
+      });
+    };
+
+    const drawNetwork = (): void => {
+      ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+      const opacity = Number.parseFloat(window.getComputedStyle(canvas).opacity || '0');
+      if (opacity < 0.02) return;
+
+      const maxDistanceSq = linkDistance * linkDistance;
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const distanceSq = dx * dx + dy * dy;
+
+          if (distanceSq > maxDistanceSq) continue;
+
+          const distance = Math.sqrt(distanceSq);
+          const strength = (1 - distance / linkDistance) * 0.15;
+          ctx.strokeStyle = `rgba(24, 18, 10, ${strength})`;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+
+      if (pointer.active) {
+        const radius = pointerRadius * 0.78;
+        const gradient = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, radius);
+        gradient.addColorStop(0, 'rgba(185, 127, 34, 0.08)');
+        gradient.addColorStop(1, 'rgba(185, 127, 34, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(pointer.x, pointer.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      nodes.forEach((node) => {
+        const pulse = reducedMotion ? 0 : Math.sin(node.phase) * 0.28;
+        ctx.fillStyle = 'rgba(24, 18, 10, 0.34)';
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, Math.max(0.8, node.size + pulse), 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(185, 127, 34, 0.42)';
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, Math.max(0.45, (node.size + pulse) * 0.42), 0, Math.PI * 2);
+        ctx.fill();
+      });
+    };
+
+    const render = (): void => {
+      if (disposed || this.isDestroyed) return;
+      if (resizeCanvas()) {
+        updateNodes();
+        drawNetwork();
+      }
+      raf = window.requestAnimationFrame(render);
+    };
+
+    const onPointerMove = (event: PointerEvent): void => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      pointer.active = x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
+      if (pointer.active) {
+        pointer.x = x;
+        pointer.y = y;
+      }
+    };
+
+    const clearPointer = (): void => {
+      pointer.active = false;
+    };
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerleave', clearPointer);
+    window.addEventListener('blur', clearPointer);
+    raf = window.requestAnimationFrame(render);
+
+    return () => {
+      disposed = true;
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerleave', clearPointer);
+      window.removeEventListener('blur', clearPointer);
     };
   }
 
@@ -416,6 +1172,24 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       document.querySelectorAll<HTMLAnchorElement>('.nav-link[data-section]')
     );
 
+    const setActiveLink = (section: string): void => {
+      navLinks.forEach((link) => {
+        link.classList.toggle('active', link.dataset['section'] === section);
+      });
+    };
+
+    const updateActiveLink = (): void => {
+      const about = document.getElementById('about');
+      const scrollY = window.scrollY || window.pageYOffset;
+
+      if (!about || scrollY < about.offsetTop - window.innerHeight * 0.28) {
+        setActiveLink('home');
+        return;
+      }
+
+      setActiveLink('about');
+    };
+
     const onClick = (e: Event): void => {
       const link    = e.currentTarget as HTMLAnchorElement;
       const section = link.dataset['section'];
@@ -425,21 +1199,32 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       if (!target) return;
 
       e.preventDefault();
-      navLinks.forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveLink(section);
+      this.scrollToPageSection(section, 'smooth');
     };
 
     navLinks.forEach(link => link.addEventListener('click', onClick));
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
+    updateActiveLink();
+
     this.cleanupFns.push(() => {
       navLinks.forEach(link => link.removeEventListener('click', onClick));
+      window.removeEventListener('scroll', updateActiveLink);
     });
   }
 
   public scrollToNextSection(): void {
-    const next = document.getElementById('about');
-    if (!next) return;
-    next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.scrollToPageSection('about', 'smooth');
+  }
+
+  private scrollToPageSection(section: string, behavior: ScrollBehavior = 'smooth'): void {
+    const target = document.getElementById(section);
+    if (!target) return;
+    window.scrollTo({
+      top: target.offsetTop,
+      left: 0,
+      behavior,
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -866,6 +1651,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     this.solariTarget.split('').forEach((letter, index) => {
       this.runSolariSequence(this.solariTiles[index], letter, 140 + index * 115, runId);
     });
+    this.startSolariMisfireLoop(runId, this.perfLite ? 1800 : 1200);
   }
 
   private playSolariIntroSequence(): void {
@@ -896,9 +1682,93 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         this.queueSolariTimer(() => {
           if ((runId !== 0 && runId !== this.solariRunId) || this.isDestroyed) return;
           this.solariIntroInProgress = false;
+          this.startSolariMisfireLoop(runId, this.perfLite ? 1700 : 1050);
         }, wordStart + 120);
       }
     });
+  }
+
+  private startSolariMisfireLoop(runId: number, delay?: number): void {
+    if (this.prefersReducedMotion()) return;
+
+    const nextDelay = delay ?? this.getSolariMisfireDelay();
+    this.queueSolariTimer(() => this.playSolariMisfire(runId), nextDelay);
+  }
+
+  private getSolariMisfireDelay(): number {
+    const min = this.perfLite ? 2200 : 1250;
+    const spread = this.perfLite ? 2600 : 2100;
+    return min + Math.floor(Math.random() * spread);
+  }
+
+  private isSolariTargetSettled(): boolean {
+    return this.solariTarget.split('').every((letter, index) => {
+      const tile = this.solariTiles[index];
+      return !!tile && !tile.busy && tile.current === letter && tile.glitchTimer === null;
+    });
+  }
+
+  private getSolariMisfireChar(original: string): string {
+    let character = original;
+    while (character === original) {
+      character = this.solariMisfireChars.charAt(
+        Math.floor(Math.random() * this.solariMisfireChars.length)
+      );
+    }
+    return character;
+  }
+
+  private playSolariMisfire(runId: number): void {
+    if (runId !== this.solariRunId || this.isDestroyed || this.solariIntroInProgress || this.prefersReducedMotion()) {
+      return;
+    }
+
+    if (!this.isSolariTargetSettled()) {
+      this.startSolariMisfireLoop(runId, 220);
+      return;
+    }
+
+    const candidates = this.solariTiles
+      .map((tile, index) => ({ tile, index }))
+      .filter(({ tile, index }) => {
+        const target = this.solariTarget[index];
+        return !!target && !tile.busy && tile.glitchTimer === null && tile.current === target;
+      });
+
+    if (candidates.length === 0) {
+      this.startSolariMisfireLoop(runId);
+      return;
+    }
+
+    const { tile, index } = candidates[Math.floor(Math.random() * candidates.length)];
+    const correctChar = this.solariTarget[index];
+    const wrongChar = this.getSolariMisfireChar(correctChar);
+    const restoreDelay = this.solariFlipTotal + (this.perfLite ? 260 : 170);
+    const settleDelay = restoreDelay + this.solariFlipTotal + (this.perfLite ? 220 : 120);
+
+    tile.el.classList.add('is-misfiring');
+    this.flipSolariTile(tile, wrongChar, runId);
+
+    this.queueSolariTimer(() => {
+      if (runId !== this.solariRunId || this.isDestroyed) return;
+
+      const restore = (): void => {
+        if (runId !== this.solariRunId || this.isDestroyed) return;
+        if (tile.busy) {
+          this.queueSolariTimer(restore, 16);
+          return;
+        }
+        this.flipSolariTile(tile, correctChar, runId);
+      };
+
+      restore();
+    }, restoreDelay);
+
+    this.queueSolariTimer(() => {
+      try { tile.el.classList.remove('is-misfiring'); } catch (_) {}
+      if (runId !== this.solariRunId || this.isDestroyed) return;
+      this.startSolariMisfireLoop(runId);
+    }, settleDelay);
   }
 
   private getSolariWordSlots(word: string): string[] {
@@ -985,11 +1855,11 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       void tile.ftop.offsetWidth;
       tile.ftop.style.transform  = '';
       tile.fbot.style.transform  = 'rotateX(90deg)';
-      tile.ftopc.textContent     = newChar;
-      tile.fbotc.textContent     = newChar;
-      tile.el.classList.remove('is-flipping');
-      this.updateSolariPlaceholderState(tile, newChar);
-      tile.busy = false;
+    tile.ftopc.textContent     = newChar;
+    tile.fbotc.textContent     = newChar;
+    tile.el.classList.remove('is-flipping');
+    this.updateSolariPlaceholderState(tile, newChar);
+    tile.busy = false;
     }, this.solariFlipMs * 2 + 20);
   }
 
@@ -1020,6 +1890,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     tile.ftop.style.transform = '';
     tile.fbot.style.transform = 'rotateX(90deg)';
     tile.el.classList.remove('is-flipping');
+    tile.el.classList.remove('is-misfiring');
     this.updateSolariPlaceholderState(tile, character);
     tile.busy = false;
   }
@@ -1041,7 +1912,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     this.solariTimers.clear();
     this.solariTiles.forEach(tile => {
       this.stopSolariGlitch(tile, false);
-      try { tile.el.classList.remove('is-flipping'); } catch (_) {}
+      try {
+        tile.el.classList.remove('is-flipping');
+        tile.el.classList.remove('is-misfiring');
+      } catch (_) {}
     });
   }
 

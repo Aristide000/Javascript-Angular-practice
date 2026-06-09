@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Aristide Portfolio">
+  <rect width="64" height="64" rx="10" fill="#f7f7f5"/>
+  <text
+    x="31"
+    y="40"
+    fill="#050505"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="29"
+    font-weight="800"
+    letter-spacing="-2"
+    text-anchor="middle"
+  >A</text>
+  <path d="M38 18L29 47" fill="none" stroke="#050505" stroke-width="3.2" stroke-linecap="round"/>
+</svg>

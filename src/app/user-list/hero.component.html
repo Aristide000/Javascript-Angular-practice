@@ -47,6 +47,40 @@
   </div>
 </div>
 
+<svg class="liquid-glass-filter" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <filter
+      id="about-liquid-glass-filter"
+      color-interpolation-filters="linearRGB"
+      filterUnits="objectBoundingBox"
+      primitiveUnits="userSpaceOnUse"
+    >
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="SourceGraphic"
+        scale="20"
+        xChannelSelector="R"
+        yChannelSelector="B"
+        x="0%"
+        y="0%"
+        width="100%"
+        height="100%"
+        result="displacementMap"
+      />
+      <feGaussianBlur
+        stdDeviation="3 3"
+        x="0%"
+        y="0%"
+        width="100%"
+        height="100%"
+        in="displacementMap"
+        edgeMode="none"
+        result="blur"
+      />
+    </filter>
+  </defs>
+</svg>
+
 <div class="page-canvas">
   <div class="hero-bg">
     <span class="bg-blob blob-1"></span>
@@ -63,13 +97,12 @@
       <ul class="nav-links nav-links--center">
         <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
         <li><a href="#about" class="nav-link" data-section="about">About</a></li>
-        <li><a href="#work" class="nav-link" data-section="work">Work</a></li>
       </ul>
 
       <div class="contact-expander nav-contact">
         <div class="contact-links" id="contact-social-links" aria-label="Social media links" aria-hidden="true">
           <a href="mailto:hello@iraguhaaristide.com" class="contact-link" aria-label="Email Aristide" tabindex="-1">Mail</a>
-          <a href="https://github.com/" class="contact-link" target="_blank" rel="noreferrer" aria-label="GitHub" tabindex="-1">GH</a>
+          <a href="https://github.com/Aristide000" class="contact-link" target="_blank" rel="noreferrer" aria-label="GitHub" tabindex="-1">GH</a>
           <a href="https://www.linkedin.com/" class="contact-link" target="_blank" rel="noreferrer" aria-label="LinkedIn" tabindex="-1">In</a>
           <a href="https://www.instagram.com/" class="contact-link" target="_blank" rel="noreferrer" aria-label="Instagram" tabindex="-1">IG</a>
         </div>
@@ -134,43 +167,190 @@
 
   <section class="about-section" id="about" aria-label="About">
     <div class="about-reveal-box">
-      <div class="about-platform" aria-hidden="true"></div>
-      <button
-        type="button"
-        class="about-panel-toggle"
-        aria-label="Expand about panel"
-        aria-pressed="false"
-      >
-        <svg class="about-panel-toggle-icon about-panel-toggle-icon--expand" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" />
+      <div class="about-platform" aria-hidden="true">
+        <svg class="about-platform-noise-svg" viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+          <filter id="about-platform-animated-noise-filter" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="1.05" numOctaves="2" seed="5" stitchTiles="stitch" result="noise">
+              <animate attributeName="seed" values="5;31;13;43;5" dur="1.1s" repeatCount="indefinite" />
+              <animate attributeName="baseFrequency" values="0.96;1.16;0.9;1.08;0.96" dur="5.2s" repeatCount="indefinite" />
+            </feTurbulence>
+            <feColorMatrix in="noise" type="saturate" values="0" result="monoNoise" />
+            <feComponentTransfer in="monoNoise" result="grainAlpha">
+              <feFuncA type="table" tableValues="0 0.38" />
+            </feComponentTransfer>
+            <feFlood flood-color="currentColor" result="noiseTint" />
+            <feComposite in="noiseTint" in2="grainAlpha" operator="in" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#about-platform-animated-noise-filter)" />
         </svg>
-        <svg class="about-panel-toggle-icon about-panel-toggle-icon--collapse" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6" />
-        </svg>
-      </button>
-      <div class="about-box-label">
-        <div class="about-box-label-inner">
-          <span class="about-title-word" aria-label="ABOUT THE DEVELOPER">
-            <span class="about-title-letter" aria-hidden="true">A</span>
-            <span class="about-title-letter" aria-hidden="true">B</span>
-            <span class="about-title-letter" aria-hidden="true">O</span>
-            <span class="about-title-letter" aria-hidden="true">U</span>
-            <span class="about-title-letter" aria-hidden="true">T</span>
-            <span class="about-title-letter about-title-space" aria-hidden="true">&nbsp;</span>
-            <span class="about-title-letter" aria-hidden="true">T</span>
-            <span class="about-title-letter" aria-hidden="true">H</span>
-            <span class="about-title-letter" aria-hidden="true">E</span>
-            <span class="about-title-letter about-title-space" aria-hidden="true">&nbsp;</span>
-            <span class="about-title-letter" aria-hidden="true">D</span>
-            <span class="about-title-letter" aria-hidden="true">E</span>
-            <span class="about-title-letter" aria-hidden="true">V</span>
-            <span class="about-title-letter" aria-hidden="true">E</span>
-            <span class="about-title-letter" aria-hidden="true">L</span>
-            <span class="about-title-letter" aria-hidden="true">O</span>
-            <span class="about-title-letter" aria-hidden="true">P</span>
-            <span class="about-title-letter" aria-hidden="true">E</span>
-            <span class="about-title-letter" aria-hidden="true">R</span>
-          </span>
+      </div>
+      <div class="about-content-mask">
+        <canvas class="about-particles-canvas" aria-hidden="true"></canvas>
+        <div class="about-corner-marker" aria-hidden="true">
+          <span>// ABOUT</span>
+        </div>
+        <button
+          type="button"
+          class="about-panel-toggle"
+          aria-label="Expand about panel"
+          aria-pressed="false"
+        >
+          <svg class="about-panel-toggle-icon about-panel-toggle-icon--expand" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" />
+          </svg>
+          <svg class="about-panel-toggle-icon about-panel-toggle-icon--collapse" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6" />
+          </svg>
+        </button>
+        <article class="about-description" aria-label="About Iraguha Aristide">
+        <section class="about-copy-section about-copy-section--intro" data-about-section="intro" aria-label="Introduction">
+          <figure class="about-portrait">
+            <img
+              src="/about-portrait-transparent.png"
+              alt="Portrait of Iraguha Aristide"
+              class="about-portrait-image"
+            >
+            <figcaption class="about-portrait-tag" aria-hidden="true">
+              <span class="about-portrait-tag-message">This is me</span>
+            </figcaption>
+          </figure>
+          <div class="about-intro-copy">
+            <h2 class="about-hero-headline">
+              <span class="about-hero-line">I’m a <span class="about-keyword">Rwandan designer</span></span>
+              <span class="about-hero-line">building <span class="about-keyword">digital products</span></span>
+              <span class="about-hero-line">that feel clear, human,</span>
+              <span class="about-hero-line">and built to last.</span>
+            </h2>
+            <p class="about-hero-support">
+              I work at the intersection of interface design, front-end engineering, and product thinking - turning ideas into polished web experiences with clarity, usability, <span class="about-keyword">impact</span>, and <span class="about-keyword">craft</span>.
+            </p>
+            <div class="about-intro-actions" aria-label="About actions">
+              <a href="mailto:hello@iraguhaaristide.com" class="about-intro-link about-intro-link--primary">Let’s talk</a>
+              <a href="https://github.com/Aristide000" class="about-intro-link about-intro-link--ghost" target="_blank" rel="noreferrer">GitHub</a>
+            </div>
+          </div>
+        </section>
+
+        <div class="about-rest-pinned" aria-label="Pinned about sections">
+          <section class="about-copy-section about-dark-section about-story-section" data-about-section="story" data-about-theme="dark" aria-label="My story">
+            <div class="about-dark-heading about-story-heading">
+              <p class="about-dark-kicker about-story-kicker">02 / MY STORY</p>
+              <div class="about-dark-title-row about-story-title-row">
+                <h2>MY STORY</h2>
+                <span class="about-dark-rule about-story-rule" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="about-story-body">
+              <p>
+                I started my journey in technology through Business Information Technology, where I learned how digital systems solve real-world problems. Over time, I became interested in frontend development, UI design, and creating smooth user experiences.
+              </p>
+              <span class="about-story-divider" aria-hidden="true"></span>
+              <p>
+                Today, I focus on building websites and applications that are simple, useful, and visually memorable. My goal is to create digital products that feel professional, easy to use, and meaningful.
+              </p>
+            </div>
+          </section>
+
+          <section class="about-copy-section about-dark-section about-card-section" data-about-section="tools" data-about-theme="dark" aria-label="What I work with">
+            <div class="about-dark-heading">
+              <p class="about-dark-kicker">03 / WHAT I WORK WITH</p>
+              <div class="about-dark-title-row">
+                <h2>WHAT I WORK WITH</h2>
+                <span class="about-dark-rule" aria-hidden="true"></span>
+              </div>
+            </div>
+            <p class="about-dark-lede">Design systems, interfaces, motion, and front-end builds.</p>
+            <ul class="about-dark-card-list about-skill-list">
+              <li>
+                <strong>Brand & visual direction</strong>
+                <span>Identity systems, layout rhythm, typography, color, and the little details that make a piece feel memorable.</span>
+              </li>
+              <li>
+                <strong>Digital product design</strong>
+                <span>User flows, responsive screens, UI components, interaction states, and interfaces that are easy to scan and use.</span>
+              </li>
+              <li>
+                <strong>Front-end development</strong>
+                <span>Angular, TypeScript, HTML, CSS, GSAP, responsive implementation, and animation that supports the experience.</span>
+              </li>
+            </ul>
+          </section>
+
+          <section class="about-copy-section about-dark-section about-card-section" data-about-section="experience" data-about-theme="dark" aria-label="Experience">
+            <div class="about-dark-heading">
+              <p class="about-dark-kicker">04 / EXPERIENCE</p>
+              <div class="about-dark-title-row">
+                <h2>EXPERIENCE</h2>
+                <span class="about-dark-rule" aria-hidden="true"></span>
+              </div>
+            </div>
+            <p class="about-dark-lede">Hands-on project work across design and development.</p>
+            <ul class="about-dark-card-list about-experience-list">
+              <li>
+                <strong>Portfolio & personal systems</strong>
+                <span>Building a personal web presence with custom motion, structured sections, polished responsive behavior, and a strong visual identity.</span>
+              </li>
+              <li>
+                <strong>Internship practice</strong>
+                <span>Turning learning into working interfaces: reading requirements, shaping components, improving UI clarity, and shipping usable front-end features.</span>
+              </li>
+              <li>
+                <strong>Creative experiments</strong>
+                <span>Exploring animation, glass effects, editorial layouts, and interactive details that give projects personality without hurting usability.</span>
+              </li>
+            </ul>
+          </section>
+
+          <section class="about-copy-section about-dark-section about-card-section" data-about-section="process" data-about-theme="dark" aria-label="How I work">
+            <div class="about-dark-heading">
+              <p class="about-dark-kicker">05 / HOW I WORK</p>
+              <div class="about-dark-title-row">
+                <h2>HOW I WORK</h2>
+                <span class="about-dark-rule" aria-hidden="true"></span>
+              </div>
+            </div>
+            <p class="about-dark-lede">Question first, build carefully, refine until it feels right.</p>
+            <ul class="about-dark-card-list about-process-list">
+              <li>
+                <strong>Understand the why</strong>
+                <span>I start by clarifying the goal, the audience, and what the work needs to make someone feel or do.</span>
+              </li>
+              <li>
+                <strong>Shape the system</strong>
+                <span>I organize the layout, components, states, and visual rules so the experience can stay consistent as it grows.</span>
+              </li>
+              <li>
+                <strong>Polish the details</strong>
+                <span>I tune spacing, motion, responsiveness, and copy until the result feels clean, intentional, and complete.</span>
+              </li>
+            </ul>
+          </section>
+        </div>
+        </article>
+        <div class="about-box-label">
+          <div class="about-box-label-inner">
+            <span class="about-title-word" aria-label="ABOUT THE DEVELOPER">
+              <span class="about-title-letter" aria-hidden="true">A</span>
+              <span class="about-title-letter" aria-hidden="true">B</span>
+              <span class="about-title-letter" aria-hidden="true">O</span>
+              <span class="about-title-letter" aria-hidden="true">U</span>
+              <span class="about-title-letter" aria-hidden="true">T</span>
+              <span class="about-title-letter about-title-space" aria-hidden="true">&nbsp;</span>
+              <span class="about-title-letter" aria-hidden="true">T</span>
+              <span class="about-title-letter" aria-hidden="true">H</span>
+              <span class="about-title-letter" aria-hidden="true">E</span>
+              <span class="about-title-letter about-title-space" aria-hidden="true">&nbsp;</span>
+              <span class="about-title-letter" aria-hidden="true">D</span>
+              <span class="about-title-letter" aria-hidden="true">E</span>
+              <span class="about-title-letter" aria-hidden="true">V</span>
+              <span class="about-title-letter" aria-hidden="true">E</span>
+              <span class="about-title-letter" aria-hidden="true">L</span>
+              <span class="about-title-letter" aria-hidden="true">O</span>
+              <span class="about-title-letter" aria-hidden="true">P</span>
+              <span class="about-title-letter" aria-hidden="true">E</span>
+              <span class="about-title-letter" aria-hidden="true">R</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
