@@ -7,6 +7,9 @@ import {
   inject,
 } from '@angular/core';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface SolariTile {
   el: HTMLElement;
@@ -21,14 +24,7 @@ interface SolariTile {
   glitchTimer: number | null;
 }
 
-interface AboutParticleNode {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  phase: number;
-}
+type SiteTheme = 'dark' | 'light';
 
 @Component({
   selector: 'app-hero',
@@ -46,6 +42,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly solariGlitchChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%*+!?';
   private readonly solariFlipMs = 105;
   private readonly solariMisfireChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*?';
+  private readonly themeStorageKey = 'aristide-portfolio-theme';
 
   private get solariFlipTotal(): number {
     return this.solariFlipMs * 2 + 25;
@@ -64,6 +61,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private solariIntroInProgress = false;
   private localTimeTimer: number | null = null;
   private localTimeAligner: number | null = null;
+  private backgroundDateTimer: number | null = null;
+  private aboutTextRevealTweens: gsap.core.Tween[] = [];
+  private aboutTextRevealReady = false;
+  private aboutTextRevealPlayed = false;
 
   private triggerMobileNotesAnimation: (() => void) | null = null;
 
@@ -75,13 +76,18 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       this.applyPerformanceClasses();
       this.setupSolariBoard();
       this.setupLocalTime();
+      this.setupBackgroundInstrumentation();
       this.setupNotesWidget();
+      this.setupThemeToggle();
       this.setupNavScrolling();
       this.setupAboutReveal();
+      this.setupWorkHorizontalScroll();
 
       this.playLandingLoader().finally(() => {
         if (this.isDestroyed) return;
         this.startHeroAnimations();
+        this.setupSkillsReveal();
+        this.setupScrollTextReveals();
       });
     });
   }
@@ -120,24 +126,18 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const toggle     = box.querySelector<HTMLButtonElement>('.about-panel-toggle');
     const portrait   = box.querySelector<HTMLElement>('.about-portrait');
     const description = box.querySelector<HTMLElement>('.about-description');
-    const particles  = box.querySelector<HTMLCanvasElement>('.about-particles-canvas');
     const cornerMarker = box.querySelector<HTMLElement>('.about-corner-marker');
-    const cornerMarkerLabel = cornerMarker?.querySelector<HTMLElement>('span') ?? null;
     const progressRail = box.querySelector<HTMLElement>('.about-progress-rail');
     const progressTicks = progressRail
       ? Array.from(progressRail.querySelectorAll<HTMLElement>('.about-progress-tick'))
       : [];
-    const revealTextItems = description
-      ? Array.from(description.querySelectorAll<HTMLElement>('h2, p, h3, .about-subsection-list li, .about-dark-card-list li'))
-      : [];
-    const keywordItems = description
-      ? Array.from(description.querySelectorAll<HTMLElement>('.about-keyword'))
-      : [];
     const darkSections = description
       ? Array.from(description.querySelectorAll<HTMLElement>('[data-about-theme="dark"]'))
       : [];
-    const stopParticles = particles ? this.setupAboutParticleNetwork(particles) : null;
-
+    const skillCardList = description?.querySelector<HTMLElement>('.about-skill-list') ?? null;
+    const skillCards = skillCardList
+      ? Array.from(skillCardList.querySelectorAll<HTMLElement>('li'))
+      : [];
     let revealed = false;
     let aboutContentReady = false;
     let activeAboutTheme: 'light' | 'dark' = 'light';
@@ -145,15 +145,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     let isFullScreen = false;
     let panelToggleTimeline: gsap.core.Timeline | null = null;
     let platformThemeTween: gsap.core.Tween | null = null;
-    let particleThemeTween: gsap.core.Tween | null = null;
+    let activeSkillCardIndex = 0;
 
-    revealTextItems.forEach((item, index) => {
-      item.classList.add('about-text-reveal');
-      item.style.setProperty('--about-text-delay', `${Math.min(index * 46, 230)}ms`);
-    });
-    keywordItems.forEach((item, index) => {
-      item.style.setProperty('--about-keyword-delay', `${Math.min(index * 22, 180)}ms`);
-    });
+    this.aboutTextRevealReady = false;
+    this.aboutTextRevealPlayed = false;
 
     const clamp01 = (value: number): number => Math.min(Math.max(value, 0), 1);
     const getAboutStoryProgress = (): number => {
@@ -180,8 +175,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
             '--about-platform-shadow': 'rgba(0, 0, 0, 0.68)',
           }
           : {
-            '--about-platform-bg'    : '#f3eee5',
-            '--about-platform-wash'  : 'rgba(255, 176, 0, 0.08)',
+            '--about-platform-bg'    : '#ffffff',
+            '--about-platform-wash'  : 'rgba(217, 166, 54, 0.03)',
             '--about-platform-border': 'rgba(255, 255, 255, 0.72)',
             '--about-platform-shadow': 'rgba(0, 0, 0, 0.42)',
           };
@@ -195,15 +190,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         overwrite: 'auto',
       });
 
-      if (particles) {
-        try { particleThemeTween?.kill(); } catch (_) {}
-        particleThemeTween = gsap.to(particles, {
-          opacity  : theme === 'dark' ? 0.18 : this.getAboutParticleOpacity(box),
-          duration,
-          ease     : 'power2.inOut',
-          overwrite: 'auto',
-        });
-      }
     };
 
     const updateAboutPlatformTheme = (): void => {
@@ -240,7 +226,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       if (progressRail) {
         gsap.set(progressRail, this.getAboutProgressRailPlacement(box, targetState));
       }
-      if (particles) gsap.set(particles, targetState);
       if (portrait && expanded) {
         gsap.set(portrait, this.getAboutPortraitPlacement(box, targetState));
       }
@@ -266,9 +251,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
       const panelState = getCurrentPanelState();
 
-      if (cornerMarkerLabel) {
-        cornerMarkerLabel.textContent = '// ABOUT';
-      }
       if (cornerMarker) {
         gsap.set(cornerMarker, {
           ...this.getAboutCornerMarkerPlacement(box, panelState),
@@ -293,33 +275,45 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       }
     };
 
-    const updateAboutTextReveal = (): void => {
-      if (!revealed || !aboutContentReady || !description || revealTextItems.length === 0) return;
+    const updateSkillCardStack = (): void => {
+      if (skillCards.length === 0) return;
 
-      const rootRect = description.getBoundingClientRect();
-      const triggerY = rootRect.top + rootRect.height * 0.84;
-      const resetY = rootRect.top + rootRect.height * 0.02;
+      skillCards.forEach((card, index) => {
+        const stackPosition = (index - activeSkillCardIndex + skillCards.length) % skillCards.length;
+        const isActive = stackPosition === 0;
 
-      revealTextItems.forEach((item) => {
-        const itemRect = item.getBoundingClientRect();
-        if (itemRect.top < triggerY && itemRect.bottom > resetY) {
-          item.classList.add('is-visible');
-        }
+        card.classList.toggle('is-active', isActive);
+        card.classList.toggle('is-next', stackPosition === 1);
+        card.classList.toggle('is-back', stackPosition === 2);
+        card.classList.toggle('is-hidden', stackPosition > 2);
+        card.style.setProperty('--skill-stack-position', String(stackPosition));
+        card.tabIndex = isActive ? 0 : -1;
+        card.setAttribute('aria-hidden', String(!isActive));
+        card.setAttribute('aria-label', isActive ? 'Show next skill card' : 'Stacked skill card');
       });
-
-      this.updateAboutKeywordLabels(description, keywordItems);
     };
 
-    const onWindowScroll = (): void => {
-      updateAboutStoryScroll();
-      updateAboutProgress();
-      updateAboutTextReveal();
-      updateAboutPlatformTheme();
+    const showNextSkillCard = (): void => {
+      if (skillCards.length <= 1) return;
+
+      activeSkillCardIndex = (activeSkillCardIndex + 1) % skillCards.length;
+      updateSkillCardStack();
     };
 
-    const onDescriptionScroll = (): void => {
-      updateAboutTextReveal();
-      updateAboutPlatformTheme();
+    const onSkillCardClick = (event: MouseEvent): void => {
+      const card = event.currentTarget as HTMLElement | null;
+      if (!card?.classList.contains('is-active')) return;
+
+      showNextSkillCard();
+    };
+
+    const onSkillCardKeydown = (event: KeyboardEvent): void => {
+      const card = event.currentTarget as HTMLElement | null;
+      if (!card?.classList.contains('is-active')) return;
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+
+      event.preventDefault();
+      showNextSkillCard();
     };
 
     const revealObserver = new IntersectionObserver(
@@ -336,7 +330,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
               toggle,
               portrait,
               description,
-              particles,
               cornerMarker,
               progressRail,
               contentMask
@@ -345,8 +338,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
               aboutContentReady = true;
               updateAboutStoryScroll();
               updateAboutProgress();
-              updateAboutTextReveal();
               updateAboutPlatformTheme();
+              this.aboutTextRevealReady = true;
+              this.playAboutTextReveals();
+              this.refreshScrollTextReveals();
             });
 
             revealObserver.disconnect();
@@ -380,7 +375,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (label) gsap.set(label, { autoAlpha: 1 });
     if (labelInner) gsap.set(labelInner, { opacity: 0, y: 20, scale: 1 });
     if (toggle) gsap.set(toggle, { autoAlpha: 0, scale: 0.96, pointerEvents: 'none' });
-    if (particles) gsap.set(particles, { opacity: 0 });
     if (cornerMarker) {
       const states = this.getAboutPlatformStates(box, labelInner);
       cornerMarker.setAttribute('data-panel-state', 'collapsed');
@@ -427,8 +421,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       setPlatformState(revealed);
       updateAboutStoryScroll();
       updateAboutProgress();
-      updateAboutTextReveal();
       updateAboutPlatformTheme();
+      this.refreshScrollTextReveals();
     };
 
     const onTogglePanel = (): void => {
@@ -460,9 +454,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       if (progressRail) {
         panelToggleTimeline.to(progressRail, this.getAboutProgressRailPlacement(box, targetState), 0);
       }
-      if (particles) {
-        panelToggleTimeline.to(particles, { ...targetState }, 0);
-      }
       if (portrait) {
         panelToggleTimeline.to(portrait, {
           ...this.getAboutPortraitPlacement(box, targetState),
@@ -475,46 +466,37 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
           y: 0,
         }, 0);
       }
-      panelToggleTimeline.eventCallback('onComplete', updateAboutStoryScroll);
+      panelToggleTimeline.eventCallback('onComplete', () => {
+        updateAboutStoryScroll();
+        this.refreshScrollTextReveals();
+      });
     };
 
     window.addEventListener('resize', onResize);
-    window.addEventListener('scroll', onWindowScroll, { passive: true });
-    if (description) description.addEventListener('scroll', onDescriptionScroll, { passive: true });
     if (toggle) toggle.addEventListener('click', onTogglePanel);
+    if (skillCardList) {
+      skillCardList.setAttribute('aria-live', 'polite');
+    }
+    skillCards.forEach((card) => {
+      card.setAttribute('role', 'button');
+      card.addEventListener('click', onSkillCardClick);
+      card.addEventListener('keydown', onSkillCardKeydown);
+    });
+    updateSkillCardStack();
     revealObserver.observe(section);
     updateAboutProgress();
-    updateAboutTextReveal();
 
     this.cleanupFns.push(() => {
       revealObserver.disconnect();
       window.removeEventListener('resize', onResize);
-      window.removeEventListener('scroll', onWindowScroll);
-      if (description) description.removeEventListener('scroll', onDescriptionScroll);
       if (toggle) toggle.removeEventListener('click', onTogglePanel);
+      skillCards.forEach((card) => {
+        card.removeEventListener('click', onSkillCardClick);
+        card.removeEventListener('keydown', onSkillCardKeydown);
+      });
       try { revealTimeline?.kill(); } catch (_) {}
       try { panelToggleTimeline?.kill(); } catch (_) {}
       try { platformThemeTween?.kill(); } catch (_) {}
-      try { particleThemeTween?.kill(); } catch (_) {}
-      if (stopParticles) stopParticles();
-    });
-  }
-
-  private updateAboutKeywordLabels(
-    description: HTMLElement,
-    keywordItems: HTMLElement[]
-  ): void {
-    if (keywordItems.length === 0) return;
-
-    const rootRect = description.getBoundingClientRect();
-    const activationY = rootRect.top + rootRect.height * 0.72;
-    const resetY = rootRect.top + rootRect.height * 0.08;
-
-    keywordItems.forEach((item) => {
-      const itemRect = item.getBoundingClientRect();
-      if (itemRect.top < activationY && itemRect.bottom > resetY) {
-        item.classList.add('is-labelled');
-      }
     });
   }
 
@@ -527,12 +509,11 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     toggle: HTMLButtonElement | null,
     portrait: HTMLElement | null,
     description: HTMLElement | null,
-    particles: HTMLCanvasElement | null,
     cornerMarker: HTMLElement | null,
     progressRail: HTMLElement | null,
     contentMask: HTMLElement | null
   ): gsap.core.Timeline {
-    const speed  = 1;
+    const speed  = this.perfLite ? 0.48 : 0.62;
     const states = this.getAboutPlatformStates(box, labelInner);
     const tl     = this.track(gsap.timeline({ defaults: { ease: 'power3.out' } }));
 
@@ -560,8 +541,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         tl.set(platform, {
           ...states.expanded,
           autoAlpha                 : 1,
-          '--about-platform-bg'     : '#f3eee5',
-          '--about-platform-wash'   : 'rgba(255, 176, 0, 0.08)',
+          '--about-platform-bg'     : '#ffffff',
+          '--about-platform-wash'   : 'rgba(217, 166, 54, 0.03)',
           '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
           '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
         }, 0);
@@ -595,12 +576,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
           pointerEvents: 'auto',
         }, 0);
       }
-      if (particles) {
-        tl.set(particles, {
-          ...states.expanded,
-          opacity: this.getAboutParticleOpacity(box),
-        }, 0);
-      }
       if (cornerMarker) {
         tl.set(cornerMarker, {
           ...this.getAboutCornerMarkerPlacement(box, states.expanded),
@@ -616,6 +591,91 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         }, 0);
       }
       if (label) tl.set(label, { autoAlpha: 0 }, 0);
+      return tl;
+    }
+
+    const hasIntroLabel = !!label || !!labelInner || !!titleWord;
+    if (!hasIntroLabel) {
+      const contentStart = 0.62 * speed;
+
+      if (platform) {
+        tl.to(platform, {
+          ...states.expanded,
+          autoAlpha                 : 1,
+          '--about-platform-bg'     : '#ffffff',
+          '--about-platform-wash'   : 'rgba(217, 166, 54, 0.03)',
+          '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
+          '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
+          duration                  : 0.76 * speed,
+          ease                      : 'power3.inOut',
+        }, 0);
+      }
+      if (contentMask) {
+        tl.to(contentMask, {
+          ...states.expanded,
+          duration: 0.76 * speed,
+          ease    : 'power3.inOut',
+        }, 0);
+      }
+      if (cornerMarker) {
+        tl.set(cornerMarker, this.getAboutCornerMarkerPlacement(box, states.expanded), contentStart);
+        tl.to(cornerMarker, {
+          autoAlpha: 1,
+          y        : 0,
+          duration : 0.32 * speed,
+          ease     : 'power2.out',
+        }, contentStart + 0.04 * speed);
+      }
+      if (progressRail) {
+        tl.set(progressRail, this.getAboutProgressRailPlacement(box, states.expanded), contentStart);
+        tl.to(progressRail, {
+          autoAlpha: 1,
+          y        : 0,
+          duration : 0.28 * speed,
+          ease     : 'power2.out',
+        }, contentStart + 0.08 * speed);
+      }
+      if (portrait) {
+        tl.set(portrait, {
+          ...this.getAboutPortraitPlacement(box, states.expanded),
+          opacity: 0,
+          y      : 18,
+        }, contentStart);
+        tl.to(portrait, {
+          opacity : 1,
+          y       : 0,
+          duration: 0.52 * speed,
+          ease    : 'power3.out',
+        }, contentStart + 0.04 * speed);
+      }
+      if (description) {
+        tl.set(description, {
+          ...this.getAboutDescriptionPlacement(box, states.expanded),
+          opacity      : 0,
+          y            : 20,
+          pointerEvents: 'none',
+        }, contentStart);
+        tl.to(description, {
+          opacity      : 1,
+          y            : 0,
+          pointerEvents: 'auto',
+          duration     : 0.56 * speed,
+          ease         : 'power3.out',
+        }, contentStart + 0.08 * speed);
+      }
+      if (toggle) {
+        tl.set(toggle, {
+          ...this.getAboutTogglePlacement(box, states.expanded),
+          pointerEvents: 'auto',
+        }, contentStart + 0.24 * speed);
+        tl.to(toggle, {
+          autoAlpha: 1,
+          scale    : 1,
+          duration : 0.22 * speed,
+          ease     : 'power2.out',
+        }, contentStart + 0.24 * speed);
+      }
+
       return tl;
     }
 
@@ -641,8 +701,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
       // ── Phase 3: platform flips to light ───────────────────────────────────
       tl.to(platform, {
-        '--about-platform-bg'     : '#f3eee5',
-        '--about-platform-wash'   : 'rgba(255, 176, 0, 0.08)',
+        '--about-platform-bg'     : '#ffffff',
+        '--about-platform-wash'   : 'rgba(217, 166, 54, 0.03)',
         '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
         '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
         duration                  : 0.9 * speed,
@@ -674,8 +734,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (platform) {
       tl.to(platform, {
         ...states.expanded,
-        '--about-platform-bg'     : '#f3eee5',
-        '--about-platform-wash'   : 'rgba(255, 176, 0, 0.08)',
+        '--about-platform-bg'     : '#ffffff',
+        '--about-platform-wash'   : 'rgba(217, 166, 54, 0.03)',
         '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
         '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
         duration                  : 0.88 * speed, // was 1.18 — tighter
@@ -685,15 +745,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (contentMask) {
       tl.to(contentMask, {
         ...states.expanded,
-        duration: 0.88 * speed,
-        ease    : 'power3.inOut',
-      }, 2.32 * speed);
-    }
-
-    if (particles) {
-      tl.to(particles, {
-        ...states.expanded,
-        opacity : this.getAboutParticleOpacity(box),
         duration: 0.88 * speed,
         ease    : 'power3.inOut',
       }, 2.32 * speed);
@@ -848,7 +899,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     const inset = isMobile
       ? clamp(panelState.width * 0.065, 18, 24)
-      : clamp(panelState.width * 0.095, 34, 170);
+      : clamp(panelState.width * 0.065, 34, 120);
     const topInset = isMobile
       ? clamp(panelState.height * 0.04, 18, 28)
       : clamp(panelState.height * 0.047, 26, 42);
@@ -886,16 +937,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       right : Math.max(12, rightInset),
       height,
     };
-  }
-
-  private getAboutParticleOpacity(box: HTMLElement): number {
-    const rawOpacity = window.getComputedStyle(box)
-      .getPropertyValue('--about-particles-opacity')
-      .trim();
-    const opacity = Number.parseFloat(rawOpacity);
-
-    if (!Number.isFinite(opacity)) return this.perfLite ? 0.42 : 0.58;
-    return Math.min(Math.max(opacity, 0), 1);
   }
 
   private getAboutPortraitPlacement(
@@ -943,7 +984,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const pinnedPanelHeight = `${maxHeight}px`;
     const pinnedStickyTop = isMobile
       ? '0px'
-      : `${Math.min(Math.max(topPad + 28, 72), 112)}px`;
+      : '0px';
 
     if (!isMobile) {
       return {
@@ -966,211 +1007,337 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     };
   }
 
-  private setupAboutParticleNetwork(canvas: HTMLCanvasElement): () => void {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return () => {};
 
-    const nodes: AboutParticleNode[] = [];
-    const pointer = { x: 0, y: 0, active: false };
+  // ---------------------------------------------------------------------------
+  // Work — horizontal sequence isolated inside the vertical page
+  // ---------------------------------------------------------------------------
+
+  private setupWorkHorizontalScroll(): void {
+    const section = document.querySelector<HTMLElement>('.work-horizontal-section');
+    const viewport = section?.querySelector<HTMLElement>('.work-horizontal-viewport') ?? null;
+    const track = viewport?.querySelector<HTMLElement>('.work-horizontal-track') ?? null;
+    const panels = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.work-horizontal-panel'))
+      : [];
+    const title = track?.querySelector<HTMLElement>('.work-horizontal-title') ?? null;
+    const servicesHeading = track?.querySelector<HTMLElement>('.work-services-heading') ?? null;
+    const servicesIndex = track?.querySelector<HTMLElement>('.work-services-index') ?? null;
+    const serviceDividers = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.work-service-divider'))
+      : [];
+    const cardSurfaces = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.work-card-surface'))
+      : [];
+    const cardContents = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.work-card-content'))
+      : [];
+    const scrollNote = track?.querySelector<HTMLElement>('.work-services-scroll-note') ?? null;
+    const experienceIndex = track?.querySelector<HTMLElement>('.work-experience-index') ?? null;
+    const experienceHeading = track?.querySelector<HTMLElement>('.work-experience-heading') ?? null;
+    const experienceBranches = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.work-experience-branch'))
+      : [];
+    const experienceCards = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.work-experience-card'))
+      : [];
+    const processHeading = track?.querySelector<HTMLElement>('.work-process-heading') ?? null;
+    const techStackCards = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.tech-stack-card'))
+      : [];
+    const techStackMarquees = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.tech-stack-marquee'))
+      : [];
+
+    if (!section || !viewport || !track || panels.length < 2) return;
+
+    const getPanelOffset = (index: number): number =>
+      Math.max(1, panels[Math.min(index, panels.length - 1)]?.offsetLeft ?? 1);
+
+    const getTravelDistance = (): number => getPanelOffset(panels.length - 1);
+
     const reducedMotion = this.prefersReducedMotion();
-    const maxNodes = this.perfLite ? 56 : 112;
-    const minNodes = this.perfLite ? 24 : 34;
-    const density = this.perfLite ? 22000 : 15500;
-    const linkDistance = this.perfLite ? 104 : 128;
-    const pointerRadius = this.perfLite ? 92 : 126;
-    const motionScale = reducedMotion ? 0 : (this.perfLite ? 0.62 : 1.15);
 
-    let raf = 0;
-    let disposed = false;
-    let cssWidth = 0;
-    let cssHeight = 0;
-    let dpr = 1;
-
-    const random = (min: number, max: number): number => min + Math.random() * (max - min);
-    const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
-
-    const makeNode = (width: number, height: number): AboutParticleNode => ({
-      x    : random(0, width),
-      y    : random(0, height),
-      vx   : random(-0.28, 0.28),
-      vy   : random(-0.24, 0.24),
-      size : random(1.05, 2.25),
-      phase: random(0, Math.PI * 2),
-    });
-
-    const fitNodeCount = (): void => {
-      const target = Math.min(
-        maxNodes,
-        Math.max(minNodes, Math.round((cssWidth * cssHeight) / density))
-      );
-
-      while (nodes.length < target) nodes.push(makeNode(cssWidth, cssHeight));
-      if (nodes.length > target) nodes.splice(target);
-    };
-
-    const resizeCanvas = (): boolean => {
-      const rect = canvas.getBoundingClientRect();
-      const nextWidth = Math.max(1, rect.width);
-      const nextHeight = Math.max(1, rect.height);
-      const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
-
-      if (nextWidth < 2 || nextHeight < 2) return false;
-
-      const changed =
-        Math.abs(nextWidth - cssWidth) > 0.5 ||
-        Math.abs(nextHeight - cssHeight) > 0.5 ||
-        nextDpr !== dpr;
-
-      if (!changed) return true;
-
-      const prevWidth = cssWidth || nextWidth;
-      const prevHeight = cssHeight || nextHeight;
-      cssWidth = nextWidth;
-      cssHeight = nextHeight;
-      dpr = nextDpr;
-
-      canvas.width = Math.max(1, Math.round(cssWidth * dpr));
-      canvas.height = Math.max(1, Math.round(cssHeight * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const scaleX = cssWidth / prevWidth;
-      const scaleY = cssHeight / prevHeight;
-      nodes.forEach((node) => {
-        node.x = clamp(node.x * scaleX, 0, cssWidth);
-        node.y = clamp(node.y * scaleY, 0, cssHeight);
+    gsap.set(serviceDividers, { scaleY: reducedMotion ? 1 : 0, transformOrigin: 'bottom center' });
+    gsap.set(cardSurfaces, { scaleX: reducedMotion ? 1 : 0, transformOrigin: 'left center' });
+    gsap.set(cardContents, { autoAlpha: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : 24 });
+    if (servicesHeading) {
+      gsap.set(servicesHeading, {
+        autoAlpha: reducedMotion ? 1 : 0,
+        y: reducedMotion ? 0 : 34,
+        clipPath: reducedMotion ? 'inset(0% 0% 0% 0%)' : 'inset(0% 0% 105% 0%)',
       });
+    }
+    if (servicesIndex) gsap.set(servicesIndex, { autoAlpha: reducedMotion ? 1 : 0, x: reducedMotion ? 0 : -16 });
+    if (scrollNote) gsap.set(scrollNote, { autoAlpha: reducedMotion ? 0.42 : 0, y: reducedMotion ? 0 : 8 });
+    if (experienceIndex) gsap.set(experienceIndex, { autoAlpha: reducedMotion ? 1 : 0, x: reducedMotion ? 0 : -14 });
+    if (experienceHeading) gsap.set(experienceHeading, { autoAlpha: reducedMotion ? 1 : 0, x: reducedMotion ? 0 : -28 });
+    gsap.set(experienceBranches, { scaleY: reducedMotion ? 1 : 0 });
+    gsap.set(experienceCards, { autoAlpha: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : 18 });
+    if (processHeading) gsap.set(processHeading, { autoAlpha: reducedMotion ? 1 : 0, x: reducedMotion ? 0 : -30 });
+    gsap.set(techStackCards, { autoAlpha: reducedMotion ? 1 : 0, yPercent: reducedMotion ? 0 : 115 });
+    gsap.set(techStackMarquees, { autoAlpha: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : 16 });
 
-      fitNodeCount();
-      return true;
-    };
+    const timeline = this.track(gsap.timeline({
+      scrollTrigger: {
+        id                 : 'work-horizontal-scroll',
+        trigger            : section,
+        start              : 'top top',
+        end                : () => `+=${Math.max(window.innerWidth * (reducedMotion ? 2.8 : 5.8), 2600)}`,
+        pin                : true,
+        scrub              : reducedMotion || this.perfLite ? true : 0.32,
+        anticipatePin      : 1,
+        invalidateOnRefresh: true,
+      },
+    }));
 
-    const updateNodes = (): void => {
-      if (motionScale === 0) return;
+    timeline
+      .to(title, {
+        autoAlpha: 0,
+        scale    : 0.88,
+        filter   : reducedMotion ? 'none' : 'blur(10px)',
+        duration : reducedMotion ? 0.08 : 0.24,
+        ease     : 'power2.in',
+      }, 0.02)
+      .to(track, {
+        x       : () => -getPanelOffset(1),
+        duration: reducedMotion ? 0.42 : 0.38,
+        ease    : reducedMotion ? 'none' : 'power3.inOut',
+      }, 0.04);
 
-      nodes.forEach((node) => {
-        node.x += node.vx * motionScale;
-        node.y += node.vy * motionScale;
-        node.phase += 0.014 * motionScale;
+    if (servicesIndex) {
+      timeline.to(servicesIndex, { autoAlpha: 1, x: 0, duration: 0.18, ease: 'power2.out' }, 0.26);
+    }
+    if (servicesHeading) {
+      timeline.to(servicesHeading, {
+        autoAlpha: 1,
+        y        : 0,
+        clipPath : 'inset(0% 0% 0% 0%)',
+        duration : reducedMotion ? 0.12 : 0.28,
+        ease     : 'power3.out',
+      }, 0.27);
+    }
+    if (!reducedMotion) {
+      timeline
+        .to(serviceDividers, {
+          scaleY : 1,
+          duration: 0.4,
+          stagger : 0.045,
+          ease    : 'power3.inOut',
+        }, 0.52)
+        .to(cardSurfaces, {
+          scaleX  : 1,
+          duration: 0.42,
+          stagger : 0.07,
+          ease    : 'power3.inOut',
+        }, 0.82)
+        .to(cardContents, {
+          autoAlpha: 1,
+          y        : 0,
+          duration : 0.3,
+          stagger  : 0.065,
+          ease     : 'power2.out',
+        }, 1.05);
+    }
+    if (scrollNote) {
+      timeline.to(scrollNote, { autoAlpha: 0.42, y: 0, duration: 0.18, ease: 'power2.out' }, reducedMotion ? 0.48 : 1.31);
+    }
 
-        if (pointer.active) {
-          const dx = node.x - pointer.x;
-          const dy = node.y - pointer.y;
-          const distance = Math.hypot(dx, dy);
+    if (scrollNote) {
+      timeline.to(scrollNote, { autoAlpha: 0, y: -6, duration: 0.14, ease: 'power1.in' }, reducedMotion ? 0.72 : 1.46);
+    }
+    timeline.to(track, {
+      x       : () => -getPanelOffset(2),
+      duration: reducedMotion ? 0.38 : 0.46,
+      ease    : reducedMotion ? 'none' : 'power3.inOut',
+    }, reducedMotion ? 0.76 : 1.48);
 
-          if (distance > 0 && distance < pointerRadius) {
-            const force = (1 - distance / pointerRadius) * 0.7;
-            node.x += (dx / distance) * force;
-            node.y += (dy / distance) * force;
+    if (experienceIndex) {
+      timeline.to(experienceIndex, { autoAlpha: 1, x: 0, duration: 0.18, ease: 'power2.out' }, reducedMotion ? 0.98 : 1.78);
+    }
+    if (experienceHeading) {
+      timeline.to(experienceHeading, { autoAlpha: 1, x: 0, duration: 0.3, ease: 'power3.out' }, reducedMotion ? 0.98 : 1.79);
+    }
+    if (!reducedMotion) {
+      timeline
+        .to(experienceBranches, {
+          scaleY  : 1,
+          duration: 0.46,
+          stagger : 0.085,
+          ease    : 'power2.inOut',
+        }, 1.92)
+        .to(experienceCards, {
+          autoAlpha: 1,
+          y        : 0,
+          duration : 0.34,
+          stagger  : 0.1,
+          ease     : 'power2.out',
+        }, 2.43);
+    }
+
+    timeline.to(track, {
+      x       : () => -getTravelDistance(),
+      duration: reducedMotion ? 0.4 : 0.5,
+      ease    : reducedMotion ? 'none' : 'power3.inOut',
+    }, reducedMotion ? 1.32 : 3.08);
+
+    if (processHeading) {
+      timeline.to(processHeading, {
+        autoAlpha: 1,
+        x        : 0,
+        duration : reducedMotion ? 0.16 : 0.34,
+        ease     : 'power3.out',
+      }, reducedMotion ? 1.52 : 3.4);
+    }
+    if (!reducedMotion) {
+      timeline
+        .to(techStackCards, {
+          autoAlpha: 1,
+          yPercent : 0,
+          duration : 0.56,
+          stagger  : 0.12,
+          ease     : 'power3.out',
+        }, 3.62)
+        .to(techStackMarquees, {
+          autoAlpha: 1,
+          y        : 0,
+          duration : 0.34,
+          stagger  : 0.08,
+          ease     : 'power2.out',
+        }, 4.0);
+    }
+    timeline.to({}, { duration: reducedMotion ? 0.12 : 0.28 });
+
+    const titleTween = title
+      ? this.track(gsap.fromTo(
+          title,
+          {
+            autoAlpha: 0,
+            y        : 90,
+            scale    : 0.84,
+            filter   : 'blur(12px)',
+          },
+          {
+            autoAlpha: 1,
+            y        : 0,
+            scale    : 1,
+            filter   : 'blur(0px)',
+            ease     : 'none',
+            scrollTrigger: {
+              id     : 'work-title-reveal',
+              trigger: section,
+              start  : 'top 82%',
+              end    : 'top 46%',
+              scrub  : this.perfLite ? true : 0.25,
+            },
           }
-        }
+        ))
+      : null;
 
-        if (node.x <= 0 || node.x >= cssWidth) node.vx *= -1;
-        if (node.y <= 0 || node.y >= cssHeight) node.vy *= -1;
-        node.x = clamp(node.x, 0, cssWidth);
-        node.y = clamp(node.y, 0, cssHeight);
-      });
-    };
-
-    const drawNetwork = (): void => {
-      ctx.clearRect(0, 0, cssWidth, cssHeight);
-
-      const opacity = Number.parseFloat(window.getComputedStyle(canvas).opacity || '0');
-      if (opacity < 0.02) return;
-
-      const maxDistanceSq = linkDistance * linkDistance;
-      ctx.lineWidth = 1;
-
-      for (let i = 0; i < nodes.length; i++) {
-        const a = nodes[i];
-        for (let j = i + 1; j < nodes.length; j++) {
-          const b = nodes[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const distanceSq = dx * dx + dy * dy;
-
-          if (distanceSq > maxDistanceSq) continue;
-
-          const distance = Math.sqrt(distanceSq);
-          const strength = (1 - distance / linkDistance) * 0.15;
-          ctx.strokeStyle = `rgba(24, 18, 10, ${strength})`;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-      }
-
-      if (pointer.active) {
-        const radius = pointerRadius * 0.78;
-        const gradient = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, radius);
-        gradient.addColorStop(0, 'rgba(185, 127, 34, 0.08)');
-        gradient.addColorStop(1, 'rgba(185, 127, 34, 0)');
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(pointer.x, pointer.y, radius, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      nodes.forEach((node) => {
-        const pulse = reducedMotion ? 0 : Math.sin(node.phase) * 0.28;
-        ctx.fillStyle = 'rgba(24, 18, 10, 0.34)';
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, Math.max(0.8, node.size + pulse), 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = 'rgba(185, 127, 34, 0.42)';
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, Math.max(0.45, (node.size + pulse) * 0.42), 0, Math.PI * 2);
-        ctx.fill();
-      });
-    };
-
-    const render = (): void => {
-      if (disposed || this.isDestroyed) return;
-      if (resizeCanvas()) {
-        updateNodes();
-        drawNetwork();
-      }
-      raf = window.requestAnimationFrame(render);
-    };
-
-    const onPointerMove = (event: PointerEvent): void => {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      pointer.active = x >= 0 && y >= 0 && x <= rect.width && y <= rect.height;
-      if (pointer.active) {
-        pointer.x = x;
-        pointer.y = y;
-      }
-    };
-
-    const clearPointer = (): void => {
-      pointer.active = false;
-    };
-
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
-    window.addEventListener('pointerleave', clearPointer);
-    window.addEventListener('blur', clearPointer);
-    raf = window.requestAnimationFrame(render);
-
-    return () => {
-      disposed = true;
-      window.cancelAnimationFrame(raf);
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerleave', clearPointer);
-      window.removeEventListener('blur', clearPointer);
-    };
+    this.cleanupFns.push(() => {
+      try { ScrollTrigger.getById('work-horizontal-scroll')?.kill(); } catch (_) {}
+      try { ScrollTrigger.getById('work-title-reveal')?.kill(); } catch (_) {}
+      try { timeline.kill(); } catch (_) {}
+      try { titleTween?.kill(); } catch (_) {}
+      gsap.set([
+        track,
+        title,
+        servicesHeading,
+        servicesIndex,
+        scrollNote,
+        experienceIndex,
+        experienceHeading,
+        processHeading,
+        ...serviceDividers,
+        ...cardSurfaces,
+        ...cardContents,
+        ...experienceBranches,
+        ...experienceCards,
+        ...techStackCards,
+        ...techStackMarquees,
+      ], { clearProps: 'all' });
+    });
   }
 
   // ---------------------------------------------------------------------------
   // Nav smooth scroll
   // ---------------------------------------------------------------------------
 
+  private setupThemeToggle(): void {
+    const pageCanvas = document.querySelector<HTMLElement>('.page-canvas');
+    const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+
+    if (!pageCanvas || !toggle) return;
+
+    const getStoredTheme = (): SiteTheme | null => {
+      try {
+        const storedTheme = window.localStorage.getItem(this.themeStorageKey);
+        return storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : null;
+      } catch (_) {
+        return null;
+      }
+    };
+
+    const saveTheme = (theme: SiteTheme): void => {
+      try {
+        window.localStorage.setItem(this.themeStorageKey, theme);
+      } catch (_) {}
+    };
+
+    const applyTheme = (theme: SiteTheme, persist = false): void => {
+      pageCanvas.dataset['theme'] = theme;
+      document.documentElement.dataset['theme'] = theme;
+
+      const isLight = theme === 'light';
+      const nextTheme = isLight ? 'dark' : 'light';
+      const label = `Switch to ${nextTheme} theme`;
+
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('aria-pressed', String(isLight));
+      toggle.setAttribute('title', label);
+
+      if (persist) saveTheme(theme);
+
+      window.requestAnimationFrame(() => {
+        try { ScrollTrigger.refresh(); } catch (_) {}
+      });
+    };
+
+    const onToggleTheme = (): void => {
+      const currentTheme: SiteTheme = pageCanvas.dataset['theme'] === 'light' ? 'light' : 'dark';
+      applyTheme(currentTheme === 'light' ? 'dark' : 'light', true);
+    };
+
+    applyTheme(getStoredTheme() ?? 'dark');
+    toggle.addEventListener('click', onToggleTheme);
+
+    this.cleanupFns.push(() => {
+      toggle.removeEventListener('click', onToggleTheme);
+      delete document.documentElement.dataset['theme'];
+    });
+  }
+
   private setupNavScrolling(): void {
+    const heroNav = document.querySelector<HTMLElement>('.hero-nav');
     const navLinks = Array.from(
       document.querySelectorAll<HTMLAnchorElement>('.nav-link[data-section]')
     );
+    const navSections = navLinks
+      .map(link => link.dataset['section'])
+      .filter((section): section is string => !!section);
+    const contactExpander = document.querySelector<HTMLElement>('.contact-expander');
+    const contactToggle = contactExpander?.querySelector<HTMLButtonElement>('.contact-toggle') ?? null;
+    const contactPopup = document.querySelector<HTMLElement>('.contact-popup');
+    const contactPopupForm = contactPopup?.querySelector<HTMLFormElement>('.contact-popup-form') ?? null;
+    const contactPopupFocusable = contactPopup
+      ? Array.from(
+          contactPopup.querySelectorAll<HTMLElement>(
+            'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+          )
+        )
+      : [];
+    const contactPopupCloseButtons = contactPopup
+      ? Array.from(contactPopup.querySelectorAll<HTMLElement>('[data-contact-popup-close]'))
+      : [];
 
     const setActiveLink = (section: string): void => {
       navLinks.forEach((link) => {
@@ -1178,16 +1345,42 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       });
     };
 
-    const updateActiveLink = (): void => {
-      const about = document.getElementById('about');
-      const scrollY = window.scrollY || window.pageYOffset;
+    const setContactOpen = (isOpen: boolean): void => {
+      if (!contactExpander || !contactToggle || !contactPopup) return;
 
-      if (!about || scrollY < about.offsetTop - window.innerHeight * 0.28) {
-        setActiveLink('home');
-        return;
+      const wasOpen = contactPopup.classList.contains('is-open');
+      contactExpander.classList.toggle('is-open', isOpen);
+      contactPopup.classList.toggle('is-open', isOpen);
+      contactToggle.setAttribute('aria-expanded', String(isOpen));
+      contactToggle.setAttribute('aria-label', isOpen ? 'Close contact form' : 'Open contact form');
+      contactPopup.setAttribute('aria-hidden', String(!isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+
+      if (isOpen) {
+        window.setTimeout(() => {
+          const firstField = contactPopup.querySelector<HTMLElement>('.contact-popup-form input, .contact-popup-form textarea');
+          firstField?.focus();
+        }, 120);
+      } else if (wasOpen) {
+        contactToggle.focus();
       }
+    };
 
-      setActiveLink('about');
+    const updateActiveLink = (): void => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const activationY = scrollY + window.innerHeight * 0.36;
+      let activeSection = 'home';
+
+      navSections.forEach((section) => {
+        const target = document.getElementById(section);
+        if (!target) return;
+
+        const targetTop = target.getBoundingClientRect().top + scrollY;
+        if (activationY >= targetTop) activeSection = section;
+      });
+
+      setActiveLink(activeSection);
+      heroNav?.classList.toggle('is-scrolled', scrollY > 0 || activeSection !== 'home');
     };
 
     const onClick = (e: Event): void => {
@@ -1200,16 +1393,64 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
       e.preventDefault();
       setActiveLink(section);
+      setContactOpen(false);
       this.scrollToPageSection(section, 'smooth');
+    };
+
+    const onContactToggleClick = (e: Event): void => {
+      e.preventDefault();
+      const isOpen = !contactPopup?.classList.contains('is-open');
+      setContactOpen(isOpen);
+    };
+
+    const onContactPopupClose = (e: Event): void => {
+      e.preventDefault();
+      setContactOpen(false);
+    };
+
+    const onContactPopupKeydown = (event: KeyboardEvent): void => {
+      if (!contactPopup?.classList.contains('is-open')) return;
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setContactOpen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab' || contactPopupFocusable.length === 0) return;
+
+      const first = contactPopupFocusable[0];
+      const last = contactPopupFocusable[contactPopupFocusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const onContactFormSubmit = (event: SubmitEvent): void => {
+      event.preventDefault();
     };
 
     navLinks.forEach(link => link.addEventListener('click', onClick));
     window.addEventListener('scroll', updateActiveLink, { passive: true });
+    if (contactToggle) contactToggle.addEventListener('click', onContactToggleClick);
+    contactPopupCloseButtons.forEach(button => button.addEventListener('click', onContactPopupClose));
+    document.addEventListener('keydown', onContactPopupKeydown);
+    if (contactPopupForm) contactPopupForm.addEventListener('submit', onContactFormSubmit);
     updateActiveLink();
 
     this.cleanupFns.push(() => {
       navLinks.forEach(link => link.removeEventListener('click', onClick));
       window.removeEventListener('scroll', updateActiveLink);
+      if (contactToggle) contactToggle.removeEventListener('click', onContactToggleClick);
+      contactPopupCloseButtons.forEach(button => button.removeEventListener('click', onContactPopupClose));
+      document.removeEventListener('keydown', onContactPopupKeydown);
+      if (contactPopupForm) contactPopupForm.removeEventListener('submit', onContactFormSubmit);
+      document.body.style.overflow = '';
     });
   }
 
@@ -1220,130 +1461,417 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private scrollToPageSection(section: string, behavior: ScrollBehavior = 'smooth'): void {
     const target = document.getElementById(section);
     if (!target) return;
+
     window.scrollTo({
-      top: target.offsetTop,
+      top: target.getBoundingClientRect().top + window.pageYOffset,
       left: 0,
       behavior,
     });
   }
 
   // ---------------------------------------------------------------------------
-  // Notes widget — sequential card pop-in + per-card typewriter
+  // Skills runway entrance
+  // ---------------------------------------------------------------------------
+
+  private setupSkillsReveal(): void {
+    const section = document.querySelector<HTMLElement>('.skills-runway-section');
+    if (!section || this.prefersReducedMotion()) return;
+
+    const eyebrow = section.querySelector<HTMLElement>('.skills-runway-eyebrow');
+    const title = section.querySelector<HTMLElement>('.skills-runway-title');
+    const status = section.querySelector<HTMLElement>('.skills-runway-status');
+    const years = Array.from(section.querySelectorAll<HTMLElement>('.skills-year'));
+    const rows = Array.from(section.querySelectorAll<HTMLElement>('.skills-runway-row'));
+    const names = rows
+      .map((row) => row.querySelector<HTMLElement>('.skills-row-name'))
+      .filter((element): element is HTMLElement => element !== null);
+    const tracks = rows
+      .map((row) => row.querySelector<HTMLElement>('.skills-bar'))
+      .filter((element): element is HTMLElement => element !== null);
+    const fills = rows
+      .map((row) => row.querySelector<HTMLElement>('.skills-bar-fill'))
+      .filter((element): element is HTMLElement => element !== null);
+    const levelLabels = rows
+      .map((row) => row.querySelector<HTMLElement>('.skills-row-years'))
+      .filter((element): element is HTMLElement => element !== null);
+
+    if (!title || rows.length === 0) return;
+
+    const supportingTitle = [eyebrow, status].filter(
+      (element): element is HTMLElement => element !== null
+    );
+
+    gsap.set(title, { autoAlpha: 0, y: 16, filter: 'blur(7px)' });
+    gsap.set(supportingTitle, { autoAlpha: 0, y: 7 });
+    gsap.set(years, { autoAlpha: 0, y: 6 });
+    gsap.set(names, { autoAlpha: 0, x: -10 });
+    gsap.set(tracks, {
+      autoAlpha: 0,
+      scaleX: 0,
+      transformOrigin: 'left center',
+    });
+    gsap.set(levelLabels, { autoAlpha: 0, x: 8 });
+    gsap.set(fills, {
+      scaleX: 0,
+      transformOrigin: 'right center',
+    });
+
+    const timeline = gsap.timeline({
+      defaults: { overwrite: 'auto' },
+      scrollTrigger: {
+        id: 'skills-runway-reveal',
+        trigger: section,
+        start: 'top 78%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    timeline
+      .to(title, {
+        autoAlpha: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.3,
+        ease: 'power3.out',
+      })
+      .to(supportingTitle, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.2,
+        stagger: 0.035,
+        ease: 'power2.out',
+      }, '-=0.15')
+      .to(years, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.18,
+        stagger: 0.02,
+        ease: 'power2.out',
+      }, '-=0.08')
+      .to(names, {
+        autoAlpha: 1,
+        x: 0,
+        duration: 0.24,
+        stagger: 0.028,
+        ease: 'power2.out',
+      })
+      .to(tracks, {
+        autoAlpha: 1,
+        scaleX: 1,
+        duration: 0.24,
+        stagger: 0.028,
+        ease: 'power2.out',
+      }, '<')
+      .to(levelLabels, {
+        autoAlpha: 1,
+        x: 0,
+        duration: 0.18,
+        stagger: 0.022,
+        ease: 'power2.out',
+      }, '<+0.06')
+      .to(fills, {
+        scaleX: 1,
+        duration: 0.42,
+        stagger: 0.032,
+        ease: 'power2.inOut',
+      }, '>-0.05');
+
+    this.track(timeline);
+    this.cleanupFns.push(() => {
+      try { ScrollTrigger.getById('skills-runway-reveal')?.kill(); } catch (_) {}
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Site-wide scroll text reveal
+  // ---------------------------------------------------------------------------
+
+  private setupScrollTextReveals(): void {
+    if (this.prefersReducedMotion()) return;
+
+    const selectors = [
+      '.about-corner-marker span',
+      '.about-product-card h2',
+      '.about-profile-note',
+      '.about-connect-button span',
+      '.page-section .section-kicker',
+      '.page-section .section-title-row h2',
+      '.page-section .section-lede',
+      '.contact-info-panel h2',
+      '.contact-info-panel p',
+      '.contact-details-list dt',
+      '.contact-details-list dd',
+      '.contact-form-panel h3',
+      '.contact-form-panel label span',
+      '.contact-form-panel button',
+    ];
+    const excludedContexts = [
+      '.hero-nav',
+      '.landing-loader',
+      '.notes-widget',
+      '.chatbox',
+      '.solari-board',
+      '.profession-rotator',
+      '.contact-social-rail',
+      '.visually-hidden',
+    ].join(', ');
+    const candidates = selectors.flatMap((selector) =>
+      Array.from(document.querySelectorAll<HTMLElement>(selector))
+    );
+    const seen = new Set<HTMLElement>();
+    const triggerIds: string[] = [];
+    let revealIndex = 0;
+
+    this.aboutTextRevealTweens = [];
+
+    candidates.forEach((element) => {
+      if (seen.has(element)) return;
+      if (!element.textContent?.trim()) return;
+      if (element.closest(excludedContexts)) return;
+
+      seen.add(element);
+      element.classList.add('site-scroll-text-reveal');
+
+      const isAboutRevealText = !!element.closest('.about-reveal-box');
+      const triggerElement = element.closest<HTMLElement>('.about-profile-card') ?? element;
+      const triggerId = `site-text-reveal-${revealIndex}`;
+      const delay = Math.min((revealIndex % 4) * 0.045, 0.14);
+
+      const tween = gsap.fromTo(
+        element,
+        {
+          autoAlpha: 0,
+          y        : 24,
+          filter   : 'blur(8px)',
+          clipPath : 'inset(0% 0% 115% 0%)',
+        },
+        {
+          autoAlpha: 1,
+          y        : 0,
+          filter   : 'blur(0px)',
+          clipPath : 'inset(-6% -2% -8% -2%)',
+          duration : 0.78,
+          delay,
+          ease     : 'power3.out',
+          overwrite: 'auto',
+          ...(isAboutRevealText
+            ? { paused: true }
+            : {
+                scrollTrigger: {
+                  id     : triggerId,
+                  trigger: triggerElement,
+                  start  : 'top 86%',
+                  once   : true,
+                },
+              }),
+        }
+      );
+
+      this.track(tween);
+      if (isAboutRevealText) {
+        this.aboutTextRevealTweens.push(tween);
+      } else {
+        triggerIds.push(triggerId);
+      }
+      revealIndex++;
+    });
+
+    this.playAboutTextReveals();
+
+    if (triggerIds.length > 0) {
+      this.cleanupFns.push(() => {
+        triggerIds.forEach((id) => {
+          try { ScrollTrigger.getById(id)?.kill(); } catch (_) {}
+        });
+      });
+    }
+
+    this.refreshScrollTextReveals();
+  }
+
+  private playAboutTextReveals(): void {
+    if (
+      this.isDestroyed ||
+      this.prefersReducedMotion() ||
+      !this.aboutTextRevealReady ||
+      this.aboutTextRevealPlayed ||
+      this.aboutTextRevealTweens.length === 0
+    ) {
+      return;
+    }
+
+    this.aboutTextRevealPlayed = true;
+    this.aboutTextRevealTweens.forEach((tween) => {
+      try {
+        tween.restart(true, false);
+      } catch (_) {
+        try { tween.play(0); } catch (_) {}
+      }
+    });
+  }
+
+  private refreshScrollTextReveals(): void {
+    if (this.isDestroyed || this.prefersReducedMotion()) return;
+
+    window.requestAnimationFrame(() => {
+      if (this.isDestroyed) return;
+      try { ScrollTrigger.refresh(); } catch (_) {}
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Talk widget
   // ---------------------------------------------------------------------------
 
   private setupNotesWidget(): void {
     const widget = document.querySelector<HTMLElement>('.notes-widget');
     const panel  = document.querySelector<HTMLElement>('.notes-widget-panel');
-    if (!widget || !panel) return;
+    const toggle = widget?.querySelector<HTMLButtonElement>('.notes-widget-toggle') ?? null;
+    const closeButton = panel?.querySelector<HTMLButtonElement>('.chatbox-close') ?? null;
+    const chatBody = panel?.querySelector<HTMLElement>('.chatbox-body') ?? null;
+    const chatForm = panel?.querySelector<HTMLFormElement>('.chatbox-input-row') ?? null;
+    const chatInput = chatForm?.querySelector<HTMLInputElement>('input') ?? null;
+    const chatSubmit = chatForm?.querySelector<HTMLButtonElement>('button[type="submit"]') ?? null;
 
-    const cards   = Array.from(panel.querySelectorAll<HTMLElement>('.notice-card'));
-    const textEls = cards.map(c => c.querySelector<HTMLElement>('.notice-text'));
+    if (!widget || !panel || !toggle) return;
 
-    const originalTexts = textEls.map(t => t?.textContent?.trim() ?? '');
-    textEls.forEach(t => { if (t) t.textContent = ''; });
+    this.solariScopeAttr ??= this.getAngularScopeAttribute(widget);
 
-    gsap.set(cards, { opacity: 0, y: 10, scale: 0.94 });
+    let isOpen = false;
+    let isWaitingForReply = false;
+    const chatHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
 
-    let typingTimers: number[] = [];
-    let isOpen      = false;
-    let isAnimating = false;
-
-    const clearTypingTimers = (): void => {
-      typingTimers.forEach(id => window.clearTimeout(id));
-      typingTimers = [];
+    const setOpen = (nextOpen: boolean): void => {
+      isOpen = nextOpen;
+      panel.classList.toggle('notes-widget-panel--visible', isOpen);
+      panel.setAttribute('aria-hidden', String(!isOpen));
+      toggle.setAttribute('aria-expanded', String(isOpen));
     };
 
-    const resetCards = (): void => {
-      clearTypingTimers();
-      isAnimating = false;
-      gsap.killTweensOf(cards);
-      gsap.set(cards, { opacity: 0, y: 10, scale: 0.94 });
-      textEls.forEach(t => { if (t) t.textContent = ''; });
+    const scrollChatToEnd = (): void => {
+      if (!chatBody) return;
+      chatBody.scrollTop = chatBody.scrollHeight;
     };
 
-    const typeText = (el: HTMLElement, text: string, onComplete: () => void): void => {
-      el.textContent = '';
-      let i = 0;
-      const charSpeed = 18;
+    const appendChatMessage = (role: 'user' | 'bot', text: string): HTMLElement | null => {
+      if (!chatBody) return null;
 
-      const tick = (): void => {
-        if (!isOpen && !isMobile()) { el.textContent = ''; return; }
-        if (i < text.length) {
-          el.textContent += text[i++];
-          typingTimers.push(window.setTimeout(tick, charSpeed));
-        } else {
-          onComplete();
-        }
-      };
-
-      typingTimers.push(window.setTimeout(tick, 0));
+      const messageEl = document.createElement('p');
+      messageEl.className = `chatbox-message chatbox-message--${role}`;
+      messageEl.textContent = text;
+      this.applyScopeAttribute(messageEl);
+      chatBody.appendChild(messageEl);
+      scrollChatToEnd();
+      return messageEl;
     };
 
-    const animateCard = (index: number): void => {
-      if (index >= cards.length) { isAnimating = false; return; }
-      if (!isOpen && !isMobile()) return;
+    const appendLiveTyping = (): HTMLElement | null => {
+      if (!chatBody) return null;
 
-      gsap.to(cards[index], {
-        opacity : 1,
-        y       : 0,
-        scale   : 1,
-        duration: 0.34,
-        ease    : 'back.out(1.5)',
-        onComplete: () => {
-          if (!isOpen && !isMobile()) return;
-          const el = textEls[index];
-          if (el) {
-            typeText(el, originalTexts[index], () => {
-              typingTimers.push(window.setTimeout(() => animateCard(index + 1), 180));
-            });
-          } else {
-            animateCard(index + 1);
-          }
-        },
+      const typingEl = document.createElement('div');
+      typingEl.className = 'chatbox-typing chatbox-typing--live';
+      typingEl.setAttribute('aria-hidden', 'true');
+      typingEl.innerHTML = '<span></span><span></span><span></span>';
+      this.applyScopeAttribute(typingEl);
+      chatBody.appendChild(typingEl);
+      scrollChatToEnd();
+      return typingEl;
+    };
+
+    const setChatBusy = (busy: boolean): void => {
+      isWaitingForReply = busy;
+      if (chatInput) chatInput.disabled = busy;
+      if (chatSubmit) chatSubmit.disabled = busy;
+    };
+
+    const waitForTypingCycles = (): Promise<void> => {
+      const dotCycleMs = 900;
+      const cycles = 2 + Math.floor(Math.random() * 2);
+
+      return new Promise((resolve) => {
+        window.setTimeout(resolve, dotCycleMs * cycles);
       });
     };
 
-    const startSequence = (): void => {
-      if (isAnimating) return;
-      isAnimating = true;
-      typingTimers.push(window.setTimeout(() => animateCard(0), 60));
+    const requestChatReply = async (
+      message: string,
+      history: Array<{ role: 'user' | 'assistant'; content: string }>
+    ): Promise<string> => {
+      type ChatApiPayload = { reply?: string; error?: string };
+
+      const response = await fetch('/api/chat', {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify({
+          message,
+          history,
+        }),
+      });
+
+      const payload = await response.json().catch(() => ({} as ChatApiPayload)) as ChatApiPayload;
+
+      if (!response.ok) {
+        throw new Error(payload.error?.trim() || `Chat request failed with ${response.status}`);
+      }
+
+      return payload.reply?.trim() || "I'm here, but I couldn't shape a reply just now.";
     };
 
-    const isMobile = (): boolean => window.innerWidth <= 1100;
+    const submitChatMessage = async (): Promise<void> => {
+      if (!chatBody || !chatInput || isWaitingForReply) return;
 
-    if (isMobile()) {
-      isOpen = true;
-      this.triggerMobileNotesAnimation = () => startSequence();
-    } else {
-      const openPanel = (): void => {
-        if (isOpen) return;
-        isOpen = true;
-        panel.classList.add('notes-widget-panel--visible');
-        resetCards();
-        startSequence();
-      };
+      const message = chatInput.value.trim();
+      if (!message) return;
 
-      const closePanel = (): void => {
-        if (!isOpen) return;
-        isOpen = false;
-        panel.classList.remove('notes-widget-panel--visible');
-        resetCards();
-      };
+      const requestHistory = chatHistory.slice(-8);
+      appendChatMessage('user', message);
+      chatHistory.push({ role: 'user', content: message });
+      chatInput.value = '';
 
-      widget.addEventListener('mouseenter', openPanel);
-      widget.addEventListener('mouseleave', closePanel);
-      widget.addEventListener('focusin',    openPanel);
-      widget.addEventListener('focusout',   (e: FocusEvent) => {
-        if (!widget.contains(e.relatedTarget as Node)) closePanel();
-      });
+      const typingEl = appendLiveTyping();
+      const typingDelay = waitForTypingCycles();
+      setChatBusy(true);
 
-      this.cleanupFns.push(() => {
-        widget.removeEventListener('mouseenter', openPanel);
-        widget.removeEventListener('mouseleave', closePanel);
-      });
-    }
+      try {
+        const reply = await requestChatReply(message, requestHistory);
+        await typingDelay;
+        if (this.isDestroyed) return;
+        try { typingEl?.remove(); } catch (_) {}
+        appendChatMessage('bot', reply);
+        chatHistory.push({ role: 'assistant', content: reply });
+      } catch (error) {
+        await typingDelay;
+        if (this.isDestroyed) return;
+        try { typingEl?.remove(); } catch (_) {}
+        const detail = error instanceof Error && error.message
+          ? error.message
+          : 'Please try again in a moment.';
+        appendChatMessage('bot', `Connection issue: ${detail}`);
+      } finally {
+        if (this.isDestroyed) return;
+        setChatBusy(false);
+        chatInput.focus();
+      }
+    };
 
-    this.cleanupFns.push(() => clearTypingTimers());
+    const onToggleClick = (): void => setOpen(!isOpen);
+    const onCloseClick = (): void => setOpen(false);
+    const onChatSubmit = (event: SubmitEvent): void => {
+      event.preventDefault();
+      void submitChatMessage();
+    };
+
+    toggle.setAttribute('aria-expanded', 'false');
+    this.triggerMobileNotesAnimation = null;
+    toggle.addEventListener('click', onToggleClick);
+    if (closeButton) closeButton.addEventListener('click', onCloseClick);
+    if (chatForm) chatForm.addEventListener('submit', onChatSubmit);
+
+    this.cleanupFns.push(() => {
+      toggle.removeEventListener('click', onToggleClick);
+      if (closeButton) closeButton.removeEventListener('click', onCloseClick);
+      if (chatForm) chatForm.removeEventListener('submit', onChatSubmit);
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -1951,6 +2479,47 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       if (this.localTimeTimer !== null) {
         window.clearInterval(this.localTimeTimer);
         this.localTimeTimer = null;
+      }
+    });
+  }
+
+  private setupBackgroundInstrumentation(): void {
+    const dateEls = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-bg-current-date]')
+    );
+
+    if (dateEls.length === 0) return;
+
+    const formatter = new Intl.DateTimeFormat('en-GB', {
+      day  : '2-digit',
+      month: 'short',
+      year : 'numeric',
+    });
+
+    const updateDate = (): void => {
+      const value = formatter.format(new Date()).replace(',', '').toUpperCase();
+      dateEls.forEach((el) => { el.textContent = value; });
+    };
+
+    const scheduleNextDateTick = (): void => {
+      const now = new Date();
+      const nextMidnight = new Date(now);
+      nextMidnight.setHours(24, 0, 1, 0);
+      const delay = Math.max(1000, nextMidnight.getTime() - now.getTime());
+
+      this.backgroundDateTimer = window.setTimeout(() => {
+        updateDate();
+        scheduleNextDateTick();
+      }, delay);
+    };
+
+    updateDate();
+    scheduleNextDateTick();
+
+    this.cleanupFns.push(() => {
+      if (this.backgroundDateTimer !== null) {
+        window.clearTimeout(this.backgroundDateTimer);
+        this.backgroundDateTimer = null;
       }
     });
   }

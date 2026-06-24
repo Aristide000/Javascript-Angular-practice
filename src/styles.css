@@ -74,3 +74,629 @@ body::-webkit-scrollbar-thumb {
 body::-webkit-scrollbar-thumb:hover {
   background-color: var(--ui-scrollbar-active-hover);
 }
+
+/* Work horizontal sequence */
+.work-horizontal-section {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #000;
+}
+
+.work-horizontal-viewport {
+  width: 100%;
+  height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #000;
+}
+
+.work-horizontal-track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  will-change: transform;
+}
+
+.work-horizontal-panel {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100%;
+  background: #000;
+}
+
+.work-horizontal-panel--intro {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.work-horizontal-title {
+  margin: 0;
+  color: #fff;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(96px, 24vw, 390px);
+  font-weight: 950;
+  line-height: 0.72;
+  letter-spacing: -0.075em;
+  text-indent: -0.075em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translate3d(0, 90px, 0) scale(0.84);
+  transform-origin: center;
+  will-change: transform, opacity, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-horizontal-track {
+    will-change: auto;
+  }
+
+  .work-horizontal-title {
+    will-change: auto;
+  }
+}
+
+/* Skills / full-page runway fit */
+html body .page-section.skills-runway-section {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+  padding: clamp(98px, 13.5vh, 112px) clamp(26px, 2.1vw, 34px) clamp(30px, 4.2vh, 38px);
+  overflow: hidden;
+  color: #f2f0ea;
+  background: #000;
+}
+
+html body .skills-runway-shell {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+
+html body .skills-runway-frame {
+  display: grid;
+  align-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: clamp(18px, 2vw, 28px);
+}
+
+html body .skills-runway-header {
+  margin-left: 0;
+  text-align: center;
+}
+
+html body .skills-runway-chart {
+  width: min(960px, 100%);
+  margin-inline: auto;
+}
+
+@media (max-height: 680px) and (min-width: 761px) {
+  html body .page-section.skills-runway-section {
+    padding: 98px 26px 30px;
+  }
+
+  html body .skills-runway-shell,
+  html body .skills-runway-frame {
+    height: 100%;
+    min-height: 0;
+  }
+
+  html body .skills-runway-frame {
+    padding: 18px clamp(28px, 5vw, 64px);
+    overflow: hidden;
+  }
+
+  html body .skills-runway-header {
+    margin-left: 0;
+  }
+
+  html body .skills-runway-title {
+    font-size: 38px;
+  }
+
+  html body .skills-runway-status {
+    margin-top: 8px;
+  }
+
+  html body .skills-runway-chart {
+    margin-top: 18px;
+  }
+
+  html body .skills-years {
+    margin-bottom: 7px;
+    padding-bottom: 7px;
+  }
+
+  html body .skills-runway-row {
+    min-height: 22px;
+  }
+}
+
+@media (max-width: 760px) {
+  html body .page-section.skills-runway-section {
+    height: auto;
+    min-height: 100svh;
+    max-height: none;
+    padding: 128px 18px 54px;
+    overflow: visible;
+  }
+
+  html body .skills-runway-shell,
+  html body .skills-runway-frame {
+    height: auto;
+    max-height: none;
+  }
+}
+
+.skills-runway-section {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  padding-block: clamp(92px, 12vh, 150px);
+  color: #f2f0ea;
+  background:
+    radial-gradient(circle at 86% 12%, rgba(210, 176, 65, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.012), rgba(255, 255, 255, 0));
+}
+
+.skills-runway-shell {
+  width: min(1046px, calc(100% - 64px));
+  margin-inline: auto;
+}
+
+.skills-runway-frame {
+  min-height: clamp(410px, 54vh, 520px);
+  padding: clamp(34px, 5.2vw, 62px) clamp(26px, 6.6vw, 96px);
+  border-top: 1px solid rgba(188, 151, 58, 0.42);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018), transparent 36%),
+    rgba(11, 11, 10, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.skills-runway-header {
+  margin-left: min(13vw, 145px);
+}
+
+.skills-runway-eyebrow,
+.skills-runway-status,
+.skills-year,
+.skills-row-years {
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.skills-runway-eyebrow {
+  margin: 0 0 8px;
+  color: #b99530;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.skills-runway-title {
+  margin: 0;
+  color: #f5f4ef;
+  font-size: clamp(42px, 4vw, 58px);
+  font-weight: 900;
+  line-height: 0.92;
+}
+
+.skills-runway-status {
+  margin: 16px 0 0;
+  color: rgba(242, 240, 234, 0.24);
+  font-size: 9px;
+  font-weight: 800;
+  word-spacing: 0.45em;
+}
+
+.skills-runway-chart {
+  margin-top: clamp(54px, 8vh, 82px);
+}
+
+.skills-years,
+.skills-runway-row {
+  display: grid;
+  grid-template-columns: minmax(132px, 192px) minmax(360px, 1fr) 58px;
+  column-gap: 26px;
+  align-items: center;
+}
+
+.skills-years {
+  grid-template-columns: minmax(132px, 192px) repeat(6, minmax(0, 1fr)) 58px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.085);
+}
+
+.skills-year {
+  color: rgba(242, 240, 234, 0.22);
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.skills-year--now {
+  color: #b99530;
+}
+
+.skills-runway-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skills-runway-row {
+  min-height: 29px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.062);
+}
+
+.skills-row-name {
+  min-width: 0;
+  overflow: hidden;
+  color: #ece9e1;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skills-bar {
+  position: relative;
+  display: block;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.skills-bar-fill {
+  position: absolute;
+  inset-block: 0;
+  left: var(--skill-start);
+  width: var(--skill-width);
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(185, 151, 53, 0.72), #c8a848);
+  box-shadow: 0 0 14px rgba(201, 169, 72, 0.32);
+}
+
+.skills-row-years {
+  color: rgba(242, 240, 234, 0.25);
+  font-size: 8px;
+  font-weight: 900;
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .skills-runway-shell {
+    width: min(100% - 28px, 680px);
+  }
+
+  .skills-runway-frame {
+    padding: 30px 18px 34px;
+  }
+
+  .skills-runway-header {
+    margin-left: 0;
+  }
+
+  .skills-years {
+    display: none;
+  }
+
+  .skills-runway-chart {
+    margin-top: 38px;
+  }
+
+  .skills-runway-row {
+    grid-template-columns: minmax(116px, 0.64fr) minmax(120px, 1fr) 48px;
+    column-gap: 14px;
+    min-height: 34px;
+  }
+
+  .skills-row-name {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 520px) {
+  .skills-runway-section {
+    padding-block: 82px;
+  }
+
+  .skills-runway-frame {
+    min-height: auto;
+  }
+
+  .skills-runway-row {
+    grid-template-columns: 1fr 44px;
+    row-gap: 8px;
+    padding-block: 10px;
+  }
+
+  .skills-row-name {
+    white-space: normal;
+  }
+
+  .skills-bar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .skills-row-years {
+    align-self: start;
+  }
+}
+
+/* Work horizontal sequence / tools and technologies */
+.work-process-panel {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(circle at 72% 12%, rgba(255, 255, 255, 0.055), transparent 28%),
+    #000;
+}
+
+.tech-stack-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(20px, 3vh, 34px);
+  width: min(1400px, calc(100% - clamp(44px, 7vw, 112px)));
+  height: 100%;
+  box-sizing: border-box;
+  margin-inline: auto;
+  padding-block: clamp(106px, 14vh, 132px) clamp(22px, 3vh, 34px);
+}
+
+.work-process-heading {
+  will-change: transform, opacity;
+}
+
+.work-process-index,
+.tech-stack-card-header span,
+.tech-stack-card footer {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  text-transform: uppercase;
+}
+
+.work-process-index {
+  margin: 0 0 12px;
+  color: rgba(255, 255, 255, 0.43);
+  font-size: clamp(7px, 0.58vw, 9px);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.work-process-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: clamp(14px, 2vh, 21px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.work-process-title-row h2 {
+  margin: 0;
+  color: #fff;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(46px, 5.8vw, 88px);
+  font-weight: 900;
+  line-height: 0.86;
+  letter-spacing: -0.065em;
+}
+
+.work-process-title-row > p {
+  margin: 0 0 2px;
+  color: rgba(255, 255, 255, 0.66);
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(11px, 1.05vw, 16px);
+  font-weight: 660;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tech-stack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 15px);
+  align-items: end;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tech-stack-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #0a0a0a;
+  background: #f6f6f3;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+  will-change: transform, opacity;
+}
+
+.tech-stack-card:nth-child(2) { background: #fff; }
+.tech-stack-card:nth-child(3) { background: #eeeeeb; }
+
+.tech-stack-card-header,
+.tech-stack-card footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-inline: clamp(15px, 1.6vw, 24px);
+}
+
+.tech-stack-card-header {
+  min-height: clamp(58px, 8vh, 76px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+}
+
+.tech-stack-card-header span {
+  color: rgba(0, 0, 0, 0.42);
+  font-size: clamp(7px, 0.55vw, 9px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.tech-stack-card-header h3 {
+  margin: 0;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(13px, 1.2vw, 18px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.tech-stack-marquee {
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
+  will-change: transform, opacity;
+}
+
+.tech-stack-loop {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+.tech-stack-loop--up {
+  animation: techStackScrollUp 15s linear infinite;
+}
+
+.tech-stack-loop--down {
+  animation: techStackScrollDown 16s linear infinite;
+}
+
+.tech-stack-loop--slow {
+  animation-duration: 19s;
+}
+
+.tech-stack-group {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+}
+
+.tech-stack-group span {
+  display: flex;
+  align-items: center;
+  min-height: clamp(54px, 8vh, 76px);
+  box-sizing: border-box;
+  padding: 10px clamp(15px, 1.6vw, 24px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(25px, 3.25vw, 52px);
+  font-weight: 880;
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+  white-space: nowrap;
+}
+
+.tech-stack-card footer {
+  min-height: 38px;
+  border-top: 1px solid rgba(0, 0, 0, 0.14);
+  color: rgba(0, 0, 0, 0.48);
+  font-size: clamp(6px, 0.48vw, 8px);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tech-stack-card:hover .tech-stack-loop {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes techStackScrollUp {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -50%, 0); }
+}
+
+@keyframes techStackScrollDown {
+  from { transform: translate3d(0, -50%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@media (max-width: 760px) {
+  .tech-stack-shell {
+    width: calc(100% - 28px);
+    gap: 16px;
+    padding-block: 148px 24px;
+  }
+
+  .work-process-title-row {
+    display: grid;
+    gap: 9px;
+  }
+
+  .work-process-title-row h2 {
+    font-size: clamp(36px, 11vw, 54px);
+  }
+
+  .work-process-title-row > p {
+    font-size: 9px;
+  }
+
+  .tech-stack-grid {
+    gap: 4px;
+  }
+
+  .tech-stack-card-header,
+  .tech-stack-card footer {
+    padding-inline: 8px;
+  }
+
+  .tech-stack-card-header {
+    min-height: 48px;
+  }
+
+  .tech-stack-card-header h3 {
+    font-size: clamp(9px, 2.9vw, 13px);
+  }
+
+  .tech-stack-group span {
+    min-height: 52px;
+    padding-inline: 8px;
+    font-size: clamp(16px, 5.2vw, 25px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tech-stack-card footer span:last-child {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-stack-loop {
+    animation: none;
+    transform: none;
+  }
+
+  .tech-stack-group + .tech-stack-group {
+    display: none;
+  }
+}
