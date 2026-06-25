@@ -80,6 +80,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       this.setupNotesWidget();
       this.setupThemeToggle();
       this.setupNavScrolling();
+      this.setupContactForms();
       this.setupAboutReveal();
       this.setupWorkHorizontalScroll();
 
@@ -87,6 +88,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         if (this.isDestroyed) return;
         this.startHeroAnimations();
         this.setupSkillsReveal();
+        this.setupContactTransition();
         this.setupScrollTextReveals();
       });
     });
@@ -119,6 +121,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (!section || !box) return;
 
     const platform   = box.querySelector<HTMLElement>('.about-platform');
+    const platformLightSurface = platform?.querySelector<HTMLElement>('.about-platform-light-surface') ?? null;
     const contentMask = box.querySelector<HTMLElement>('.about-content-mask');
     const label      = box.querySelector<HTMLElement>('.about-box-label');
     const labelInner = box.querySelector<HTMLElement>('.about-box-label-inner');
@@ -324,6 +327,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
             revealTimeline = this.revealAboutPlatform(
               box,
               platform,
+              platformLightSurface,
               label,
               labelInner,
               titleWord,
@@ -384,6 +388,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         y: 10,
       });
     }
+    if (platformLightSurface) gsap.set(platformLightSurface, { opacity: 0 });
     if (progressRail) {
       const states = this.getAboutPlatformStates(box, labelInner);
       gsap.set(progressRail, {
@@ -503,6 +508,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private revealAboutPlatform(
     box: HTMLElement,
     platform: HTMLElement | null,
+    platformLightSurface: HTMLElement | null,
     label: HTMLElement | null,
     labelInner: HTMLElement | null,
     titleWord: HTMLElement | null,
@@ -547,6 +553,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
           '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
         }, 0);
       }
+      if (platformLightSurface) tl.set(platformLightSurface, { opacity: 0 }, 0);
       if (contentMask) {
         tl.set(contentMask, {
           ...states.expanded,
@@ -597,25 +604,68 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const hasIntroLabel = !!label || !!labelInner || !!titleWord;
     if (!hasIntroLabel) {
       const contentStart = 0.62 * speed;
+      const expandDuration = 0.76 * speed;
+      const compactScaleX = states.expanded.width > 0
+        ? states.compact.width / states.expanded.width
+        : 1;
+      const compactScaleY = states.expanded.height > 0
+        ? states.compact.height / states.expanded.height
+        : 1;
 
       if (platform) {
-        tl.to(platform, {
+        // Size the panel once, then reveal it with compositor-only scaling.
+        // Animating width/height here caused layout and a full-panel repaint
+        // on every frame.
+        tl.set(platform, {
           ...states.expanded,
+          scaleX                    : compactScaleX,
+          scaleY                    : compactScaleY,
+          force3D                   : true,
           autoAlpha                 : 1,
-          '--about-platform-bg'     : '#ffffff',
-          '--about-platform-wash'   : 'rgba(217, 166, 54, 0.03)',
+          '--about-platform-bg'     : '#0b0e13',
+          '--about-platform-wash'   : 'rgba(0, 0, 0, 0)',
           '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
           '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
-          duration                  : 0.76 * speed,
+        }, 0);
+        tl.to(platform, {
+          scaleX  : 1,
+          scaleY  : 1,
+          duration: expandDuration,
           ease                      : 'power3.inOut',
         }, 0);
       }
+      if (platformLightSurface) {
+        // Crossfading a pre-rendered surface stays on the compositor and
+        // avoids repainting a large gradient while the panel is moving.
+        tl.set(platformLightSurface, { opacity: 0 }, 0);
+        tl.to(platformLightSurface, {
+          opacity : 1,
+          duration: expandDuration,
+          ease    : 'sine.inOut',
+        }, 0);
+      }
       if (contentMask) {
-        tl.to(contentMask, {
+        tl.set(contentMask, {
           ...states.expanded,
-          duration: 0.76 * speed,
+          scaleX : compactScaleX,
+          scaleY : compactScaleY,
+          force3D: true,
+        }, 0);
+        tl.to(contentMask, {
+          scaleX  : 1,
+          scaleY  : 1,
+          duration: expandDuration,
           ease    : 'power3.inOut',
         }, 0);
+      }
+      if (platform) {
+        tl.set(platform, {
+          '--about-platform-bg'    : '#ffffff',
+          '--about-platform-wash'  : 'rgba(217, 166, 54, 0.03)',
+        }, expandDuration);
+      }
+      if (platformLightSurface) {
+        tl.set(platformLightSurface, { opacity: 0 }, expandDuration);
       }
       if (cornerMarker) {
         tl.set(cornerMarker, this.getAboutCornerMarkerPlacement(box, states.expanded), contentStart);
@@ -1087,6 +1137,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         scrub              : reducedMotion || this.perfLite ? true : 0.32,
         anticipatePin      : 1,
         invalidateOnRefresh: true,
+        onUpdate           : (self) => {
+          section.classList.toggle(
+            'is-process-active',
+            self.isActive && self.progress >= 0.72
+          );
+        },
       },
     }));
 
@@ -1238,6 +1294,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       try { ScrollTrigger.getById('work-title-reveal')?.kill(); } catch (_) {}
       try { timeline.kill(); } catch (_) {}
       try { titleTween?.kill(); } catch (_) {}
+      section.classList.remove('is-process-active');
       gsap.set([
         track,
         title,
@@ -1324,10 +1381,11 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const navSections = navLinks
       .map(link => link.dataset['section'])
       .filter((section): section is string => !!section);
+    let navSectionOffsets: Array<{ section: string; top: number }> = [];
+    let navOffsetsDirty = true;
     const contactExpander = document.querySelector<HTMLElement>('.contact-expander');
     const contactToggle = contactExpander?.querySelector<HTMLButtonElement>('.contact-toggle') ?? null;
     const contactPopup = document.querySelector<HTMLElement>('.contact-popup');
-    const contactPopupForm = contactPopup?.querySelector<HTMLFormElement>('.contact-popup-form') ?? null;
     const contactPopupFocusable = contactPopup
       ? Array.from(
           contactPopup.querySelectorAll<HTMLElement>(
@@ -1338,6 +1396,18 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const contactPopupCloseButtons = contactPopup
       ? Array.from(contactPopup.querySelectorAll<HTMLElement>('[data-contact-popup-close]'))
       : [];
+    let navUpdateFrame: number | null = null;
+
+    const refreshNavSectionOffsets = (): void => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      navSectionOffsets = navSections.flatMap((section) => {
+        const target = document.getElementById(section);
+        return target
+          ? [{ section, top: target.getBoundingClientRect().top + scrollY }]
+          : [];
+      });
+      navOffsetsDirty = false;
+    };
 
     const setActiveLink = (section: string): void => {
       navLinks.forEach((link) => {
@@ -1371,16 +1441,31 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       const activationY = scrollY + window.innerHeight * 0.36;
       let activeSection = 'home';
 
-      navSections.forEach((section) => {
-        const target = document.getElementById(section);
-        if (!target) return;
-
-        const targetTop = target.getBoundingClientRect().top + scrollY;
-        if (activationY >= targetTop) activeSection = section;
+      if (navOffsetsDirty) refreshNavSectionOffsets();
+      navSectionOffsets.forEach(({ section, top }) => {
+        if (activationY >= top) activeSection = section;
       });
 
       setActiveLink(activeSection);
-      heroNav?.classList.toggle('is-scrolled', scrollY > 0 || activeSection !== 'home');
+      const notchThreshold = Math.min(64, Math.max(24, window.innerHeight * 0.05));
+      heroNav?.classList.toggle(
+        'is-scrolled',
+        scrollY > notchThreshold || activeSection !== 'home'
+      );
+    };
+
+    const requestNavUpdate = (): void => {
+      if (navUpdateFrame !== null) return;
+
+      navUpdateFrame = window.requestAnimationFrame(() => {
+        navUpdateFrame = null;
+        updateActiveLink();
+      });
+    };
+
+    const invalidateNavOffsets = (): void => {
+      navOffsetsDirty = true;
+      requestNavUpdate();
     };
 
     const onClick = (e: Event): void => {
@@ -1431,26 +1516,114 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       }
     };
 
-    const onContactFormSubmit = (event: SubmitEvent): void => {
-      event.preventDefault();
-    };
-
     navLinks.forEach(link => link.addEventListener('click', onClick));
-    window.addEventListener('scroll', updateActiveLink, { passive: true });
+    window.addEventListener('scroll', requestNavUpdate, { passive: true });
+    window.addEventListener('resize', invalidateNavOffsets, { passive: true });
+    ScrollTrigger.addEventListener('refresh', invalidateNavOffsets);
     if (contactToggle) contactToggle.addEventListener('click', onContactToggleClick);
     contactPopupCloseButtons.forEach(button => button.addEventListener('click', onContactPopupClose));
     document.addEventListener('keydown', onContactPopupKeydown);
-    if (contactPopupForm) contactPopupForm.addEventListener('submit', onContactFormSubmit);
     updateActiveLink();
 
     this.cleanupFns.push(() => {
       navLinks.forEach(link => link.removeEventListener('click', onClick));
-      window.removeEventListener('scroll', updateActiveLink);
+      window.removeEventListener('scroll', requestNavUpdate);
+      window.removeEventListener('resize', invalidateNavOffsets);
+      ScrollTrigger.removeEventListener('refresh', invalidateNavOffsets);
+      if (navUpdateFrame !== null) window.cancelAnimationFrame(navUpdateFrame);
       if (contactToggle) contactToggle.removeEventListener('click', onContactToggleClick);
       contactPopupCloseButtons.forEach(button => button.removeEventListener('click', onContactPopupClose));
       document.removeEventListener('keydown', onContactPopupKeydown);
-      if (contactPopupForm) contactPopupForm.removeEventListener('submit', onContactFormSubmit);
       document.body.style.overflow = '';
+    });
+  }
+
+  private setupContactForms(): void {
+    const forms = Array.from(
+      document.querySelectorAll<HTMLFormElement>('form[data-contact-form]')
+    );
+
+    if (forms.length === 0) return;
+
+    const submitForm = async (form: HTMLFormElement): Promise<void> => {
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const status = form.querySelector<HTMLElement>('.contact-form-status');
+      if (!button || form.dataset['submitting'] === 'true') return;
+      if (!form.reportValidity()) return;
+
+      const formData = new FormData(form);
+      const payload = {
+        name   : String(formData.get('name') ?? ''),
+        email  : String(formData.get('email') ?? ''),
+        message: String(formData.get('message') ?? ''),
+        website: String(formData.get('website') ?? ''),
+      };
+      const originalLabel = button.textContent ?? 'Submit';
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 15_000);
+
+      form.dataset['submitting'] = 'true';
+      form.setAttribute('aria-busy', 'true');
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      status?.classList.remove('is-success', 'is-error');
+      if (status) status.textContent = '';
+
+      try {
+        const response = await fetch('/api/contact', {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body   : JSON.stringify(payload),
+          signal : controller.signal,
+        });
+        const responseType = response.headers.get('content-type') ?? '';
+        const result = responseType.includes('application/json')
+          ? await response.json().catch(() => ({} as { error?: string }))
+          : {};
+        const responsePayload = result as {
+          error?: string;
+        };
+
+        if (!response.ok) {
+          const fallback = response.status === 504 || response.status === 502
+            ? 'The email server is not running. Restart the app with npm start.'
+            : `Your message could not be sent (error ${response.status}).`;
+          throw new Error(responsePayload.error?.trim() || fallback);
+        }
+
+        form.reset();
+        status?.classList.add('is-success');
+        if (status) status.textContent = 'Message sent. I’ll get back to you soon.';
+      } catch (error) {
+        const message = error instanceof DOMException && error.name === 'AbortError'
+          ? 'Sending took too long. Please try again.'
+          : error instanceof Error
+            ? error.message
+            : 'Your message could not be sent.';
+        status?.classList.add('is-error');
+        if (status) status.textContent = message;
+      } finally {
+        window.clearTimeout(timeout);
+        delete form.dataset['submitting'];
+        form.removeAttribute('aria-busy');
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
+    };
+
+    const handlers = forms.map((form) => {
+      const onSubmit = (event: SubmitEvent): void => {
+        event.preventDefault();
+        void submitForm(form);
+      };
+      form.addEventListener('submit', onSubmit);
+      return { form, onSubmit };
+    });
+
+    this.cleanupFns.push(() => {
+      handlers.forEach(({ form, onSubmit }) => {
+        form.removeEventListener('submit', onSubmit);
+      });
     });
   }
 
@@ -1582,6 +1755,74 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  private setupContactTransition(): void {
+    const section = document.querySelector<HTMLElement>('.contact-section');
+    const sequence = section?.closest<HTMLElement>('.skills-contact-sequence') ?? null;
+    const backdrop = sequence?.querySelector<HTMLElement>('.skills-contact-backdrop') ?? null;
+    const shell = section?.querySelector<HTMLElement>('.contact-shell') ?? null;
+    const content = section
+      ? Array.from(
+          section.querySelectorAll<HTMLElement>(
+            '.contact-info-panel, .contact-form-panel, .contact-social-rail'
+          )
+        )
+      : [];
+
+    if (!section || !sequence || !backdrop || !shell) return;
+
+    const targetBackground = '#ffcc01';
+
+    if (this.prefersReducedMotion()) {
+      gsap.set(backdrop, { backgroundColor: targetBackground });
+      gsap.set(section, { backgroundColor: 'transparent' });
+      gsap.set(shell, { backgroundColor: 'transparent' });
+      return;
+    }
+
+    gsap.set(backdrop, { backgroundColor: '#000000' });
+    gsap.set(section, { backgroundColor: 'transparent' });
+    gsap.set(shell, { backgroundColor: 'transparent' });
+    gsap.set(content, { autoAlpha: 0, y: 18 });
+
+    const timeline = this.track(gsap.timeline({
+      scrollTrigger: {
+        id                 : 'contact-background-transition',
+        trigger            : section,
+        start              : 'top 88%',
+        end                : 'top 12%',
+        scrub              : this.perfLite ? true : 0.3,
+        invalidateOnRefresh: true,
+      },
+    }));
+
+    timeline
+      .to(section, {
+        backgroundColor: 'transparent',
+        duration       : 1,
+      }, 0)
+      .to(backdrop, {
+        backgroundColor: targetBackground,
+        duration       : 1,
+        ease           : 'none',
+      }, 0)
+      .to(content, {
+        autoAlpha: 1,
+        y        : 0,
+        duration : 0.38,
+        stagger  : 0.035,
+        ease     : 'power2.out',
+      }, 0.64);
+
+    this.cleanupFns.push(() => {
+      try { ScrollTrigger.getById('contact-background-transition')?.kill(); } catch (_) {}
+      try { timeline.kill(); } catch (_) {}
+      gsap.set(backdrop, { clearProps: 'backgroundColor' });
+      gsap.set(section, { clearProps: 'backgroundColor' });
+      gsap.set(shell, { clearProps: 'backgroundColor' });
+      gsap.set(content, { clearProps: 'opacity,transform,visibility' });
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // Site-wide scroll text reveal
   // ---------------------------------------------------------------------------
@@ -1597,13 +1838,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       '.page-section .section-kicker',
       '.page-section .section-title-row h2',
       '.page-section .section-lede',
-      '.contact-info-panel h2',
-      '.contact-info-panel p',
-      '.contact-details-list dt',
-      '.contact-details-list dd',
-      '.contact-form-panel h3',
-      '.contact-form-panel label span',
-      '.contact-form-panel button',
     ];
     const excludedContexts = [
       '.hero-nav',

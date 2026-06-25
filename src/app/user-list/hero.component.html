@@ -61,7 +61,7 @@
     </div>
   </div>
 
-  <nav class="hero-nav">
+  <nav class="hero-nav" aria-label="Primary navigation">
     <div class="logo">
       <img src="/aristide-mark-white.svg" alt="Iraguha Aristide logo" class="logo-image">
     </div>
@@ -122,27 +122,28 @@
           we're here to help. Contact us today to learn more.
         </p>
         <p class="contact-popup-email">
-          Or email us on <a href="mailto:hello@iraguhaaristide.com">hello&#64;iraguhaaristide.com</a>
+          Or email me at <a href="mailto:arystoto47@gmail.com">arystoto47&#64;gmail.com</a>
         </p>
       </div>
 
-      <form class="contact-popup-form">
+      <form class="contact-popup-form" data-contact-form>
         <label>
           <span class="visually-hidden">Name</span>
-          <input type="text" name="name" placeholder="Name" autocomplete="name">
+          <input type="text" name="name" placeholder="Name" autocomplete="name" required>
         </label>
         <label>
           <span class="visually-hidden">Email</span>
-          <input type="email" name="email" placeholder="Email" autocomplete="email">
-        </label>
-        <label>
-          <span class="visually-hidden">Subject</span>
-          <input type="text" name="subject" placeholder="Subject">
+          <input type="email" name="email" placeholder="Email" autocomplete="email" required>
         </label>
         <label>
           <span class="visually-hidden">Your message</span>
-          <textarea name="message" placeholder="Your message"></textarea>
+          <textarea name="message" placeholder="Your message" minlength="10" required></textarea>
         </label>
+        <label class="contact-honeypot" aria-hidden="true">
+          <span>Website</span>
+          <input type="text" name="website" tabindex="-1" autocomplete="off">
+        </label>
+        <p class="contact-form-status" aria-live="polite"></p>
         <button type="submit">Send message</button>
       </form>
     </div>
@@ -222,7 +223,9 @@
 
   <section class="about-section" id="about" aria-label="About">
     <div class="about-reveal-box">
-      <div class="about-platform" aria-hidden="true"></div>
+      <div class="about-platform" aria-hidden="true">
+        <span class="about-platform-light-surface"></span>
+      </div>
       <div class="about-content-mask">
         <div class="about-corner-marker" aria-hidden="true">
           <span class="about-corner-index">01</span>
@@ -250,7 +253,7 @@
                 <span class="about-title-option about-title-option--three" aria-hidden="true">Art<br>Enthusiast</span>
                 <span class="about-title-option about-title-option--four" aria-hidden="true">Music<br>Producer</span>
               </h2>
-              <a href="mailto:hello@iraguhaaristide.com" class="about-connect-button">
+              <a href="mailto:arystoto47@gmail.com" class="about-connect-button">
                 <span>Let's connect</span>
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path d="M7 17 17 7M9 7h8v8" />
@@ -529,6 +532,9 @@
     </div>
   </section>
 
+  <div class="skills-contact-sequence">
+    <span class="skills-contact-backdrop" aria-hidden="true"></span>
+
   <section class="page-section skills-runway-section" id="skills" aria-label="Skills">
     <div class="skills-runway-shell">
       <div class="skills-runway-frame">
@@ -605,53 +611,49 @@
   <section class="page-section contact-section" id="contact" aria-label="Contact">
     <div class="contact-shell">
       <header class="contact-info-panel">
-        <h2>Contact me</h2>
+        <h2>Let&rsquo;s talk.</h2>
+        <p>Have a project or need help? Fill out the form, and I&rsquo;ll get back to you soon.</p>
       </header>
 
-      <div class="contact-section-body">
-        <dl class="contact-details-list">
-          <div>
-            <dt>Email</dt>
-            <dd><a href="mailto:hello@iraguhaaristide.com">hello&#64;iraguhaaristide.com</a></dd>
-          </div>
-          <div>
-            <dt>Phone</dt>
-            <dd><a href="tel:+250780000000">+250 780 000 000</a></dd>
-          </div>
-          <div>
-            <dt>Address</dt>
-            <dd>Kigali, Rwanda</dd>
-          </div>
-        </dl>
+      <nav class="contact-social-rail" aria-label="Social profiles">
+        <a href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4l14 16M19 4 5 20"></path></svg>
+        </a>
+        <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"></rect><circle cx="12" cy="12" r="3.5"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>
+        </a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9v9M6 6.5v.1M10.5 18v-9m0 4c.8-2.7 6-3.1 6 1.2V18M16.5 18v-4.2"></path></svg>
+        </a>
+        <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6" width="17" height="12" rx="3"></rect><path d="m10 9.5 5 2.5-5 2.5Z"></path></svg>
+        </a>
+      </nav>
 
-        <form class="contact-form-panel" aria-label="Contact form">
-          <div class="contact-name-field">
-            <p class="contact-form-legend">Name (required)</p>
-            <div class="contact-name-grid">
-              <label>
-                <span>First name</span>
-                <input type="text" name="firstName" autocomplete="given-name" required>
-              </label>
-              <label>
-                <span>Last name</span>
-                <input type="text" name="lastName" autocomplete="family-name" required>
-              </label>
-            </div>
-          </div>
+      <form class="contact-form-panel" aria-label="Contact form" data-contact-form>
+        <label>
+          <span>Name</span>
+          <input type="text" name="name" autocomplete="name" placeholder="Enter your name" required>
+        </label>
 
-          <label>
-            <span>Email (required)</span>
-            <input type="email" name="email" autocomplete="email" required>
-          </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="email" placeholder="Enter your email" required>
+        </label>
 
-          <label>
-            <span>Message (required)</span>
-            <textarea name="message" rows="3" required></textarea>
-          </label>
+        <label>
+          <span>Your Project</span>
+          <textarea name="message" rows="5" placeholder="Tell us about your project" minlength="10" required></textarea>
+        </label>
 
-          <button type="button">Submit</button>
-        </form>
-      </div>
+        <label class="contact-honeypot" aria-hidden="true">
+          <span>Website</span>
+          <input type="text" name="website" tabindex="-1" autocomplete="off">
+        </label>
+        <p class="contact-form-status" aria-live="polite"></p>
+        <button type="submit">Submit</button>
+      </form>
     </div>
   </section>
+  </div>
 </div>
