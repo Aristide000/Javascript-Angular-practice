@@ -98,7 +98,7 @@
           class="nav-cta contact-toggle"
           aria-expanded="false"
           aria-controls="contact-popup"
-          aria-label="Open contact form"
+          aria-label="Open quick links"
         >
           <span class="contact-toggle-line contact-toggle-line--top" aria-hidden="true"></span>
           <span class="contact-toggle-line contact-toggle-line--bottom" aria-hidden="true"></span>
@@ -107,46 +107,14 @@
     </div>
   </nav>
 
-  <div class="contact-popup" id="contact-popup" role="dialog" aria-modal="true" aria-labelledby="contact-popup-title" aria-hidden="true">
+  <div class="contact-popup" id="contact-popup" role="dialog" aria-label="Quick links" aria-hidden="true">
     <div class="contact-popup-backdrop" data-contact-popup-close></div>
-    <div class="contact-popup-card">
-      <button type="button" class="contact-popup-close" aria-label="Close contact form" data-contact-popup-close>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </button>
-
-      <div class="contact-popup-copy">
-        <h2 id="contact-popup-title">Get in touch</h2>
-        <p>
-          Whether you're looking to enhance your digital strategy or bring a polished web idea into your company,
-          we're here to help. Contact us today to learn more.
-        </p>
-        <p class="contact-popup-email">
-          Or email me at <a href="mailto:arystoto47@gmail.com">arystoto47&#64;gmail.com</a>
-        </p>
-      </div>
-
-      <form class="contact-popup-form" data-contact-form>
-        <label>
-          <span class="visually-hidden">Name</span>
-          <input type="text" name="name" placeholder="Name" autocomplete="name" required>
-        </label>
-        <label>
-          <span class="visually-hidden">Email</span>
-          <input type="email" name="email" placeholder="Email" autocomplete="email" required>
-        </label>
-        <label>
-          <span class="visually-hidden">Your message</span>
-          <textarea name="message" placeholder="Your message" minlength="10" required></textarea>
-        </label>
-        <label class="contact-honeypot" aria-hidden="true">
-          <span>Website</span>
-          <input type="text" name="website" tabindex="-1" autocomplete="off">
-        </label>
-        <p class="contact-form-status" aria-live="polite"></p>
-        <button type="submit">Send message</button>
-      </form>
-    </div>
+    <nav class="contact-popup-links" aria-label="Quick links">
+      <a href="/resume.pdf" download>DOWNLOAD MY RESUME</a>
+      <a href="/terms-and-conditions">TERMS AND CONDITIONS</a>
+      <a href="/privacy-policies">PRIVACY POLICIES</a>
+      <a href="mailto:arystoto47@gmail.com?subject=Book%20a%20call%20with%20Aristide">BOOK A CALL</a>
+    </nav>
   </div>
 
   <section class="hero" id="home">
@@ -165,18 +133,22 @@
 
       <span class="hero-portfolio">
         <span class="solari-board" aria-label="Portfolio split flap display"></span>
+        <span class="hero-meta" aria-label="Location and current date">
+          <span>Kigali, Rwanda</span>
+          <time data-hero-current-date datetime="">-- --- ----</time>
+        </span>
       </span>
     </div>
 
     <div class="notes-widget">
       <button type="button" class="notes-widget-toggle" aria-label="Open chat box">Talk to me</button>
-      <div class="notes-widget-panel chatbox" role="dialog" aria-label="Chat with Aristide" aria-hidden="true">
+      <div class="notes-widget-panel chatbox" role="dialog" aria-label="Chat with Aristide's assistant" aria-hidden="true">
         <div class="chatbox-header">
           <div class="chatbox-avatar" aria-hidden="true">
             <img src="/chat-profile.png" alt="">
           </div>
           <div class="chatbox-title">
-            <strong>Aristide</strong>
+            <strong>Aristide's assistant</strong>
             <span>online</span>
           </div>
           <button type="button" class="chatbox-close" aria-label="Close chat box">
@@ -193,9 +165,7 @@
             <span></span>
           </div>
           <p class="chatbox-message chatbox-message--bot chatbox-message--intro">
-            Welcome aboard! I'm Aristide's co-pilot. Ask me anything about UX, Design Systems, or just say hello. Fasten your seatbelt.
-          </p>
-        </div>
+Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, his skills, projects, and creative work. Feel free to ask me anything about his web design, development or just say hello!        </div>
 
         <form class="chatbox-input-row" aria-label="Start chat">
           <input type="text" aria-label="Chat message" placeholder="Your message..." />

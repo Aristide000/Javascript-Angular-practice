@@ -8,13 +8,19 @@ try {
 }
 
 const port = Number.parseInt(process.env.CHAT_API_PORT ?? '3001', 10);
-const model = process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
-const apiKey = process.env.OPENAI_API_KEY;
+const geminiModel = process.env.GEMINI_MODEL ?? 'gemini-3.1-flash-lite';
+const geminiApiKey = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
 const resendApiKey = process.env.RESEND_API_KEY;
 const contactToEmail = process.env.CONTACT_TO_EMAIL ?? 'arystoto47@gmail.com';
 const contactFromEmail =
   process.env.RESEND_FROM_EMAIL ?? 'Aristide Portfolio <onboarding@resend.dev>';
 const contactRateLimit = new Map();
+const chatSystemInstruction = [
+  "You are Aristide's assistant, a concise portfolio chatbot for Aristide's website.",
+  'Answer warmly in 1-3 short sentences.',
+  'Help with questions about UX, design systems, frontend work, and contacting Aristide.',
+  'If asked for private or unknown details, say you do not have that information and suggest using the contact section.',
+].join(' ');
 
 class ApiError extends Error {
   constructor(status, message) {
@@ -96,27 +102,40 @@ const checkContactRateLimit = (req) => {
   return true;
 };
 
-const formatMessages = (history) => {
+const normalizeGeminiModelPath = (value) => {
+  const modelName = String(value ?? '')
+    .trim()
+    .replace(/^models\//, '');
+
+  return `models/${modelName || 'gemini-3.1-flash-lite'}`;
+};
+
+const formatGeminiContents = (history) => {
   if (!Array.isArray(history)) return [];
 
   return history
     .slice(-8)
     .map((entry) => {
-      const role = entry?.role === 'assistant' ? 'assistant' : 'user';
+      const role = entry?.role === 'assistant' ? 'model' : 'user';
       const content = cleanText(entry?.content);
-      return content ? { role, content } : null;
+      return content ? { role, parts: [{ text: content }] } : null;
     })
     .filter(Boolean);
 };
 
 const getResponseText = (payload) => {
-  const content = payload?.choices?.[0]?.message?.content;
-  return typeof content === 'string' ? content.trim() : '';
+  const parts = payload?.candidates?.[0]?.content?.parts;
+  if (!Array.isArray(parts)) return '';
+
+  return parts
+    .map((part) => (typeof part?.text === 'string' ? part.text : ''))
+    .join('')
+    .trim();
 };
 
 const createChatReply = async ({ message, history }) => {
-  if (!apiKey) {
-    throw new Error('OPENAI_API_KEY is not set');
+  if (!geminiApiKey) {
+    throw new Error('GEMINI_API_KEY is not set');
   }
 
   const userMessage = cleanText(message);
@@ -124,35 +143,32 @@ const createChatReply = async ({ message, history }) => {
     throw new Error('Message is required');
   }
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const modelPath = normalizeGeminiModelPath(geminiModel);
+  const query = new URLSearchParams({ key: geminiApiKey });
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${modelPath}:generateContent?${query}`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: 'developer',
-          content: [
-            "You are Aristide, a concise portfolio co-pilot for Aristide's website.",
-            'Answer warmly in 1-3 short sentences.',
-            'Help with questions about UX, design systems, frontend work, and contacting Aristide.',
-            'If asked for private or unknown details, say you do not have that information and suggest using the contact section.',
-          ].join(' '),
-        },
-        ...formatMessages(history),
-        { role: 'user', content: userMessage },
+      systemInstruction: {
+        parts: [{ text: chatSystemInstruction }],
+      },
+      contents: [
+        ...formatGeminiContents(history),
+        { role: 'user', parts: [{ text: userMessage }] },
       ],
-      max_tokens: 180,
+      generationConfig: {
+        maxOutputTokens: 180,
+        temperature: 0.7,
+      },
     }),
   });
 
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const detail = payload?.error?.message || `OpenAI request failed with ${response.status}`;
+    const detail = payload?.error?.message || `Gemini request failed with ${response.status}`;
     throw new Error(detail);
   }
 

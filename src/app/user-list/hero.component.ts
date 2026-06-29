@@ -88,7 +88,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         if (this.isDestroyed) return;
         this.startHeroAnimations();
         this.setupSkillsReveal();
-        this.setupContactTransition();
         this.setupScrollTextReveals();
       });
     });
@@ -1422,14 +1421,13 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       contactExpander.classList.toggle('is-open', isOpen);
       contactPopup.classList.toggle('is-open', isOpen);
       contactToggle.setAttribute('aria-expanded', String(isOpen));
-      contactToggle.setAttribute('aria-label', isOpen ? 'Close contact form' : 'Open contact form');
+      contactToggle.setAttribute('aria-label', isOpen ? 'Close quick links' : 'Open quick links');
       contactPopup.setAttribute('aria-hidden', String(!isOpen));
       document.body.style.overflow = isOpen ? 'hidden' : '';
 
       if (isOpen) {
         window.setTimeout(() => {
-          const firstField = contactPopup.querySelector<HTMLElement>('.contact-popup-form input, .contact-popup-form textarea');
-          firstField?.focus();
+          contactPopup.querySelector<HTMLElement>('.contact-popup-links a')?.focus();
         }, 120);
       } else if (wasOpen) {
         contactToggle.focus();
@@ -1755,74 +1753,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  private setupContactTransition(): void {
-    const section = document.querySelector<HTMLElement>('.contact-section');
-    const sequence = section?.closest<HTMLElement>('.skills-contact-sequence') ?? null;
-    const backdrop = sequence?.querySelector<HTMLElement>('.skills-contact-backdrop') ?? null;
-    const shell = section?.querySelector<HTMLElement>('.contact-shell') ?? null;
-    const content = section
-      ? Array.from(
-          section.querySelectorAll<HTMLElement>(
-            '.contact-info-panel, .contact-form-panel, .contact-social-rail'
-          )
-        )
-      : [];
-
-    if (!section || !sequence || !backdrop || !shell) return;
-
-    const targetBackground = '#ffcc01';
-
-    if (this.prefersReducedMotion()) {
-      gsap.set(backdrop, { backgroundColor: targetBackground });
-      gsap.set(section, { backgroundColor: 'transparent' });
-      gsap.set(shell, { backgroundColor: 'transparent' });
-      return;
-    }
-
-    gsap.set(backdrop, { backgroundColor: '#000000' });
-    gsap.set(section, { backgroundColor: 'transparent' });
-    gsap.set(shell, { backgroundColor: 'transparent' });
-    gsap.set(content, { autoAlpha: 0, y: 18 });
-
-    const timeline = this.track(gsap.timeline({
-      scrollTrigger: {
-        id                 : 'contact-background-transition',
-        trigger            : section,
-        start              : 'top 88%',
-        end                : 'top 12%',
-        scrub              : this.perfLite ? true : 0.3,
-        invalidateOnRefresh: true,
-      },
-    }));
-
-    timeline
-      .to(section, {
-        backgroundColor: 'transparent',
-        duration       : 1,
-      }, 0)
-      .to(backdrop, {
-        backgroundColor: targetBackground,
-        duration       : 1,
-        ease           : 'none',
-      }, 0)
-      .to(content, {
-        autoAlpha: 1,
-        y        : 0,
-        duration : 0.38,
-        stagger  : 0.035,
-        ease     : 'power2.out',
-      }, 0.64);
-
-    this.cleanupFns.push(() => {
-      try { ScrollTrigger.getById('contact-background-transition')?.kill(); } catch (_) {}
-      try { timeline.kill(); } catch (_) {}
-      gsap.set(backdrop, { clearProps: 'backgroundColor' });
-      gsap.set(section, { clearProps: 'backgroundColor' });
-      gsap.set(shell, { clearProps: 'backgroundColor' });
-      gsap.set(content, { clearProps: 'opacity,transform,visibility' });
-    });
-  }
-
   // ---------------------------------------------------------------------------
   // Site-wide scroll text reveal
   // ---------------------------------------------------------------------------
@@ -1963,6 +1893,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const toggle = widget?.querySelector<HTMLButtonElement>('.notes-widget-toggle') ?? null;
     const closeButton = panel?.querySelector<HTMLButtonElement>('.chatbox-close') ?? null;
     const chatBody = panel?.querySelector<HTMLElement>('.chatbox-body') ?? null;
+    const introMessage = panel?.querySelector<HTMLElement>('.chatbox-message--intro') ?? null;
     const chatForm = panel?.querySelector<HTMLFormElement>('.chatbox-input-row') ?? null;
     const chatInput = chatForm?.querySelector<HTMLInputElement>('input') ?? null;
     const chatSubmit = chatForm?.querySelector<HTMLButtonElement>('button[type="submit"]') ?? null;
@@ -1973,13 +1904,27 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     let isOpen = false;
     let isWaitingForReply = false;
+    let hasTypedIntroMessage = false;
+    let introTypewriterTimeout = 0;
     const chatHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
+    const introText = String(introMessage?.textContent ?? '').replace(/\s+/g, ' ').trim();
+
+    if (introMessage && !this.prefersReducedMotion()) {
+      introMessage.textContent = '';
+    }
 
     const setOpen = (nextOpen: boolean): void => {
       isOpen = nextOpen;
       panel.classList.toggle('notes-widget-panel--visible', isOpen);
       panel.setAttribute('aria-hidden', String(!isOpen));
       toggle.setAttribute('aria-expanded', String(isOpen));
+
+      if (isOpen) {
+        startIntroTypewriter();
+      } else if (!hasTypedIntroMessage && introTypewriterTimeout) {
+        window.clearTimeout(introTypewriterTimeout);
+        introTypewriterTimeout = 0;
+      }
     };
 
     const scrollChatToEnd = (): void => {
@@ -1997,6 +1942,69 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       chatBody.appendChild(messageEl);
       scrollChatToEnd();
       return messageEl;
+    };
+
+    const getTypewriterDelay = (character: string): number => {
+      if (character === '.' || character === '!' || character === '?') return 82;
+      if (character === ',' || character === ';' || character === ':') return 44;
+      if (character === ' ') return 12;
+      return 18;
+    };
+
+    const typewriteMessageText = async (messageEl: HTMLElement, text: string): Promise<void> => {
+      if (this.prefersReducedMotion()) {
+        messageEl.textContent = text;
+        scrollChatToEnd();
+        return;
+      }
+
+      const characters = Array.from(text);
+      messageEl.textContent = '';
+
+      for (let index = 0; index < characters.length; index += 1) {
+        if (this.isDestroyed) return;
+
+        const character = characters[index];
+        messageEl.textContent += character;
+
+        if (index % 2 === 0 || index === characters.length - 1) {
+          scrollChatToEnd();
+        }
+
+        await new Promise<void>((resolve) => {
+          window.setTimeout(resolve, getTypewriterDelay(character));
+        });
+      }
+
+      scrollChatToEnd();
+    };
+
+    const appendTypewriterChatMessage = async (role: 'user' | 'bot', text: string): Promise<HTMLElement | null> => {
+      const shouldType = role === 'bot' && !this.prefersReducedMotion();
+      const messageEl = appendChatMessage(role, shouldType ? '' : text);
+      if (!messageEl || !shouldType) return messageEl;
+
+      await typewriteMessageText(messageEl, text);
+
+      return messageEl;
+    };
+
+    const startIntroTypewriter = (): void => {
+      if (!introMessage || hasTypedIntroMessage || !introText) return;
+
+      if (this.prefersReducedMotion()) {
+        introMessage.textContent = introText;
+        hasTypedIntroMessage = true;
+        return;
+      }
+
+      window.clearTimeout(introTypewriterTimeout);
+      introTypewriterTimeout = window.setTimeout(() => {
+        if (this.isDestroyed || !isOpen || hasTypedIntroMessage) return;
+
+        hasTypedIntroMessage = true;
+        void typewriteMessageText(introMessage, introText);
+      }, 2950);
     };
 
     const appendLiveTyping = (): HTMLElement | null => {
@@ -2032,15 +2040,21 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       history: Array<{ role: 'user' | 'assistant'; content: string }>
     ): Promise<string> => {
       type ChatApiPayload = { reply?: string; error?: string };
-
-      const response = await fetch('/api/chat', {
+      const body = JSON.stringify({
+        message,
+        history,
+      });
+      const sendChatRequest = (url: string): Promise<Response> => fetch(url, {
         method : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body   : JSON.stringify({
-          message,
-          history,
-        }),
+        body,
       });
+      const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+      let response = await sendChatRequest('/api/chat');
+
+      if (response.status === 404 && isLocalHost) {
+        response = await sendChatRequest('http://localhost:3001/api/chat');
+      }
 
       const payload = await response.json().catch(() => ({} as ChatApiPayload)) as ChatApiPayload;
 
@@ -2071,7 +2085,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         await typingDelay;
         if (this.isDestroyed) return;
         try { typingEl?.remove(); } catch (_) {}
-        appendChatMessage('bot', reply);
+        await appendTypewriterChatMessage('bot', reply);
         chatHistory.push({ role: 'assistant', content: reply });
       } catch (error) {
         await typingDelay;
@@ -2080,7 +2094,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         const detail = error instanceof Error && error.message
           ? error.message
           : 'Please try again in a moment.';
-        appendChatMessage('bot', `Connection issue: ${detail}`);
+        await appendTypewriterChatMessage('bot', `Connection issue: ${detail}`);
       } finally {
         if (this.isDestroyed) return;
         setChatBusy(false);
@@ -2102,6 +2116,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (chatForm) chatForm.addEventListener('submit', onChatSubmit);
 
     this.cleanupFns.push(() => {
+      window.clearTimeout(introTypewriterTimeout);
       toggle.removeEventListener('click', onToggleClick);
       if (closeButton) closeButton.removeEventListener('click', onCloseClick);
       if (chatForm) chatForm.removeEventListener('submit', onChatSubmit);
@@ -2232,6 +2247,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         if (this.prefersReducedMotion()) { this.showSolariTarget(); return; }
         this.queueSolariTimer(() => this.playSolariIntroSequence(), 0);
       })
+      .from('.hero-meta', { y: 8, autoAlpha: 0, duration: 0.56 * baseDuration }, '-=0.18')
       .from('.notes-widget',    { x: 26, autoAlpha: 0, duration: 0.9  * baseDuration }, '-=0.24')
       .call(() => {
         if (this.triggerMobileNotesAnimation) {
@@ -2533,9 +2549,9 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     }, settleDelay);
   }
 
-  private getSolariWordSlots(word: string): string[] {
+  private getSolariWordSlots(word: string, placeholder = '.'): string[] {
     const tileCount = this.solariTiles.length || this.solariTarget.length;
-    const slots     = Array.from({ length: tileCount }, () => '.');
+    const slots     = Array.from({ length: tileCount }, () => placeholder);
     const letters   = Array.from(word.toUpperCase()).slice(0, tileCount);
     const start     = Math.max(0, Math.floor((tileCount - letters.length) / 2));
     letters.forEach((letter, index) => { slots[start + index] = letter; });
@@ -2633,7 +2649,11 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     this.clearSolariTimers();
     this.solariRunId += 1;
     this.solariIntroInProgress = false;
-    this.solariTarget.split('').forEach((letter, index) => {
+    this.resetSolariToWord(this.solariTarget);
+  }
+
+  private resetSolariToWord(word: string, placeholder = '.'): void {
+    this.getSolariWordSlots(word, placeholder).forEach((letter, index) => {
       const tile = this.solariTiles[index];
       if (!tile) return;
       this.resetSolariTile(tile, letter);
@@ -2719,7 +2739,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
   private setupBackgroundInstrumentation(): void {
     const dateEls = Array.from(
-      document.querySelectorAll<HTMLElement>('[data-bg-current-date]')
+      document.querySelectorAll<HTMLElement>('[data-bg-current-date], [data-hero-current-date]')
     );
 
     if (dateEls.length === 0) return;
@@ -2731,8 +2751,18 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     });
 
     const updateDate = (): void => {
-      const value = formatter.format(new Date()).replace(',', '').toUpperCase();
-      dateEls.forEach((el) => { el.textContent = value; });
+      const now = new Date();
+      const value = formatter.format(now).replace(',', '').toUpperCase();
+      const isoDate = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, '0'),
+        String(now.getDate()).padStart(2, '0'),
+      ].join('-');
+
+      dateEls.forEach((el) => {
+        el.textContent = value;
+        if (el instanceof HTMLTimeElement) el.dateTime = isoDate;
+      });
     };
 
     const scheduleNextDateTick = (): void => {
