@@ -197,6 +197,9 @@ Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, h
         <span class="about-platform-light-surface"></span>
       </div>
       <div class="about-content-mask">
+        <div class="about-section-tab" aria-hidden="true">
+          <span>About</span>
+        </div>
         <div class="about-corner-marker" aria-hidden="true">
           <span class="about-corner-index">01</span>
           <span class="about-corner-word">ABOUT</span>
@@ -267,83 +270,9 @@ Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, h
               <span class="work-service-divider" aria-hidden="true"></span>
               <span class="work-service-divider" aria-hidden="true"></span>
 
-              <article class="work-service-card work-service-card--web">
-                <span
-                  class="work-card-surface"
-                  style="background: #f7f7f4 url('/web-design-paper-bg.png') center / cover no-repeat;"
-                  aria-hidden="true"
-                ></span>
-                <div class="work-card-content">
-                  <div class="work-card-meta">
-                    <span>01</span>
-                    <span>Digital</span>
-                  </div>
-                  <svg class="work-card-icon" viewBox="0 0 160 112" aria-hidden="true" focusable="false">
-                    <rect x="13" y="16" width="134" height="80" rx="2"></rect>
-                    <path d="M13 34h134M25 25h3M35 25h3M45 25h3M29 49h42v31H29zM82 49h47M82 61h38M82 73h28"></path>
-                  </svg>
-                  <div class="work-card-copy">
-                    <h3>Web Design</h3>
-                    <p>Thoughtful interfaces, responsive builds and digital experiences made to feel effortless.</p>
-                    <ul aria-label="Web design services">
-                      <li>UI / UX</li>
-                      <li>Development</li>
-                    </ul>
-                  </div>
-                </div>
-              </article>
-
-              <article class="work-service-card work-service-card--music">
-                <span
-                  class="work-card-surface"
-                  style="background: #000 url('/music-production-bg.jpg') center / cover no-repeat;"
-                  aria-hidden="true"
-                ></span>
-                <div class="work-card-content" style="color: #f5f4ef;">
-                  <div class="work-card-meta" style="color: rgba(245, 244, 239, 0.52);">
-                    <span>02</span>
-                    <span>Sound</span>
-                  </div>
-                  <svg class="work-card-icon" viewBox="0 0 160 112" aria-hidden="true" focusable="false">
-                    <path d="M22 74V53M34 82V43M46 70V56M58 90V34M70 76V49M82 85V40M94 69V57M106 91V31M118 76V49M130 83V42M142 72V54"></path>
-                    <circle cx="58" cy="34" r="3"></circle>
-                    <circle cx="106" cy="31" r="3"></circle>
-                  </svg>
-                  <div class="work-card-copy">
-                    <h3 style="color: #f5f4ef;">Music Production</h3>
-                    <p style="color: rgba(245, 244, 239, 0.68);">Original production, arrangement and sonic direction shaped around mood and story.</p>
-                    <ul aria-label="Music production services">
-                      <li style="border-color: rgba(245, 244, 239, 0.24); color: rgba(245, 244, 239, 0.68);">Production</li>
-                      <li style="border-color: rgba(245, 244, 239, 0.24); color: rgba(245, 244, 239, 0.68);">Sound design</li>
-                    </ul>
-                  </div>
-                </div>
-              </article>
-
-              <article class="work-service-card work-service-card--art">
-                <span class="work-card-surface" aria-hidden="true"></span>
-                <div class="work-card-content">
-                  <div class="work-card-meta">
-                    <span>03</span>
-                    <span>Visual</span>
-                  </div>
-                  <img
-                    src="/art-zigzag-card.jpg"
-                    alt=""
-                    class="work-card-icon"
-                    style="width: min(62%, 176px); aspect-ratio: 1 / 1; max-height: none; object-fit: cover; object-position: center; opacity: 1;"
-                    aria-hidden="true"
-                  >
-                  <div class="work-card-copy">
-                    <h3>Art</h3>
-                    <p>Expressive visual concepts and crafted artwork where curiosity leads the composition.</p>
-                    <ul aria-label="Art services">
-                      <li>Art direction</li>
-                      <li>Illustration</li>
-                    </ul>
-                  </div>
-                </div>
-              </article>
+              @for (service of workServices; track service.index) {
+                <app-work-service-card [card]="service"></app-work-service-card>
+              }
             </div>
 
             <p class="work-services-scroll-note" aria-hidden="true">Scroll to unfold / 01</p>
@@ -581,7 +510,7 @@ Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, h
   <section class="page-section contact-section" id="contact" aria-label="Contact">
     <div class="contact-shell">
       <header class="contact-info-panel">
-        <h2>Let&rsquo;s talk.</h2>
+        <h2>Let&rsquo;s Work Together.</h2>
         <p>Have a project or need help? Fill out the form, and I&rsquo;ll get back to you soon.</p>
       </header>
 

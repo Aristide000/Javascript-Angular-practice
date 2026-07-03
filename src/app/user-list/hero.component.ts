@@ -7,9 +7,14 @@ import {
   inject,
 } from '@angular/core';
 import { gsap } from 'gsap';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {
+  WorkServiceCardComponent,
+  type WorkServiceCard,
+} from '../shared/work-service-card/work-service-card.component';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 interface SolariTile {
   el: HTMLElement;
@@ -29,6 +34,7 @@ type SiteTheme = 'dark' | 'light';
 @Component({
   selector: 'app-hero',
   standalone: true,
+  imports: [WorkServiceCardComponent],
   templateUrl: 'hero.component.html',
   styleUrls: ['hero.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +49,41 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly solariFlipMs = 105;
   private readonly solariMisfireChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*?';
   private readonly themeStorageKey = 'aristide-portfolio-theme';
+  private readonly motionEase = 'power3.inOut';
+  public readonly workServices: readonly WorkServiceCard[] = [
+    {
+      variant: 'web',
+      index: '01',
+      category: 'Digital',
+      title: 'Web Design',
+      description: 'Thoughtful interfaces, responsive builds and digital experiences made to feel effortless.',
+      services: ['UI / UX', 'Development'],
+      icon: 'web',
+      surfaceBackground: '#f7f7f4',
+    },
+    {
+      variant: 'music',
+      index: '02',
+      category: 'Sound',
+      title: 'Music Production',
+      description: 'Original production, arrangement and sonic direction shaped around mood and story.',
+      services: ['Production', 'Sound design'],
+      icon: 'music',
+      surfaceBackground: '#000',
+      dark: true,
+    },
+    {
+      variant: 'art',
+      index: '03',
+      category: 'Visual',
+      title: 'Art',
+      description: 'Expressive visual concepts and crafted artwork where curiosity leads the composition.',
+      services: ['Art direction', 'Illustration'],
+      icon: 'art',
+      imageSrc: '/art-zigzag-card.jpg',
+      imageAlt: '',
+    },
+  ];
 
   private get solariFlipTotal(): number {
     return this.solariFlipMs * 2 + 25;
@@ -65,6 +106,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private aboutTextRevealTweens: gsap.core.Tween[] = [];
   private aboutTextRevealReady = false;
   private aboutTextRevealPlayed = false;
+  private pageScrollTween: gsap.core.Tween | null = null;
 
   private triggerMobileNotesAnimation: (() => void) | null = null;
 
@@ -73,6 +115,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       this.perfLite = this.isPerformanceModeEnabled();
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
+      this.setupMotionChoreography();
       this.applyPerformanceClasses();
       this.setupSolariBoard();
       this.setupLocalTime();
@@ -100,6 +143,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       try { animation.kill(); } catch (_) {}
     });
     this.animations = [];
+    try { this.pageScrollTween?.kill(); } catch (_) {}
+    this.pageScrollTween = null;
 
     this.cleanupFns.forEach((fn) => {
       try { fn(); } catch (_) {}
@@ -112,6 +157,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   // ---------------------------------------------------------------------------
   // About Section — scroll-triggered box expansion
   // ---------------------------------------------------------------------------
+
+  private setupMotionChoreography(): void {
+    gsap.defaults({
+      overwrite: 'auto',
+    });
+  }
 
   private setupAboutReveal(): void {
     const section = document.querySelector<HTMLElement>('.about-section');
@@ -1633,11 +1684,46 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const target = document.getElementById(section);
     if (!target) return;
 
-    window.scrollTo({
-      top: target.getBoundingClientRect().top + window.pageYOffset,
-      left: 0,
-      behavior,
-    });
+    const currentY = window.scrollY || window.pageYOffset;
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const targetY = Math.min(
+      Math.max(0, target.getBoundingClientRect().top + currentY),
+      maxScroll
+    );
+
+    try { this.pageScrollTween?.kill(); } catch (_) {}
+
+    if (behavior === 'auto' || this.prefersReducedMotion()) {
+      window.scrollTo({ top: targetY, left: 0, behavior: 'auto' });
+      return;
+    }
+
+    const pageCanvas = document.querySelector<HTMLElement>('.page-canvas');
+    pageCanvas?.classList.add('is-section-transitioning');
+
+    this.pageScrollTween = this.track(gsap.to(window, {
+      duration: this.getPageScrollDuration(Math.abs(targetY - currentY)),
+      ease: this.motionEase,
+      scrollTo: {
+        y: targetY,
+        autoKill: false,
+      },
+      onComplete: () => {
+        pageCanvas?.classList.remove('is-section-transitioning');
+        this.pageScrollTween = null;
+      },
+      onInterrupt: () => {
+        pageCanvas?.classList.remove('is-section-transitioning');
+        this.pageScrollTween = null;
+      },
+    }));
+  }
+
+  private getPageScrollDuration(distance: number): number {
+    if (this.perfLite) return 0.72;
+
+    const viewportRatio = distance / Math.max(window.innerHeight, 1);
+    return gsap.utils.clamp(0.72, 1.28, 0.68 + viewportRatio * 0.16);
   }
 
   // ---------------------------------------------------------------------------

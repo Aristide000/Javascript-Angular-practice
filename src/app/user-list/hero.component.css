@@ -1325,12 +1325,56 @@
   will-change: transform;
 }
 
+.about-section-tab {
+  position: absolute;
+  top: clamp(24px, 3.6vh, 36px);
+  left: clamp(28px, 4.2vw, 58px);
+  z-index: 6;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  overflow: visible;
+  color: #111;
+  background: transparent;
+  pointer-events: none;
+}
+
+.about-section-tab::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  background: #050505;
+  transform-origin: center;
+  animation: aboutPinTick 1s linear infinite;
+}
+
+.about-section-tab span {
+  position: relative;
+  z-index: 1;
+  display: block;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(15px, 1.15vw, 19px);
+  font-weight: 620;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  text-shadow: none;
+  transform: none;
+}
+
+@keyframes aboutPinTick {
+  to { transform: rotate(360deg); }
+}
+
 .about-corner-marker {
   position: absolute;
   top: clamp(72px, 10vh, 104px);
   left: clamp(28px, 6.5vw, 120px);
   z-index: 4;
-  display: grid;
+  display: none;
   grid-template-columns: auto 1px auto minmax(44px, 1fr);
   align-items: center;
   column-gap: 12px;
@@ -3271,6 +3315,15 @@ button.site-scroll-text-reveal {
     height: max(100vh, 820px);
   }
 
+  .about-section-tab {
+    top: 26px;
+    left: clamp(22px, 5vw, 34px);
+  }
+
+  .about-section-tab span {
+    font-size: 16px;
+  }
+
   .about-profile-panel {
     padding: 0;
     overflow: hidden;
@@ -3332,6 +3385,10 @@ button.site-scroll-text-reveal {
 }
 
 @media (max-width: 560px) {
+  .about-section-tab span {
+    font-size: 14px;
+  }
+
   .about-profile-panel {
     padding: 0;
   }
@@ -4230,9 +4287,7 @@ button.site-scroll-text-reveal {
 }
 
 .work-services-index,
-.work-services-scroll-note,
-.work-card-meta,
-.work-card-copy li {
+.work-services-scroll-note {
   font-family: 'Space Mono', 'Courier New', monospace;
   text-transform: uppercase;
 }
@@ -4283,103 +4338,6 @@ button.site-scroll-text-reveal {
 .work-service-divider:nth-of-type(3) { left: 66.666%; }
 .work-service-divider:nth-of-type(4) { right: 0; }
 
-.work-service-card {
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-  color: #080808;
-  isolation: isolate;
-}
-
-.work-card-surface {
-  position: absolute;
-  z-index: -1;
-  inset: 0 2px 0 0;
-  background: #f7f7f4;
-  will-change: transform;
-}
-
-.work-service-card--music .work-card-surface { background: #fff; }
-.work-service-card--art .work-card-surface { right: 0; background: #f1f1ee; }
-
-.work-card-content {
-  position: relative;
-  display: grid;
-  grid-template-rows: auto minmax(84px, 1fr) auto;
-  gap: clamp(12px, 2vh, 24px);
-  height: 100%;
-  box-sizing: border-box;
-  padding: clamp(18px, 2.6vw, 38px);
-  will-change: transform, opacity;
-}
-
-.work-card-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: rgba(0, 0, 0, 0.48);
-  font-size: clamp(7px, 0.58vw, 9px);
-  font-weight: 700;
-  letter-spacing: 0.11em;
-}
-
-.work-card-icon {
-  align-self: center;
-  justify-self: center;
-  width: min(68%, 190px);
-  max-height: clamp(72px, 14vh, 142px);
-  overflow: visible;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.25;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  opacity: 0.84;
-}
-
-.work-card-copy {
-  align-self: end;
-}
-
-.work-card-copy h3 {
-  margin: 0;
-  color: #080808;
-  font-family: 'Manrope', 'Outfit', sans-serif;
-  font-size: clamp(23px, 2.6vw, 42px);
-  font-weight: 900;
-  line-height: 0.94;
-  letter-spacing: -0.055em;
-}
-
-.work-card-copy p {
-  max-width: 31ch;
-  margin: clamp(12px, 1.7vh, 18px) 0 0;
-  color: rgba(0, 0, 0, 0.58);
-  font-family: 'Manrope', 'Outfit', sans-serif;
-  font-size: clamp(10px, 0.78vw, 12px);
-  font-weight: 560;
-  line-height: 1.55;
-}
-
-.work-card-copy ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: clamp(12px, 2vh, 20px) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.work-card-copy li {
-  border: 1px solid rgba(0, 0, 0, 0.18);
-  border-radius: 999px;
-  padding: 5px 8px;
-  color: rgba(0, 0, 0, 0.58);
-  font-size: clamp(6px, 0.5vw, 8px);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-
 .work-services-scroll-note {
   justify-self: end;
   margin: 0;
@@ -4411,29 +4369,6 @@ button.site-scroll-text-reveal {
     line-height: 0.9;
   }
 
-  .work-card-content {
-    grid-template-rows: auto minmax(72px, 1fr) auto;
-    gap: 10px;
-    padding: 14px 9px 16px;
-  }
-
-  .work-card-meta span:last-child,
-  .work-card-copy p,
-  .work-card-copy ul {
-    display: none;
-  }
-
-  .work-card-icon {
-    width: 86%;
-    stroke-width: 1.6;
-  }
-
-  .work-card-copy h3 {
-    font-size: clamp(17px, 5.2vw, 25px);
-    line-height: 0.98;
-    overflow-wrap: anywhere;
-  }
-
   .work-service-divider {
     width: 1px;
   }
@@ -4441,9 +4376,7 @@ button.site-scroll-text-reveal {
 
 @media (prefers-reduced-motion: reduce) {
   .work-services-heading,
-  .work-service-divider,
-  .work-card-surface,
-  .work-card-content {
+  .work-service-divider {
     will-change: auto;
   }
 }

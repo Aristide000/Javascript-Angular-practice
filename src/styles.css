@@ -1,7 +1,37 @@
 :root {
+  --color-ink: #080808;
+  --color-ink-soft: rgba(8, 8, 8, 0.68);
+  --color-paper: #fffefa;
+  --color-paper-soft: #f7f7f4;
+  --color-night: #030303;
+  --color-night-soft: #101010;
+  --color-accent: #f1c400;
+  --font-ui: 'Manrope', 'Outfit', sans-serif;
+  --space-1: 3px;
+  --space-2: 6px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 56px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --layout-page-gutter: clamp(18px, 4vw, 60px);
+  --layout-content-max: 1440px;
+  --auto-layout-gap: var(--space-5);
+  --auto-layout-align: stretch;
+  --auto-layout-justify: start;
   --ui-scrollbar-size: 10px;
   --ui-scrollbar-active: rgba(255, 176, 0, 0.62);
   --ui-scrollbar-active-hover: rgba(255, 176, 0, 0.86);
+  --motion-choreography-ease: cubic-bezier(0.19, 1, 0.22, 1);
+  --motion-choreography-duration: 720ms;
+  --motion-choreography-fast: 420ms;
   --film-grain-opacity: 0.028;
   --film-grain-size: 64px;
   --film-grain-blend-mode: soft-light;
@@ -54,6 +84,46 @@ body::-webkit-scrollbar-thumb {
 
 body::-webkit-scrollbar-thumb:hover {
   background-color: var(--ui-scrollbar-active-hover);
+}
+
+/* Design system primitives -------------------------------------------------
+   Auto-layout utilities keep spacing and alignment consistent across reusable
+   components without forcing each section to invent its own one-off wrapper. */
+.ui-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: var(--auto-layout-align, stretch);
+  justify-content: var(--auto-layout-justify, start);
+  gap: var(--auto-layout-gap, var(--space-5));
+}
+
+.ui-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: var(--auto-layout-align, center);
+  justify-content: var(--auto-layout-justify, start);
+  gap: var(--auto-layout-gap, var(--space-4));
+}
+
+.ui-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    var(--auto-layout-columns, auto-fit),
+    minmax(min(100%, var(--auto-layout-min, 220px)), 1fr)
+  );
+  align-items: var(--auto-layout-align, stretch);
+  gap: var(--auto-layout-gap, var(--space-5));
+}
+
+.ui-frame {
+  width: min(var(--layout-content-max), calc(100% - var(--layout-page-gutter) * 2));
+  margin-inline: auto;
+}
+
+.ui-surface {
+  border-radius: var(--surface-radius, var(--radius-sm));
+  background: var(--surface-background, var(--color-paper));
+  color: var(--surface-color, var(--color-ink));
 }
 
 /* Work horizontal sequence */
@@ -146,22 +216,87 @@ body .page-canvas:not([data-theme='light']) .work-services-panel::after {
    The app-wide header begins as a full-width landing navigation, then folds
    into one compact capsule once the visitor leaves the hero. */
 body .page-canvas .hero-nav {
+  --nav-glide-ease: var(--motion-choreography-ease);
+  --nav-row-height: 32px;
+  --nav-logo-size: 28px;
+
   left: 0;
   right: 0;
   width: calc(100% - 120px);
   margin-inline: auto;
-  padding: 20px 0 14px;
+  padding: 5px 10px;
   border: 1px solid transparent;
   border-radius: 12px;
   translate: none;
+  transform: translate3d(0, 0, 0);
+  will-change: top, width, padding, column-gap, border-radius, background-color, backdrop-filter;
   transition:
-    top 460ms cubic-bezier(0.22, 1, 0.36, 1),
-    width 560ms cubic-bezier(0.22, 1, 0.36, 1),
-    padding 460ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 320ms ease,
-    border-radius 460ms cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 320ms ease,
-    box-shadow 420ms ease;
+    top 720ms var(--nav-glide-ease),
+    width 760ms var(--nav-glide-ease),
+    padding 680ms var(--nav-glide-ease),
+    column-gap 680ms var(--nav-glide-ease),
+    border-color 360ms ease,
+    border-radius 720ms var(--nav-glide-ease),
+    background-color 460ms ease,
+    box-shadow 520ms ease,
+    backdrop-filter 520ms ease,
+    -webkit-backdrop-filter 520ms ease;
+}
+
+body .page-canvas .hero-nav .logo {
+  transition:
+    width 620ms var(--nav-glide-ease),
+    height 620ms var(--nav-glide-ease);
+}
+
+body .page-canvas .hero-nav .logo-image {
+  transition:
+    width 620ms var(--nav-glide-ease),
+    height 620ms var(--nav-glide-ease),
+    opacity 250ms ease,
+    filter 250ms ease,
+    transform 250ms ease;
+}
+
+body .page-canvas .hero-nav .nav-links,
+body .page-canvas .hero-nav .nav-actions {
+  transition:
+    gap 620ms var(--nav-glide-ease),
+    min-height 620ms var(--nav-glide-ease);
+}
+
+body .page-canvas .hero-nav .nav-link {
+  transition:
+    height 620ms var(--nav-glide-ease),
+    color 300ms ease,
+    font-size 480ms var(--nav-glide-ease),
+    letter-spacing 480ms var(--nav-glide-ease);
+}
+
+body .page-canvas .hero-nav .theme-toggle {
+  transition:
+    width 620ms var(--nav-glide-ease),
+    height 620ms var(--nav-glide-ease),
+    background 240ms ease,
+    border-color 240ms ease,
+    color 240ms ease,
+    transform 240ms ease;
+}
+
+body .page-canvas .hero-nav .contact-expander,
+body .page-canvas .hero-nav .nav-cta {
+  transition:
+    width 620ms var(--nav-glide-ease),
+    min-width 620ms var(--nav-glide-ease),
+    height 620ms var(--nav-glide-ease),
+    min-height 620ms var(--nav-glide-ease),
+    background 240ms ease,
+    border-color 240ms ease,
+    transform 240ms ease;
+}
+
+body .page-canvas.is-section-transitioning .hero-nav {
+  transition-timing-function: var(--motion-choreography-ease);
 }
 
 body .page-canvas .hero-nav.is-scrolled {
@@ -304,6 +439,22 @@ body .page-canvas[data-theme='light'] .hero-nav.is-scrolled {
 
   body .page-canvas .hero-nav.is-scrolled .contact-toggle-line {
     width: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .page-canvas .hero-nav,
+  body .page-canvas .hero-nav :is(
+    .logo,
+    .logo-image,
+    .nav-links,
+    .nav-actions,
+    .nav-link,
+    .theme-toggle,
+    .contact-expander,
+    .nav-cta
+  ) {
+    transition-duration: 1ms !important;
   }
 }
 
