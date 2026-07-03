@@ -32,6 +32,12 @@
   --motion-choreography-ease: cubic-bezier(0.19, 1, 0.22, 1);
   --motion-choreography-duration: 720ms;
   --motion-choreography-fast: 420ms;
+  --micro-ease: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --micro-fast: 180ms;
+  --micro-medium: 520ms;
+  --micro-highlight: rgba(255, 176, 0, 0.22);
+  --micro-highlight-soft: rgba(255, 255, 255, 0.12);
+  --micro-focus-ring: rgba(255, 176, 0, 0.52);
   --film-grain-opacity: 0.028;
   --film-grain-size: 64px;
   --film-grain-blend-mode: soft-light;
@@ -124,6 +130,132 @@ body::-webkit-scrollbar-thumb:hover {
   border-radius: var(--surface-radius, var(--radius-sm));
   background: var(--surface-background, var(--color-paper));
   color: var(--surface-color, var(--color-ink));
+}
+
+/* Microinteraction system --------------------------------------------------
+   Shared hover, focus and click feedback for controls, cards and form fields. */
+.has-microinteractions :is(a[href], button, input, textarea, select, .ui-micro-card) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ui-micro-control,
+.ui-micro-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.ui-micro-ripple-host {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.ui-micro-control::before,
+.ui-micro-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: transparent;
+  transition: opacity var(--micro-fast) ease;
+}
+
+.ui-micro-control:is(:hover, :focus-visible, .is-micro-focused)::before,
+.ui-micro-card:is(:hover, :focus-within, .is-micro-focused)::after {
+  opacity: 1;
+}
+
+.ui-micro-ripple {
+  position: absolute;
+  left: var(--micro-ripple-x);
+  top: var(--micro-ripple-y);
+  z-index: 0;
+  width: var(--micro-ripple-size);
+  height: var(--micro-ripple-size);
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.16;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  animation: uiMicroRipple var(--micro-medium) var(--micro-ease) forwards;
+}
+
+.ui-micro-ripple-host > :not(.ui-micro-ripple) {
+  position: relative;
+  z-index: 1;
+}
+
+.ui-micro-field {
+  transition:
+    border-color var(--micro-fast) ease,
+    background-color var(--micro-fast) ease,
+    box-shadow var(--micro-fast) ease;
+}
+
+.ui-micro-field:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 176, 0, 0.12);
+}
+
+.ui-micro-ripple-host.is-micro-pressed {
+  transform: translateY(1px) scale(0.992);
+}
+
+@keyframes uiMicroRipple {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ui-micro-card {
+    transition:
+      border-color var(--micro-fast) ease,
+      box-shadow var(--micro-fast) ease,
+      filter var(--micro-fast) ease,
+      background-color var(--micro-fast) ease;
+  }
+
+  .skills-runway-row.ui-micro-card {
+    border-radius: var(--radius-xs);
+  }
+
+  .skills-runway-row.ui-micro-card:hover {
+    border-bottom-color: rgba(185, 151, 48, 0.35);
+    background: rgba(255, 255, 255, 0.026);
+  }
+
+  .skills-runway-row.ui-micro-card:hover .skills-row-name {
+    color: #fffaf0;
+  }
+
+  .skills-runway-row.ui-micro-card:hover .skills-bar-fill {
+    filter: saturate(1.18);
+    box-shadow:
+      0 0 18px rgba(201, 169, 72, 0.5),
+      0 0 2px rgba(255, 255, 255, 0.42);
+  }
+
+  .tech-stack-card.ui-micro-card:hover {
+    filter: brightness(1.018);
+    box-shadow:
+      0 26px 70px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-micro-control::before,
+  .ui-micro-card::after,
+  .ui-micro-field,
+  .ui-micro-ripple-host,
+  .ui-micro-ripple {
+    animation: none !important;
+    transition-duration: 1ms !important;
+  }
 }
 
 /* Work horizontal sequence */
@@ -1110,27 +1242,34 @@ body .page-canvas .hero::before {
 }
 
 body .page-canvas .hero::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  z-index: 1;
-  height: clamp(82px, 15vh, 146px);
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.025) 18%,
-    rgba(0, 0, 0, 0.1) 38%,
-    rgba(0, 0, 0, 0.28) 58%,
-    rgba(0, 0, 0, 0.58) 78%,
-    rgba(0, 0, 0, 0.86) 92%,
-    #000 100%
-  );
+  content: none;
 }
 
-body .page-canvas .about-section::before,
+body .page-canvas .about-section {
+  --about-background-radius: clamp(22px, 3vw, 42px);
+
+  background: #ffcc01;
+  border-radius: 0 0 var(--about-background-radius) var(--about-background-radius);
+  color: #111;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+body .page-canvas .about-section::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--landing-grain-texture);
+  background-repeat: repeat;
+  background-size: 72px 72px;
+  opacity: 0.72;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  animation: landing-grain-shift 0.48s steps(1, end) infinite;
+}
+
 body .page-canvas .about-section::after {
   content: none;
 }
@@ -1252,7 +1391,7 @@ body .page-canvas .hero-nav:not(.is-scrolled) .contact-toggle-line {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body .page-canvas :is(.hero, .contact-section)::before {
+  body .page-canvas :is(.hero, .about-section, .contact-section)::before {
     animation: none;
     opacity: 0.1;
     transform: none;

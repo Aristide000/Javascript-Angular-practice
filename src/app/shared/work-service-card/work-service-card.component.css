@@ -8,6 +8,9 @@
   overflow: hidden;
   color: var(--color-ink, #080808);
   isolation: isolate;
+  transition:
+    filter var(--micro-fast, 180ms) ease,
+    box-shadow var(--micro-fast, 180ms) ease;
 }
 
 .work-card-surface {
@@ -15,6 +18,9 @@
   z-index: -1;
   inset: 0 2px 0 0;
   background: var(--color-paper-soft, #f7f7f4);
+  transition:
+    filter var(--micro-fast, 180ms) ease,
+    transform var(--micro-fast, 180ms) var(--micro-ease, ease);
   will-change: transform;
 }
 
@@ -62,6 +68,9 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   opacity: 0.84;
+  transition:
+    opacity var(--micro-fast, 180ms) ease,
+    transform var(--micro-fast, 180ms) var(--micro-ease, ease);
 }
 
 .work-card-icon--image {
@@ -85,6 +94,9 @@
   font-weight: 900;
   line-height: 0.94;
   letter-spacing: -0.055em;
+  transition:
+    color var(--micro-fast, 180ms) ease,
+    transform var(--micro-fast, 180ms) var(--micro-ease, ease);
 }
 
 .work-card-copy p {
@@ -116,6 +128,10 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  transition:
+    border-color var(--micro-fast, 180ms) ease,
+    color var(--micro-fast, 180ms) ease,
+    background-color var(--micro-fast, 180ms) ease;
 }
 
 .work-card-content--dark {
@@ -137,6 +153,38 @@
 .work-card-content--dark .work-card-copy li {
   border-color: rgba(245, 244, 239, 0.24);
   color: rgba(245, 244, 239, 0.68);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-service-card:hover {
+    filter: saturate(1.03);
+  }
+
+  .work-service-card:hover .work-card-surface {
+    filter: brightness(0.985);
+  }
+
+  .work-service-card:hover .work-card-icon {
+    opacity: 0.96;
+    transform: translateY(-4px) scale(1.025);
+  }
+
+  .work-service-card:hover .work-card-copy h3 {
+    transform: translateY(-2px);
+  }
+
+  .work-service-card:hover .work-card-copy li {
+    border-color: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.035);
+    color: rgba(0, 0, 0, 0.74);
+  }
+
+  .work-card-content--dark:hover .work-card-copy li,
+  .work-service-card:hover .work-card-content--dark .work-card-copy li {
+    border-color: rgba(245, 244, 239, 0.36);
+    background: rgba(245, 244, 239, 0.07);
+    color: rgba(245, 244, 239, 0.82);
+  }
 }
 
 @media (max-width: 760px) {
@@ -170,7 +218,11 @@
 
 @media (prefers-reduced-motion: reduce) {
   .work-card-surface,
-  .work-card-content {
+  .work-card-content,
+  .work-card-icon,
+  .work-card-copy h3,
+  .work-card-copy li {
     will-change: auto;
+    transition-duration: 1ms;
   }
 }

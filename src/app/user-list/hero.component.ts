@@ -124,6 +124,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       this.setupThemeToggle();
       this.setupNavScrolling();
       this.setupContactForms();
+      this.setupMicroInteractions();
       this.setupAboutReveal();
       this.setupWorkHorizontalScroll();
 
@@ -161,6 +162,146 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private setupMotionChoreography(): void {
     gsap.defaults({
       overwrite: 'auto',
+    });
+  }
+
+  private setupMicroInteractions(): void {
+    const root = document.querySelector<HTMLElement>('.page-canvas');
+    if (!root) return;
+
+    const targetSelector = [
+      'a[href]',
+      'button',
+      'input',
+      'textarea',
+      'select',
+      '.service-link',
+      '.work-service-card',
+      '.work-experience-card',
+      '.tech-stack-card',
+      '.skills-runway-row',
+      '.contact-form-panel',
+      '.notes-widget-panel',
+    ].join(', ');
+    const cardSelector = [
+      '.service-link',
+      '.work-service-card',
+      '.work-experience-card',
+      '.tech-stack-card',
+      '.skills-runway-row',
+      '.contact-form-panel',
+      '.notes-widget-panel',
+    ].join(', ');
+    const controlSelector = 'a[href], button';
+    const fieldSelector = 'input, textarea, select';
+    const reducedMotion = this.prefersReducedMotion();
+    const pressedTargets = new Set<HTMLElement>();
+
+    root.classList.add('has-microinteractions');
+
+    const hydrateMicroTargets = (scope: ParentNode = root): void => {
+      scope.querySelectorAll<HTMLElement>(targetSelector).forEach((element) => {
+        element.classList.add('ui-micro-target');
+
+        if (element.matches(controlSelector)) {
+          element.classList.add('ui-micro-control', 'ui-micro-ripple-host');
+        }
+
+        if (element.matches(fieldSelector)) {
+          element.classList.add('ui-micro-field');
+        }
+
+        if (element.matches(cardSelector)) {
+          element.classList.add('ui-micro-card');
+        }
+      });
+    };
+
+    const getMicroTarget = (target: EventTarget | null): HTMLElement | null => {
+      if (!(target instanceof Element)) return null;
+
+      const candidate = target.closest<HTMLElement>('.ui-micro-target, .ui-micro-card');
+      return candidate && root.contains(candidate) ? candidate : null;
+    };
+
+    const clearPressedTargets = (): void => {
+      pressedTargets.forEach((target) => target.classList.remove('is-micro-pressed'));
+      pressedTargets.clear();
+    };
+
+    const onPointerDown = (event: PointerEvent): void => {
+      if (event.button !== 0 || reducedMotion || !(event.target instanceof Element)) return;
+
+      const target = event.target.closest<HTMLElement>('.ui-micro-ripple-host');
+      if (!target || !root.contains(target) || target.matches(':disabled, [aria-disabled="true"]')) return;
+
+      const rect = target.getBoundingClientRect();
+      const rippleSize = Math.max(rect.width, rect.height) * 2.35;
+      const ripple = document.createElement('span');
+
+      ripple.className = 'ui-micro-ripple';
+      ripple.style.setProperty('--micro-ripple-x', `${event.clientX - rect.left}px`);
+      ripple.style.setProperty('--micro-ripple-y', `${event.clientY - rect.top}px`);
+      ripple.style.setProperty('--micro-ripple-size', `${rippleSize}px`);
+
+      target.classList.add('is-micro-pressed');
+      pressedTargets.add(target);
+      target.appendChild(ripple);
+
+      ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
+    };
+
+    const onFocusIn = (event: FocusEvent): void => {
+      const target = getMicroTarget(event.target);
+      target?.classList.add('is-micro-focused');
+
+      if (event.target instanceof Element) {
+        event.target.closest('label')?.classList.add('is-micro-focused');
+      }
+    };
+
+    const onFocusOut = (event: FocusEvent): void => {
+      const target = getMicroTarget(event.target);
+      target?.classList.remove('is-micro-focused');
+
+      if (event.target instanceof Element) {
+        event.target.closest('label')?.classList.remove('is-micro-focused');
+      }
+    };
+
+    hydrateMicroTargets();
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof Element) {
+            if (node.matches(targetSelector)) {
+              hydrateMicroTargets(node.parentNode ?? root);
+            } else {
+              hydrateMicroTargets(node);
+            }
+          }
+        });
+      });
+    });
+
+    observer.observe(root, { childList: true, subtree: true });
+
+    root.addEventListener('pointerdown', onPointerDown);
+    root.addEventListener('pointerup', clearPressedTargets);
+    root.addEventListener('pointercancel', clearPressedTargets);
+    root.addEventListener('focusin', onFocusIn);
+    root.addEventListener('focusout', onFocusOut);
+
+    this.cleanupFns.push(() => {
+      observer.disconnect();
+      clearPressedTargets();
+      root.classList.remove('has-microinteractions');
+      root.removeEventListener('pointerdown', onPointerDown);
+      root.removeEventListener('pointerup', clearPressedTargets);
+      root.removeEventListener('pointercancel', clearPressedTargets);
+      root.removeEventListener('focusin', onFocusIn);
+      root.removeEventListener('focusout', onFocusOut);
     });
   }
 
@@ -420,7 +561,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (platform) {
       gsap.set(platform, {
         autoAlpha                 : 1,
-        '--about-platform-bg'     : '#0b0e13',
+        '--about-platform-bg'     : 'transparent',
         '--about-platform-wash'   : 'rgba(0, 0, 0, 0)',
         '--about-platform-border' : 'rgba(255, 255, 255, 0)',
         '--about-platform-shadow' : 'rgba(0, 0, 0, 0)',
@@ -578,7 +719,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       tl.set(platform, {
         ...states.compact,
         autoAlpha                 : 1,
-        '--about-platform-bg'     : '#0b0e13',
+        '--about-platform-bg'     : 'transparent',
         '--about-platform-wash'   : 'rgba(0, 0, 0, 0)',
         '--about-platform-border' : 'rgba(255, 255, 255, 0)',
         '--about-platform-shadow' : 'rgba(0, 0, 0, 0)',
@@ -672,10 +813,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
           scaleY                    : compactScaleY,
           force3D                   : true,
           autoAlpha                 : 1,
-          '--about-platform-bg'     : '#0b0e13',
+          '--about-platform-bg'     : 'transparent',
           '--about-platform-wash'   : 'rgba(0, 0, 0, 0)',
-          '--about-platform-border' : 'rgba(255, 255, 255, 0.72)',
-          '--about-platform-shadow' : 'rgba(0, 0, 0, 0.42)',
+          '--about-platform-border' : 'rgba(255, 255, 255, 0)',
+          '--about-platform-shadow' : 'rgba(0, 0, 0, 0)',
         }, 0);
         tl.to(platform, {
           scaleX  : 1,
@@ -792,9 +933,9 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     // ── Phase 2: platform warms up (dark → slightly lighter) ─────────────────
     if (platform) {
       tl.to(platform, {
-        '--about-platform-bg'     : '#211f1a',
-        '--about-platform-border' : 'rgba(255, 255, 255, 0.14)',
-        '--about-platform-shadow' : 'rgba(0, 0, 0, 0.12)',
+        '--about-platform-bg'     : 'transparent',
+        '--about-platform-border' : 'rgba(255, 255, 255, 0)',
+        '--about-platform-shadow' : 'rgba(0, 0, 0, 0)',
         duration                  : 0.46 * speed,
         ease                      : 'none',
       }, 0.88 * speed);
