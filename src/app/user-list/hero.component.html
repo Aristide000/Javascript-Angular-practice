@@ -61,6 +61,14 @@
     </div>
   </div>
 
+  <button type="button" class="side-wall-notch" aria-label="Open chat box" aria-expanded="false" data-side-chat-toggle>
+    <svg class="side-wall-notch-frame" viewBox="0 0 36 220" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path d="M36 21C34.9 45 31.2 58.2 22.8 64.6C15.4 70.2 4 68.7 1.2 84.7C0.4 89.4 0 94.5 0 100.3V119.7C0 125.5 0.4 130.6 1.2 135.3C4 151.3 15.4 149.8 22.8 155.4C31.2 161.8 34.9 175 36 199V21Z" />
+      <text class="side-wall-notch-svg-label side-wall-notch-svg-label--cta" x="16.2" y="110" text-anchor="middle" dominant-baseline="middle" textLength="48" lengthAdjust="spacingAndGlyphs" transform="rotate(-90 16.2 110)">Talk to me</text>
+      <text class="side-wall-notch-svg-label side-wall-notch-svg-label--time" x="16.2" y="110" text-anchor="middle" dominant-baseline="middle" textLength="48" lengthAdjust="spacingAndGlyphs" transform="rotate(-90 16.2 110)" data-side-notch-time>--:--:--</text>
+    </svg>
+  </button>
+
   <nav class="hero-nav" aria-label="Primary navigation">
     <div class="logo">
       <img src="/aristide-mark-white.svg" alt="Iraguha Aristide logo" class="logo-image">
@@ -141,7 +149,26 @@
     </div>
 
     <div class="notes-widget">
-      <button type="button" class="notes-widget-toggle" aria-label="Open chat box">Talk to me</button>
+      <svg class="notes-widget-goo-filter" aria-hidden="true" focusable="false">
+        <filter id="chat-gooey">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
+            result="goo"
+          />
+          <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+      </svg>
+      <span class="notes-widget-morph-layer" aria-hidden="true">
+        <span class="notes-widget-morph-blob notes-widget-morph-blob--button"></span>
+        <span class="notes-widget-morph-blob notes-widget-morph-blob--bridge"></span>
+        <span class="notes-widget-morph-blob notes-widget-morph-blob--panel"></span>
+      </span>
+      <button type="button" class="notes-widget-toggle" aria-label="Open chat box">
+        <span class="notes-widget-toggle-label">Talk to me</span>
+      </button>
       <div class="notes-widget-panel chatbox" role="dialog" aria-label="Chat with Aristide's assistant" aria-hidden="true">
         <div class="chatbox-header">
           <div class="chatbox-avatar" aria-hidden="true">

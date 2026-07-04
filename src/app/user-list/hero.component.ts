@@ -49,7 +49,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly solariFlipMs = 105;
   private readonly solariMisfireChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*?';
   private readonly themeStorageKey = 'aristide-portfolio-theme';
-  private readonly motionEase = 'power3.inOut';
+  private readonly motionEase = 'expo.inOut';
   public readonly workServices: readonly WorkServiceCard[] = [
     {
       variant: 'web',
@@ -161,6 +161,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
   private setupMotionChoreography(): void {
     gsap.defaults({
+      ease: this.motionEase,
       overwrite: 'auto',
     });
   }
@@ -1318,6 +1319,46 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     gsap.set(techStackCards, { autoAlpha: reducedMotion ? 1 : 0, yPercent: reducedMotion ? 0 : 115 });
     gsap.set(techStackMarquees, { autoAlpha: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : 16 });
 
+    let processCardsRevealed = reducedMotion;
+    const processRevealTimeline = !reducedMotion
+      ? this.track(gsap.timeline({
+          paused  : true,
+          defaults: {
+            overwrite: 'auto',
+          },
+        })
+          .to(techStackCards, {
+            autoAlpha: 1,
+            yPercent : 0,
+            duration : 0.74,
+            stagger  : 0.11,
+            ease     : 'expo.out',
+          }, 0)
+          .to(techStackMarquees, {
+            autoAlpha: 1,
+            y        : 0,
+            duration : 0.42,
+            stagger  : 0.07,
+            ease     : 'power2.out',
+          }, 0.34))
+      : null;
+
+    const resetProcessCards = (): void => {
+      if (reducedMotion || !processCardsRevealed) return;
+
+      processCardsRevealed = false;
+      processRevealTimeline?.pause(0);
+      gsap.set(techStackCards, { autoAlpha: 0, yPercent: 115 });
+      gsap.set(techStackMarquees, { autoAlpha: 0, y: 16 });
+    };
+
+    const revealProcessCards = (): void => {
+      if (reducedMotion || processCardsRevealed) return;
+
+      processCardsRevealed = true;
+      processRevealTimeline?.restart();
+    };
+
     const timeline = this.track(gsap.timeline({
       scrollTrigger: {
         id                 : 'work-horizontal-scroll',
@@ -1329,10 +1370,24 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         anticipatePin      : 1,
         invalidateOnRefresh: true,
         onUpdate           : (self) => {
+          const currentX = Math.abs(Number(gsap.getProperty(track, 'x')) || 0);
+          const processRevealX = Math.max(
+            getPanelOffset(Math.max(0, panels.length - 2)),
+            getTravelDistance() * 0.78
+          );
+          const processResetX = Math.max(0, processRevealX - Math.max(window.innerWidth * 0.24, 220));
+          const isProcessActive = self.isActive && currentX >= processRevealX;
+
           section.classList.toggle(
             'is-process-active',
-            self.isActive && self.progress >= 0.72
+            isProcessActive
           );
+
+          if (isProcessActive) {
+            revealProcessCards();
+          } else if (currentX < processResetX) {
+            resetProcessCards();
+          }
         },
       },
     }));
@@ -1435,23 +1490,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         ease     : 'power3.out',
       }, reducedMotion ? 1.52 : 3.4);
     }
-    if (!reducedMotion) {
-      timeline
-        .to(techStackCards, {
-          autoAlpha: 1,
-          yPercent : 0,
-          duration : 0.56,
-          stagger  : 0.12,
-          ease     : 'power3.out',
-        }, 3.62)
-        .to(techStackMarquees, {
-          autoAlpha: 1,
-          y        : 0,
-          duration : 0.34,
-          stagger  : 0.08,
-          ease     : 'power2.out',
-        }, 4.0);
-    }
     timeline.to({}, { duration: reducedMotion ? 0.12 : 0.28 });
 
     const titleTween = title
@@ -1485,6 +1523,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       try { ScrollTrigger.getById('work-title-reveal')?.kill(); } catch (_) {}
       try { timeline.kill(); } catch (_) {}
       try { titleTween?.kill(); } catch (_) {}
+      try { processRevealTimeline?.kill(); } catch (_) {}
       section.classList.remove('is-process-active');
       gsap.set([
         track,
@@ -1565,6 +1604,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   }
 
   private setupNavScrolling(): void {
+    const pageCanvas = document.querySelector<HTMLElement>('.page-canvas');
     const heroNav = document.querySelector<HTMLElement>('.hero-nav');
     const navLinks = Array.from(
       document.querySelectorAll<HTMLAnchorElement>('.nav-link[data-section]')
@@ -1637,7 +1677,14 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       });
 
       setActiveLink(activeSection);
+      const firstPostHomeTop = navSectionOffsets
+        .filter(({ section }) => section !== 'home')
+        .reduce((minTop, { top }) => Math.min(minTop, top), Number.POSITIVE_INFINITY);
+      const hasPassedHome = Number.isFinite(firstPostHomeTop)
+        ? scrollY >= firstPostHomeTop - 1
+        : activeSection !== 'home';
       const notchThreshold = Math.min(64, Math.max(24, window.innerHeight * 0.05));
+      pageCanvas?.classList.toggle('has-side-wall-notch', hasPassedHome);
       heroNav?.classList.toggle(
         'is-scrolled',
         scrollY > notchThreshold || activeSection !== 'home'
@@ -1724,6 +1771,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       if (contactToggle) contactToggle.removeEventListener('click', onContactToggleClick);
       contactPopupCloseButtons.forEach(button => button.removeEventListener('click', onContactPopupClose));
       document.removeEventListener('keydown', onContactPopupKeydown);
+      pageCanvas?.classList.remove('has-side-wall-notch');
       document.body.style.overflow = '';
     });
   }
@@ -1864,7 +1912,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (this.perfLite) return 0.72;
 
     const viewportRatio = distance / Math.max(window.innerHeight, 1);
-    return gsap.utils.clamp(0.72, 1.28, 0.68 + viewportRatio * 0.16);
+    return gsap.utils.clamp(0.86, 1.46, 0.78 + viewportRatio * 0.2);
   }
 
   // ---------------------------------------------------------------------------
@@ -2118,6 +2166,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const widget = document.querySelector<HTMLElement>('.notes-widget');
     const panel  = document.querySelector<HTMLElement>('.notes-widget-panel');
     const toggle = widget?.querySelector<HTMLButtonElement>('.notes-widget-toggle') ?? null;
+    const sideToggle = document.querySelector<HTMLButtonElement>('[data-side-chat-toggle]');
     const closeButton = panel?.querySelector<HTMLButtonElement>('.chatbox-close') ?? null;
     const chatBody = panel?.querySelector<HTMLElement>('.chatbox-body') ?? null;
     const introMessage = panel?.querySelector<HTMLElement>('.chatbox-message--intro') ?? null;
@@ -2133,6 +2182,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     let isWaitingForReply = false;
     let hasTypedIntroMessage = false;
     let introTypewriterTimeout = 0;
+    let morphTimer = 0;
     const chatHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
     const introText = String(introMessage?.textContent ?? '').replace(/\s+/g, ' ').trim();
 
@@ -2142,9 +2192,32 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     const setOpen = (nextOpen: boolean): void => {
       isOpen = nextOpen;
-      panel.classList.toggle('notes-widget-panel--visible', isOpen);
-      panel.setAttribute('aria-hidden', String(!isOpen));
-      toggle.setAttribute('aria-expanded', String(isOpen));
+      window.clearTimeout(morphTimer);
+
+      widget.classList.remove('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--closing');
+      if (isOpen) {
+        widget.classList.add('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--open');
+        panel.classList.add('notes-widget-panel--visible');
+        panel.setAttribute('aria-hidden', 'false');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Close chat box');
+        sideToggle?.setAttribute('aria-expanded', 'true');
+        sideToggle?.setAttribute('aria-label', 'Close chat box');
+      } else {
+        widget.classList.add('notes-widget--morphing', 'notes-widget--closing');
+        widget.classList.remove('notes-widget--open');
+        panel.classList.remove('notes-widget-panel--visible');
+        panel.setAttribute('aria-hidden', 'true');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open chat box');
+        sideToggle?.setAttribute('aria-expanded', 'false');
+        sideToggle?.setAttribute('aria-label', 'Open chat box');
+      }
+
+      morphTimer = window.setTimeout(() => {
+        widget.classList.remove('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--closing');
+        morphTimer = 0;
+      }, this.prefersReducedMotion() ? 1 : 900);
 
       if (isOpen) {
         startIntroTypewriter();
@@ -2337,14 +2410,19 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     };
 
     toggle.setAttribute('aria-expanded', 'false');
+    sideToggle?.setAttribute('aria-expanded', 'false');
     this.triggerMobileNotesAnimation = null;
     toggle.addEventListener('click', onToggleClick);
+    sideToggle?.addEventListener('click', onToggleClick);
     if (closeButton) closeButton.addEventListener('click', onCloseClick);
     if (chatForm) chatForm.addEventListener('submit', onChatSubmit);
 
     this.cleanupFns.push(() => {
       window.clearTimeout(introTypewriterTimeout);
+      window.clearTimeout(morphTimer);
+      widget.classList.remove('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--closing');
       toggle.removeEventListener('click', onToggleClick);
+      sideToggle?.removeEventListener('click', onToggleClick);
       if (closeButton) closeButton.removeEventListener('click', onCloseClick);
       if (chatForm) chatForm.removeEventListener('submit', onChatSubmit);
     });
@@ -2934,13 +3012,18 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   }
 
   private setupLocalTime(): void {
-    const el = document.querySelector<HTMLElement>('.local-time-value');
-    if (!el) return;
+    const timeEls = Array.from(
+      document.querySelectorAll<HTMLElement>('.local-time-value, [data-side-notch-time]')
+    );
+    if (timeEls.length === 0) return;
 
     const pad  = (n: number) => String(n).padStart(2, '0');
     const tick = () => {
       const t = new Date();
-      el.textContent = `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;
+      const value = `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;
+      timeEls.forEach((el) => {
+        el.textContent = value;
+      });
     };
 
     tick();

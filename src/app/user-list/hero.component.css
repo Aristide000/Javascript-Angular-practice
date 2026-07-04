@@ -794,22 +794,32 @@
 }
 
 .notes-widget {
-  position: absolute;
-  right: clamp(52px, 8vw, 168px);
-  bottom: 104px;
-  z-index: 4;
-  width: min(100%, 300px);
+  --chat-morph-duration: 820ms;
+  --chat-close-duration: 820ms;
+  --chat-morph-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --chat-panel-radius: 16px;
+
+  position: fixed;
+  right: clamp(24px, 5vw, 84px);
+  bottom: 100px;
+  z-index: 90;
+  width: min(calc(100vw - 48px), 300px);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  isolation: isolate;
 }
 
 .notes-widget-toggle {
+  position: relative;
+  z-index: 4;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 92px;
+  min-height: 28px;
   padding: 6px 14px;
+  overflow: hidden;
   border-radius: 999px;
   border: 1px solid rgba(255, 176, 0, 0.34);
   background: #050505;
@@ -822,9 +832,12 @@
   font-weight: 600;
   color: #ffb000;
   cursor: pointer;
+  transform-origin: 100% 50%;
   transition:
-    transform 0.25s ease,
+    opacity 180ms ease,
+    transform var(--chat-morph-duration) var(--chat-morph-ease),
     border-color 0.25s ease,
+    border-radius var(--chat-morph-duration) var(--chat-morph-ease),
     background 0.25s ease,
     box-shadow 0.25s ease,
     color 0.25s ease;
@@ -833,12 +846,14 @@
 .notes-widget-panel {
   position: absolute;
   right: 0;
-  bottom: calc(100% + 14px);
+  bottom: 0;
+  z-index: 3;
   width: min(100vw - 36px, 300px);
   height: min(72vh, 390px);
   box-sizing: border-box;
   padding: 12px;
-  border-radius: 12px;
+  overflow: hidden;
+  border-radius: 999px;
   background: rgba(18, 18, 19, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.09);
   backdrop-filter: blur(18px);
@@ -846,15 +861,38 @@
     0 24px 60px rgba(0, 0, 0, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
   opacity: 0;
-  transform: translateY(8px);
+  clip-path: inset(0 0 0 0 round 999px);
+  transform: translate3d(0, 0, 0) scale(0.31, 0.075);
+  transform-origin: 100% 100%;
   pointer-events: none;
-  transition: opacity 0.22s ease, transform 0.22s ease;
+  transition:
+    opacity 210ms ease,
+    clip-path var(--chat-morph-duration) var(--chat-morph-ease),
+    border-radius var(--chat-morph-duration) var(--chat-morph-ease),
+    transform var(--chat-morph-duration) var(--chat-morph-ease),
+    box-shadow var(--chat-morph-duration) var(--chat-morph-ease);
+}
+
+.notes-widget-panel > * {
+  opacity: 0;
+  transform: translateY(10px) scale(0.985);
+  transition:
+    opacity 220ms ease,
+    transform 360ms cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 .notes-widget-panel--visible {
   opacity: 1;
-  transform: translateY(0);
+  border-radius: var(--chat-panel-radius);
+  clip-path: inset(0 0 0 0 round var(--chat-panel-radius));
+  transform: translate3d(0, 0, 0) scale(1);
   pointer-events: auto;
+}
+
+.notes-widget-panel--visible > * {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: 240ms;
 }
 
 .notes-widget:hover .notes-widget-toggle,
@@ -869,11 +907,14 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.notes-widget .notes-widget-toggle[aria-expanded="true"] {
-  transform: translateY(-2px);
+.notes-widget--open .notes-widget-toggle {
+  opacity: 0;
+  transform: translate3d(0, -7px, 0) scale(1.45, 0.72);
   border-color: rgba(255, 176, 0, 0.82);
+  border-radius: 18px;
   background: #050505;
   color: #ffb000;
+  pointer-events: none;
   box-shadow:
     0 0 0 1px rgba(255, 176, 0, 0.18),
     0 12px 28px rgba(0, 0, 0, 0.34),
@@ -1162,7 +1203,7 @@
 .scroll-hint {
   appearance: none;
   position: absolute;
-  bottom: 36px;
+  bottom: clamp(92px, 13vh, 132px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -1175,7 +1216,7 @@
   color: inherit;
   font: inherit;
   cursor: pointer;
-  z-index: 3;
+  z-index: 8;
   transition: opacity 0.22s ease, transform 0.22s ease;
 }
 
@@ -4027,19 +4068,26 @@ button.site-scroll-text-reveal {
   .hero { padding: 0 28px; }
 
   .notes-widget {
-    position: static;
-    width: min(100%, 560px);
-    margin: 36px auto 0;
-    align-items: stretch;
+    position: fixed;
+    right: 24px;
+    bottom: 30px;
+    width: min(calc(100vw - 48px), 320px);
+    margin: 0;
+    align-items: flex-end;
   }
 
   .notes-widget-panel {
-    position: static;
-    width: 100%;
-    margin-top: 14px;
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: min(calc(100vw - 48px), 320px);
+    height: min(68vh, 390px);
+    margin-top: 0;
+    transform-origin: 100% 100%;
+  }
+
+  .notes-widget-morph-layer {
+    display: none;
   }
 
   .hero-content {
@@ -4215,7 +4263,10 @@ button.site-scroll-text-reveal {
 
   .profession-rotator { width: 118px; margin-left: 0; }
 
-  .notes-widget { margin-top: 28px; }
+  .notes-widget {
+    bottom: 74px;
+    margin: 0;
+  }
   .notes-widget-toggle { align-self: flex-end; }
 
   .scroll-hint { bottom: 118px; }

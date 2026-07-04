@@ -32,6 +32,10 @@
   --motion-choreography-ease: cubic-bezier(0.19, 1, 0.22, 1);
   --motion-choreography-duration: 720ms;
   --motion-choreography-fast: 420ms;
+  --motion-glide-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-glide-ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-glide-duration: 560ms;
+  --motion-glide-fast: 320ms;
   --micro-ease: cubic-bezier(0.2, 0.9, 0.2, 1);
   --micro-fast: 180ms;
   --micro-medium: 520ms;
@@ -52,6 +56,10 @@ body {
   min-height: 100%;
   height: auto;
   overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -248,6 +256,10 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .ui-micro-control::before,
   .ui-micro-card::after,
   .ui-micro-field,
@@ -256,6 +268,498 @@ body::-webkit-scrollbar-thumb:hover {
     animation: none !important;
     transition-duration: 1ms !important;
   }
+}
+
+/* Motion harmonizer --------------------------------------------------------
+   Final-pass polish for repeated UI surfaces that were still using short,
+   mechanical 0.2s ease transitions. */
+body .page-canvas.has-microinteractions :is(
+  .nav-link,
+  .contact-popup-links a,
+  .contact-details-list a,
+  .contact-social-rail a,
+  .contact-form-panel button,
+  .chatbox-close,
+  .chatbox-input-row button,
+  .about-connect-button,
+  .about-panel-toggle
+) {
+  transition:
+    color var(--motion-glide-fast) var(--motion-glide-ease),
+    background-color var(--motion-glide-fast) var(--motion-glide-ease),
+    background var(--motion-glide-fast) var(--motion-glide-ease),
+    border-color var(--motion-glide-fast) var(--motion-glide-ease),
+    box-shadow var(--motion-glide-duration) var(--motion-glide-ease),
+    opacity var(--motion-glide-fast) var(--motion-glide-ease),
+    filter var(--motion-glide-fast) var(--motion-glide-ease),
+    transform var(--motion-glide-duration) var(--motion-glide-ease);
+  will-change: transform;
+}
+
+body .page-canvas.has-microinteractions :is(
+  .service-link,
+  .work-service-card,
+  .work-experience-card,
+  .tech-stack-card,
+  .contact-form-panel
+) {
+  transition:
+    border-color var(--motion-glide-fast) var(--motion-glide-ease),
+    background-color var(--motion-glide-fast) var(--motion-glide-ease),
+    background var(--motion-glide-fast) var(--motion-glide-ease),
+    box-shadow var(--motion-glide-duration) var(--motion-glide-ease),
+    filter var(--motion-glide-fast) var(--motion-glide-ease),
+    opacity var(--motion-glide-fast) var(--motion-glide-ease),
+    transform var(--motion-glide-duration) var(--motion-glide-ease);
+}
+
+body .page-canvas.has-microinteractions :is(
+  .contact-form-panel input,
+  .contact-form-panel textarea,
+  .chatbox-input-row input
+) {
+  transform: translate3d(0, 0, 0);
+  transition:
+    border-color var(--motion-glide-fast) var(--motion-glide-ease),
+    background-color var(--motion-glide-fast) var(--motion-glide-ease),
+    background-size var(--motion-glide-duration) var(--motion-glide-ease),
+    box-shadow var(--motion-glide-fast) var(--motion-glide-ease),
+    color var(--motion-glide-fast) var(--motion-glide-ease),
+    transform var(--motion-glide-fast) var(--motion-glide-ease);
+}
+
+body .page-canvas.has-microinteractions :is(
+  .contact-form-panel input,
+  .contact-form-panel textarea,
+  .chatbox-input-row input
+):focus {
+  transform: translate3d(0, -1px, 0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body .page-canvas.has-microinteractions :is(.service-link, .tech-stack-card):is(:hover, :focus-within) {
+    transform: translate3d(0, -4px, 0);
+  }
+
+  body .page-canvas.has-microinteractions .contact-form-panel:is(:hover, :focus-within) {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .page-canvas.has-microinteractions :is(
+    .nav-link,
+    .contact-popup-links a,
+    .contact-details-list a,
+    .contact-social-rail a,
+    .contact-form-panel button,
+    .chatbox-close,
+    .chatbox-input-row button,
+    .about-connect-button,
+    .about-panel-toggle,
+    .service-link,
+    .work-service-card,
+    .work-experience-card,
+    .tech-stack-card,
+    .contact-form-panel,
+    .contact-form-panel input,
+    .contact-form-panel textarea,
+    .chatbox-input-row input
+  ) {
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Chat morph primitives ----------------------------------------------------
+   Kept global so the component stylesheet stays below Angular's style budget. */
+.notes-widget-goo-filter {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.notes-widget-morph-layer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  width: min(100vw - 36px, 300px);
+  height: min(72vh, 390px);
+  overflow: hidden;
+  border-radius: var(--chat-panel-radius, 16px);
+  clip-path: inset(0 0 0 0 round var(--chat-panel-radius, 16px));
+  pointer-events: none;
+  opacity: 0;
+  filter: url("#chat-gooey");
+  transform: translateZ(0);
+  transition:
+    opacity 160ms ease,
+    filter var(--chat-morph-duration, 820ms) var(--chat-morph-ease, ease);
+}
+
+.notes-widget-morph-blob {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 35% 22%, rgba(255, 255, 255, 0.13), transparent 30%),
+    #050505;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.26);
+  transform: translate3d(0, 0, 0);
+  transform-origin: 100% 100%;
+  will-change: transform, opacity, border-radius;
+}
+
+.notes-widget-morph-blob--button {
+  right: 0;
+  bottom: 0;
+  width: 94px;
+  height: 30px;
+  border-radius: 999px;
+  opacity: 1;
+  transition:
+    opacity 220ms ease,
+    transform var(--chat-morph-duration, 820ms) var(--chat-morph-ease, ease),
+    border-radius var(--chat-morph-duration, 820ms) var(--chat-morph-ease, ease);
+}
+
+.notes-widget-morph-blob--bridge {
+  right: 34px;
+  bottom: 10px;
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(0.16);
+}
+
+.notes-widget-morph-blob--panel {
+  inset: 0;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(0.31, 0.075);
+  transition:
+    opacity 180ms ease,
+    transform var(--chat-morph-duration, 820ms) var(--chat-morph-ease, ease),
+    border-radius var(--chat-morph-duration, 820ms) var(--chat-morph-ease, ease);
+}
+
+.notes-widget--morphing .notes-widget-morph-layer {
+  opacity: 1;
+}
+
+.notes-widget--open .notes-widget-morph-blob--button {
+  opacity: 0;
+  border-radius: var(--chat-panel-radius, 16px);
+  transform: translate3d(-196px, -336px, 0) scale(0.42, 0.42);
+}
+
+.notes-widget--opening .notes-widget-morph-blob--bridge {
+  animation: chatGooBridgeOpen var(--chat-morph-duration, 820ms) var(--chat-morph-ease, ease) both;
+}
+
+.notes-widget--open .notes-widget-morph-blob--panel {
+  opacity: 0;
+  border-radius: var(--chat-panel-radius, 16px);
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.notes-widget--closing .notes-widget-morph-layer {
+  opacity: 0;
+  transition-duration: 120ms;
+}
+
+.notes-widget--closing .notes-widget-morph-blob {
+  opacity: 0 !important;
+  animation: none !important;
+  transition-duration: 120ms;
+  transition-timing-function: ease;
+}
+
+.notes-widget--closing .notes-widget-panel {
+  z-index: 1;
+  transition:
+    opacity 120ms ease,
+    clip-path var(--chat-close-duration, var(--chat-morph-duration, 820ms)) var(--chat-morph-ease, ease),
+    border-radius var(--chat-close-duration, var(--chat-morph-duration, 820ms)) var(--chat-morph-ease, ease),
+    transform var(--chat-close-duration, var(--chat-morph-duration, 820ms)) var(--chat-morph-ease, ease),
+    box-shadow var(--chat-close-duration, var(--chat-morph-duration, 820ms)) var(--chat-morph-ease, ease);
+}
+
+.notes-widget--closing .notes-widget-panel > * {
+  opacity: 0;
+  transform: translateY(8px) scale(0.982);
+  transition-delay: 0ms;
+  transition-duration: 150ms;
+}
+
+.notes-widget-toggle-label {
+  display: inline-block;
+  transition:
+    letter-spacing 220ms var(--micro-ease),
+    transform 220ms var(--micro-ease);
+}
+
+.notes-widget-toggle::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(105deg, transparent 22%, rgba(255, 255, 255, 0.18), transparent 58%);
+  transform: translateX(-120%);
+}
+
+.notes-widget-toggle:is(:hover, :focus-visible) .notes-widget-toggle-label {
+  letter-spacing: 0.02em;
+  transform: translateY(-1px);
+}
+
+.notes-widget-toggle:is(:hover, :focus-visible)::after {
+  opacity: 1;
+  transform: translateX(120%);
+  transition:
+    opacity 180ms ease,
+    transform 620ms var(--micro-ease);
+}
+
+.notes-widget-toggle:active {
+  transform: translateY(1px) scale(0.96);
+}
+
+.notes-widget--closing .notes-widget-toggle {
+  animation: chatToggleCloseReveal 360ms var(--chat-morph-ease, ease) 120ms both;
+  pointer-events: none;
+}
+
+.notes-widget-panel--visible {
+  box-shadow:
+    0 28px 68px rgba(0, 0, 0, 0.44),
+    0 0 0 1px rgba(255, 176, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.chatbox-input-row {
+  transition: transform 220ms var(--micro-ease);
+}
+
+.notes-widget-panel--visible .chatbox-input-row:focus-within {
+  transform: translateY(-1px);
+}
+
+.notes-widget-panel--visible .chatbox-input-row:focus-within input {
+  border-color: rgba(255, 176, 0, 0.62);
+  box-shadow: 0 0 0 3px rgba(255, 176, 0, 0.08);
+}
+
+@keyframes chatGooBridgeOpen {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) scale(0.16); }
+  22% { opacity: 0.88; transform: translate3d(-18px, -34px, 0) scale(0.92, 0.68); }
+  52% { opacity: 0.78; transform: translate3d(-72px, -148px, 0) scale(1.9, 1.04); }
+  78% { opacity: 0.38; transform: translate3d(-138px, -284px, 0) scale(1.12, 0.74); }
+  100% { opacity: 0; transform: translate3d(-192px, -336px, 0) scale(0.32); }
+}
+
+@keyframes chatToggleCloseReveal {
+  0%,
+  30% {
+    opacity: 0;
+    transform: translate3d(0, -4px, 0) scale(0.92);
+  }
+
+  72% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.035, 0.985);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notes-widget-morph-layer,
+  .notes-widget-morph-blob,
+  .notes-widget--closing .notes-widget-toggle {
+    animation: none !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Right wall notch --------------------------------------------------------- */
+.side-wall-notch {
+  appearance: none;
+  position: fixed;
+  top: clamp(382px, 78vh, calc(100vh - 106px));
+  right: -3px;
+  z-index: 2147483000;
+  width: 30px;
+  height: 220px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+  transform: translate3d(100%, -50%, 0);
+  filter: drop-shadow(-5px 14px 18px rgba(0, 0, 0, 0.22));
+  transition:
+    opacity 320ms var(--motion-choreography-ease, ease),
+    visibility 320ms step-end,
+    filter var(--motion-glide-fast, 320ms) var(--motion-glide-ease, ease),
+    transform 520ms var(--motion-choreography-ease, ease);
+}
+
+.page-canvas.has-side-wall-notch .side-wall-notch {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(0, -50%, 0);
+  transition:
+    opacity 260ms ease,
+    visibility 1ms step-start,
+    filter var(--motion-glide-fast, 320ms) var(--motion-glide-ease, ease),
+    transform 620ms var(--motion-choreography-ease, ease);
+}
+
+.page-canvas.has-side-wall-notch .side-wall-notch:is(:hover, :focus-visible) {
+  filter:
+    drop-shadow(-6px 15px 20px rgba(0, 0, 0, 0.24))
+    brightness(1.06);
+  transform: translate3d(0, -50%, 0);
+}
+
+.side-wall-notch:focus-visible {
+  outline: 1px solid rgba(255, 176, 0, 0.74);
+  outline-offset: 4px;
+}
+
+.side-wall-notch-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: #050505;
+}
+
+.side-wall-notch-svg-label {
+  fill: #ffb000;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11.4px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  stroke: rgba(0, 0, 0, 0.45);
+  stroke-linejoin: round;
+  stroke-width: 0.22px;
+}
+
+.side-wall-notch-svg-label--cta {
+  animation: sideNotchCtaMorph 7.2s var(--motion-choreography-ease, ease) infinite;
+}
+
+.side-wall-notch-svg-label--time {
+  opacity: 0;
+  animation: sideNotchTimeMorph 7.2s var(--motion-choreography-ease, ease) infinite;
+}
+
+@keyframes sideNotchCtaMorph {
+  0%,
+  38% {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: 0.08em;
+  }
+
+  47%,
+  63% {
+    opacity: 0;
+    filter: blur(2px);
+    letter-spacing: 0.18em;
+  }
+
+  72%,
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: 0.08em;
+  }
+}
+
+@keyframes sideNotchTimeMorph {
+  0%,
+  38% {
+    opacity: 0;
+    filter: blur(2px);
+    letter-spacing: 0.18em;
+  }
+
+  47%,
+  63% {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: 0.04em;
+  }
+
+  72%,
+  100% {
+    opacity: 0;
+    filter: blur(2px);
+    letter-spacing: 0.18em;
+  }
+}
+
+@media (max-width: 760px) {
+  .side-wall-notch {
+    right: -2px;
+    width: 25px;
+    height: 188px;
+    opacity: 0.92;
+  }
+
+  .side-wall-notch-svg-label {
+    font-size: 10.4px;
+  }
+
+  .page-canvas:not(.has-side-wall-notch) .side-wall-notch {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-wall-notch-svg-label--cta,
+  .side-wall-notch-svg-label--time {
+    animation: none !important;
+    filter: none !important;
+  }
+
+  .side-wall-notch-svg-label--cta {
+    opacity: 1;
+  }
+
+  .side-wall-notch-svg-label--time {
+    opacity: 0;
+  }
+}
+
+body .page-canvas.has-side-wall-notch .hero .notes-widget .notes-widget-toggle {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  animation: none !important;
+}
+
+body .page-canvas.has-side-wall-notch .hero .notes-widget .notes-widget-toggle::before,
+body .page-canvas.has-side-wall-notch .hero .notes-widget .notes-widget-toggle::after {
+  display: none !important;
 }
 
 /* Work horizontal sequence */
