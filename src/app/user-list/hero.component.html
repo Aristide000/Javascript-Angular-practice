@@ -40,8 +40,11 @@
       <div class="landing-dot"></div>
       <h2>&#2488;&#2509;&#2476;&#2494;&#2455;&#2468;&#2478;</h2>
     </div>
+    <div class="landing-welcome-text">
+      <div class="landing-dot"></div>
+      <h2>Muraho</h2>
+    </div>
   </div>
-  <div class="landing-loader-caption">.Coded by Iraguha Aristide</div>
   <div class="landing-loader-round">
     <div class="landing-loader-curve"></div>
   </div>
@@ -118,11 +121,70 @@
   <div class="contact-popup" id="contact-popup" role="dialog" aria-label="Quick links" aria-hidden="true">
     <div class="contact-popup-backdrop" data-contact-popup-close></div>
     <nav class="contact-popup-links" aria-label="Quick links">
-      <a href="/resume.pdf" download>DOWNLOAD MY RESUME</a>
-      <a href="/terms-and-conditions">TERMS AND CONDITIONS</a>
-      <a href="/privacy-policies">PRIVACY POLICIES</a>
-      <a href="mailto:arystoto47@gmail.com?subject=Book%20a%20call%20with%20Aristide">BOOK A CALL</a>
+      <a href="/resume.pdf" download class="contact-action-card contact-action-card--cv">
+        <span class="contact-action-label">Download CV</span>
+      </a>
+      <a href="mailto:arystoto47@gmail.com?subject=Book%20a%20call%20with%20Aristide" class="contact-action-card contact-action-card--call">
+        <span class="contact-action-label">Book a call</span>
+      </a>
     </nav>
+  </div>
+
+  <div class="notes-widget">
+    <svg class="notes-widget-goo-filter" aria-hidden="true" focusable="false">
+      <filter id="chat-gooey">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur" />
+        <feColorMatrix
+          in="blur"
+          mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
+          result="goo"
+        />
+        <feBlend in="SourceGraphic" in2="goo" />
+      </filter>
+    </svg>
+    <span class="notes-widget-morph-layer" aria-hidden="true">
+      <span class="notes-widget-morph-blob notes-widget-morph-blob--button"></span>
+      <span class="notes-widget-morph-blob notes-widget-morph-blob--bridge"></span>
+      <span class="notes-widget-morph-blob notes-widget-morph-blob--panel"></span>
+    </span>
+    <button type="button" class="notes-widget-toggle" aria-label="Open chat box">
+      <span class="notes-widget-toggle-label">Talk to me</span>
+    </button>
+    <div class="notes-widget-panel chatbox" role="dialog" aria-label="Chat with Aristide's assistant" aria-hidden="true">
+      <div class="chatbox-header">
+        <div class="chatbox-avatar" aria-hidden="true">
+          <img src="/chat-profile.png" alt="">
+        </div>
+        <div class="chatbox-title">
+          <strong>Aristide's assistant</strong>
+          <span>online</span>
+        </div>
+        <button type="button" class="chatbox-close" aria-label="Close chat box">
+          <svg class="chatbox-close-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="chatbox-body" aria-live="polite">
+        <div class="chatbox-typing" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="chatbox-message chatbox-message--bot chatbox-message--intro">
+Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, his skills, projects, and creative work. Feel free to ask me anything about his web design, development or just say hello!        </div>
+
+      <form class="chatbox-input-row" aria-label="Start chat">
+        <input type="text" aria-label="Chat message" placeholder="Your message..." />
+        <button type="submit" aria-label="Send message">
+          <svg class="chatbox-send-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M5.5 6.75 18.5 12 5.5 17.25v-3.7L12.35 12 5.5 10.45v-3.7Z" />
+          </svg>
+        </button>
+      </form>
+    </div>
   </div>
 
   <section class="hero" id="home">
@@ -146,63 +208,6 @@
           <time data-hero-current-date datetime="">-- --- ----</time>
         </span>
       </span>
-    </div>
-
-    <div class="notes-widget">
-      <svg class="notes-widget-goo-filter" aria-hidden="true" focusable="false">
-        <filter id="chat-gooey">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur" />
-          <feColorMatrix
-            in="blur"
-            mode="matrix"
-            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
-            result="goo"
-          />
-          <feBlend in="SourceGraphic" in2="goo" />
-        </filter>
-      </svg>
-      <span class="notes-widget-morph-layer" aria-hidden="true">
-        <span class="notes-widget-morph-blob notes-widget-morph-blob--button"></span>
-        <span class="notes-widget-morph-blob notes-widget-morph-blob--bridge"></span>
-        <span class="notes-widget-morph-blob notes-widget-morph-blob--panel"></span>
-      </span>
-      <button type="button" class="notes-widget-toggle" aria-label="Open chat box">
-        <span class="notes-widget-toggle-label">Talk to me</span>
-      </button>
-      <div class="notes-widget-panel chatbox" role="dialog" aria-label="Chat with Aristide's assistant" aria-hidden="true">
-        <div class="chatbox-header">
-          <div class="chatbox-avatar" aria-hidden="true">
-            <img src="/chat-profile.png" alt="">
-          </div>
-          <div class="chatbox-title">
-            <strong>Aristide's assistant</strong>
-            <span>online</span>
-          </div>
-          <button type="button" class="chatbox-close" aria-label="Close chat box">
-            <svg class="chatbox-close-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" />
-            </svg>
-          </button>
-        </div>
-
-        <div class="chatbox-body" aria-live="polite">
-          <div class="chatbox-typing" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <p class="chatbox-message chatbox-message--bot chatbox-message--intro">
-Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, his skills, projects, and creative work. Feel free to ask me anything about his web design, development or just say hello!        </div>
-
-        <form class="chatbox-input-row" aria-label="Start chat">
-          <input type="text" aria-label="Chat message" placeholder="Your message..." />
-          <button type="submit" aria-label="Send message">
-            <svg class="chatbox-send-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M5.5 6.75 18.5 12 5.5 17.25v-3.7L12.35 12 5.5 10.45v-3.7Z" />
-            </svg>
-          </button>
-        </form>
-      </div>
     </div>
 
     <button type="button" class="scroll-hint" aria-label="Scroll to about section" (click)="scrollToNextSection()">
@@ -247,18 +252,19 @@ Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, h
         <article class="about-description about-profile-panel" aria-label="About Iraguha Aristide">
           <section class="about-copy-section about-profile-card" data-about-section="profile" aria-label="Profile introduction">
             <div class="about-product-card">
-              <h2 class="about-rotating-title" aria-label="Product Designer, Music Producer, Art Enthusiast">
+              <h2 class="about-rotating-title" aria-label="Product Designer, Music Producer, Art Enthusiast, Branding, CRO">
                 <span class="about-title-option about-title-option--one" aria-hidden="true">Product<br>Designer</span>
                 <span class="about-title-option about-title-option--two" aria-hidden="true">Music<br>Producer</span>
                 <span class="about-title-option about-title-option--three" aria-hidden="true">Art<br>Enthusiast</span>
-                <span class="about-title-option about-title-option--four" aria-hidden="true">Music<br>Producer</span>
+                <span class="about-title-option about-title-option--four" aria-hidden="true">Branding</span>
+                <span class="about-title-option about-title-option--five" aria-hidden="true">CRO</span>
               </h2>
-              <a href="mailto:arystoto47@gmail.com" class="about-connect-button">
-                <span>Let's connect</span>
+              <button type="button" class="about-connect-button" aria-label="Open more about Aristide" aria-expanded="false" aria-controls="about-more-page" data-about-more-open>
+                <span>More</span>
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path d="M7 17 17 7M9 7h8v8" />
                 </svg>
-              </a>
+              </button>
             </div>
 
             <figure class="about-portrait about-profile-photo">
@@ -274,6 +280,97 @@ Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, h
             </p>
           </section>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-more-page" id="about-more-page" aria-labelledby="about-more-title" aria-hidden="true" hidden data-about-more-page>
+    <button type="button" class="about-more-back" data-about-more-back>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M15 6 9 12l6 6" />
+      </svg>
+      <span>Back to About</span>
+    </button>
+
+    <div class="about-more-shell">
+      <h2 id="about-more-title" class="about-more-heading">More</h2>
+      <div class="about-more-services" aria-label="More about Aristide's work">
+        <details class="about-more-service-detail">
+          <summary class="about-more-service-row">
+            <span class="about-more-service-index">01</span>
+            <span class="about-more-service-title">Product Designer</span>
+            <span class="about-more-service-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="about-more-service-expanded">
+            <div class="about-more-service-copy">
+              <h3>Elevate your digital presence.</h3>
+              <p>
+                We craft modern, high-performing websites built around user experience, clarity, and conversion.
+                Every page is designed to guide users seamlessly toward action.
+              </p>
+            </div>
+            <div class="about-more-service-results">
+              <span>Results</span>
+              <strong>+142% Engagement</strong>
+              <strong>-3.1s Pagespeed</strong>
+              <strong>+68% CTR</strong>
+            </div>
+          </div>
+        </details>
+        <details class="about-more-service-detail">
+          <summary class="about-more-service-row">
+            <span class="about-more-service-index">02</span>
+            <span class="about-more-service-title">Branding</span>
+            <span class="about-more-service-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="about-more-service-expanded">
+            <div class="about-more-service-copy">
+              <h3>Create a visual identity people trust and remember.</h3>
+              <p>
+                We develop visual identities that communicate trust, clarity, and personality,
+                helping brands stand out and stay memorable.
+              </p>
+            </div>
+            <div class="about-more-service-results">
+              <span>Results</span>
+              <strong>+70% Consistency</strong>
+              <strong>3x Dwell</strong>
+              <strong>+28 Trust</strong>
+            </div>
+          </div>
+        </details>
+        <details class="about-more-service-detail">
+          <summary class="about-more-service-row">
+            <span class="about-more-service-index">03</span>
+            <span class="about-more-service-title">CRO</span>
+            <span class="about-more-service-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="about-more-service-expanded">
+            <div class="about-more-service-copy">
+              <h3>Turn visitors into customers with smart optimization.</h3>
+              <p>
+                We optimize funnels, run A/B tests, and analyze behavioral data to increase conversions
+                and turn more visitors into qualified leads.
+              </p>
+            </div>
+            <div class="about-more-service-results">
+              <span>Results</span>
+              <strong>+220% Conversion</strong>
+              <strong>-20% Drop-Off</strong>
+              <strong>+5 Tests</strong>
+            </div>
+          </div>
+        </details>
+        <button type="button" class="about-more-service-row">
+          <span class="about-more-service-index">04</span>
+          <span class="about-more-service-title">Music Producer</span>
+          <span class="about-more-service-plus" aria-hidden="true">+</span>
+        </button>
+        <button type="button" class="about-more-service-row">
+          <span class="about-more-service-index">05</span>
+          <span class="about-more-service-title">Art Enthusiast</span>
+          <span class="about-more-service-plus" aria-hidden="true">+</span>
+        </button>
       </div>
     </div>
   </section>

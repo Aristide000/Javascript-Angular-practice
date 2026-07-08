@@ -58,6 +58,11 @@ body {
   overflow-x: hidden;
 }
 
+html:has(.landing-loader),
+body:has(.landing-loader) {
+  overflow: hidden;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -668,6 +673,349 @@ body .page-canvas.has-microinteractions :is(
 .side-wall-notch-svg-label--time {
   opacity: 0;
   animation: sideNotchTimeMorph 7.2s var(--motion-choreography-ease, ease) infinite;
+}
+
+button.about-connect-button {
+  border: 0;
+  cursor: pointer;
+}
+
+.about-more-page {
+  position: fixed;
+  inset: 0;
+  z-index: 89;
+  box-sizing: border-box;
+  padding: clamp(78px, 11vh, 104px) clamp(30px, 4.7vw, 60px) clamp(28px, 5vh, 48px);
+  overflow: hidden auto;
+  background:
+    linear-gradient(90deg, transparent calc(25% - 0.5px), rgba(255, 255, 255, 0.07) 25%, transparent calc(25% + 0.5px)),
+    linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(255, 255, 255, 0.07) 50%, transparent calc(50% + 0.5px)),
+    linear-gradient(90deg, transparent calc(75% - 0.5px), rgba(255, 255, 255, 0.07) 75%, transparent calc(75% + 0.5px)),
+    #000;
+  color: #fffdf8;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition:
+    opacity 240ms ease,
+    visibility 240ms step-end,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-more-page[hidden] {
+  display: block;
+}
+
+.page-canvas.is-about-more-open .about-more-page {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    opacity 220ms ease,
+    visibility 1ms step-start,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-more-back {
+  position: fixed;
+  left: clamp(24px, 5vw, 72px);
+  top: 20px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  color: #fffdf8;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.about-more-back svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.about-more-back:is(:hover, :focus-visible) {
+  border-color: rgba(255, 176, 0, 0.58);
+  background: rgba(255, 176, 0, 0.12);
+  transform: translateX(-2px);
+  outline: 0;
+}
+
+.about-more-shell {
+  width: min(1204px, 100%);
+  min-height: calc(100vh - clamp(106px, 16vh, 152px));
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about-more-heading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.about-more-services {
+  display: grid;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.about-more-service-row {
+  appearance: none;
+  width: 100%;
+  min-height: clamp(104px, 17vh, 142px);
+  display: grid;
+  grid-template-columns: minmax(70px, 0.24fr) minmax(0, 1fr) 56px;
+  align-items: center;
+  column-gap: clamp(22px, 4vw, 54px);
+  padding: 0 clamp(12px, 1.6vw, 20px);
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: #fffdf8;
+  cursor: pointer;
+  text-align: left;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.about-more-service-row:last-child {
+  border-bottom: 0;
+}
+
+.about-more-service-row:is(:hover, :focus-visible),
+.about-more-service-row.is-active {
+  background: rgba(255, 255, 255, 0.13);
+  outline: 0;
+}
+
+.about-more-service-detail {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.about-more-service-detail .about-more-service-row {
+  border-bottom: 0;
+  list-style: none;
+}
+
+.about-more-service-detail .about-more-service-row::-webkit-details-marker {
+  display: none;
+}
+
+.about-more-service-detail[open] {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.about-more-service-detail[open] > .about-more-service-row {
+  min-height: 0;
+  padding-top: clamp(24px, 4vh, 38px);
+  padding-bottom: 0;
+  background: transparent;
+}
+
+.about-more-service-detail[open] > .about-more-service-row .about-more-service-title {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.about-more-service-index {
+  color: rgba(255, 255, 255, 0.48);
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 560;
+  letter-spacing: 0;
+}
+
+.about-more-service-title {
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(34px, 3.4vw, 43px);
+  font-weight: 820;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.about-more-service-plus {
+  justify-self: end;
+  color: #ffb000;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(26px, 2.4vw, 34px);
+  font-weight: 620;
+  line-height: 1;
+}
+
+.about-more-service-detail .about-more-service-plus::before {
+  content: '+';
+}
+
+.about-more-service-detail[open] .about-more-service-plus::before {
+  content: '-';
+}
+
+.about-more-service-expanded {
+  display: grid;
+  grid-template-columns: minmax(70px, 0.24fr) minmax(260px, 0.9fr) minmax(220px, 0.76fr) 56px;
+  gap: clamp(22px, 4vw, 54px);
+  padding: 0 clamp(12px, 1.6vw, 20px) clamp(34px, 5vh, 52px);
+}
+
+.about-more-service-copy {
+  grid-column: 2;
+}
+
+.about-more-service-copy h3 {
+  max-width: 11.5em;
+  margin: 0;
+  color: #fffdf8;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(30px, 3.4vw, 48px);
+  font-weight: 820;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.about-more-service-copy p {
+  max-width: 25em;
+  margin: 14px 0 0;
+  color: rgba(255, 255, 255, 0.58);
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(14px, 1.08vw, 17px);
+  font-weight: 560;
+  line-height: 1.45;
+}
+
+.about-more-service-results {
+  grid-column: 3;
+  align-self: center;
+  display: grid;
+  color: #fffdf8;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(19px, 1.8vw, 25px);
+  font-weight: 620;
+  line-height: 1.18;
+}
+
+.about-more-service-results span {
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-weight: 560;
+}
+
+.about-more-service-results strong {
+  font: inherit;
+}
+
+.page-canvas.is-about-more-open .hero-nav.is-scrolled {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.58) 64%, rgba(0, 0, 0, 0));
+}
+
+.page-canvas.is-about-more-open :is(.logo-image, .hero-nav .logo-image) {
+  filter: none;
+}
+
+.page-canvas.is-about-more-open .nav-link {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.page-canvas.is-about-more-open .nav-link:is(:hover, .active) {
+  color: #fff;
+}
+
+.page-canvas.is-about-more-open .contact-toggle-line {
+  background: #fff;
+}
+
+.page-route-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483600;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  visibility: hidden;
+  background:
+    linear-gradient(90deg, transparent calc(25% - 0.5px), rgba(255, 255, 255, 0.08) 25%, transparent calc(25% + 0.5px)),
+    linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(255, 255, 255, 0.08) 50%, transparent calc(50% + 0.5px)),
+    linear-gradient(90deg, transparent calc(75% - 0.5px), rgba(255, 255, 255, 0.08) 75%, transparent calc(75% + 0.5px)),
+    #050505;
+  color: #fff;
+  will-change: transform, opacity;
+}
+
+.page-route-transition-label {
+  display: block;
+  max-width: calc(100vw - 48px);
+  color: #fff;
+  font-family: 'Manrope', 'Outfit', sans-serif;
+  font-size: clamp(72px, 16vw, 260px);
+  font-weight: 950;
+  line-height: 0.72;
+  letter-spacing: -0.075em;
+  text-align: center;
+  text-indent: -0.075em;
+  text-transform: uppercase;
+  text-shadow: 0 26px 70px rgba(0, 0, 0, 0.42);
+}
+
+@media (max-width: 780px) {
+  .about-more-page {
+    padding: 112px 22px 36px;
+  }
+
+  .about-more-back {
+    left: 22px;
+    top: 20px;
+  }
+
+  .about-more-shell {
+    min-height: calc(100vh - 148px);
+  }
+
+  .about-more-service-row {
+    min-height: 96px;
+    grid-template-columns: 42px minmax(0, 1fr) 34px;
+    column-gap: 16px;
+    padding-inline: 0;
+  }
+
+  .about-more-service-title {
+    font-size: clamp(27px, 9vw, 38px);
+  }
+
+  .about-more-service-expanded {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 16px;
+    padding: 0 0 32px;
+  }
+
+  .about-more-service-copy,
+  .about-more-service-results {
+    grid-column: 2;
+  }
+
+  .about-more-service-results {
+    margin-top: 8px;
+  }
 }
 
 @keyframes sideNotchCtaMorph {

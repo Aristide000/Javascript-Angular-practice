@@ -312,6 +312,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     if (!section || !box) return;
 
+    const pageCanvas = document.querySelector<HTMLElement>('.page-canvas');
     const platform   = box.querySelector<HTMLElement>('.about-platform');
     const platformLightSurface = platform?.querySelector<HTMLElement>('.about-platform-light-surface') ?? null;
     const contentMask = box.querySelector<HTMLElement>('.about-content-mask');
@@ -319,6 +320,9 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const labelInner = box.querySelector<HTMLElement>('.about-box-label-inner');
     const titleWord  = box.querySelector<HTMLElement>('.about-title-word');
     const toggle     = box.querySelector<HTMLButtonElement>('.about-panel-toggle');
+    const moreButton = box.querySelector<HTMLButtonElement>('[data-about-more-open]');
+    const morePage = document.querySelector<HTMLElement>('[data-about-more-page]');
+    const moreBackButton = morePage?.querySelector<HTMLButtonElement>('[data-about-more-back]') ?? null;
     const portrait   = box.querySelector<HTMLElement>('.about-portrait');
     const description = box.querySelector<HTMLElement>('.about-description');
     const cornerMarker = box.querySelector<HTMLElement>('.about-corner-marker');
@@ -341,6 +345,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     let panelToggleTimeline: gsap.core.Timeline | null = null;
     let platformThemeTween: gsap.core.Tween | null = null;
     let activeSkillCardIndex = 0;
+    let aboutMoreLastFocus: HTMLElement | null = null;
+    let previousBodyOverflow: string | null = null;
+    let previousDocumentOverflow: string | null = null;
+    let aboutMoreCloseTimer: number | null = null;
 
     this.aboutTextRevealReady = false;
     this.aboutTextRevealPlayed = false;
@@ -622,10 +630,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       this.refreshScrollTextReveals();
     };
 
-    const onTogglePanel = (): void => {
+    const setPanelFullscreen = (nextFullScreen: boolean): void => {
       if (!revealed || !platform || !toggle) return;
 
-      isFullScreen = !isFullScreen;
+      isFullScreen = nextFullScreen;
       const states = this.getAboutPlatformStates(box, labelInner);
       const targetState = isFullScreen ? states.fullscreen : states.expanded;
 
@@ -638,7 +646,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       }
 
       try { panelToggleTimeline?.kill(); } catch (_) {}
-      panelToggleTimeline = gsap.timeline({ defaults: { duration: 0.7, ease: 'power3.inOut' } });
+      panelToggleTimeline = gsap.timeline({ defaults: { duration: this.prefersReducedMotion() ? 0 : 0.7, ease: 'power3.inOut' } });
       panelToggleTimeline
         .to(platform, { ...targetState }, 0)
         .to(toggle, { ...this.getAboutTogglePlacement(box, targetState) }, 0);
@@ -669,8 +677,81 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       });
     };
 
+    const onTogglePanel = (): void => {
+      setPanelFullscreen(!isFullScreen);
+    };
+
+    const setAboutMorePageOpen = (isOpen: boolean, restoreFocus = true): void => {
+      if (!morePage) return;
+
+      if (aboutMoreCloseTimer !== null) {
+        window.clearTimeout(aboutMoreCloseTimer);
+        aboutMoreCloseTimer = null;
+      }
+
+      if (isOpen) {
+        aboutMoreLastFocus = document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : moreButton;
+        previousBodyOverflow = document.body.style.overflow;
+        previousDocumentOverflow = document.documentElement.style.overflow;
+        morePage.hidden = false;
+        morePage.setAttribute('aria-hidden', 'false');
+        pageCanvas?.classList.add('is-about-more-open');
+        moreButton?.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        window.setTimeout(() => moreBackButton?.focus(), 0);
+        return;
+      }
+
+      pageCanvas?.classList.remove('is-about-more-open');
+      morePage.setAttribute('aria-hidden', 'true');
+      moreButton?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = previousBodyOverflow ?? '';
+      document.documentElement.style.overflow = previousDocumentOverflow ?? '';
+      previousBodyOverflow = null;
+      previousDocumentOverflow = null;
+      aboutMoreCloseTimer = window.setTimeout(() => {
+        aboutMoreCloseTimer = null;
+        morePage.hidden = true;
+        if (!restoreFocus) return;
+
+        const focusTarget = aboutMoreLastFocus && document.contains(aboutMoreLastFocus)
+          ? aboutMoreLastFocus
+          : moreButton;
+        focusTarget?.focus();
+        aboutMoreLastFocus = null;
+      }, this.prefersReducedMotion() ? 0 : 240);
+    };
+
+    const onMoreExpand = (event: Event): void => {
+      event.preventDefault();
+      setAboutMorePageOpen(true);
+    };
+
+    const onMoreBack = (): void => {
+      setAboutMorePageOpen(false);
+    };
+
+    const onMorePageKeydown = (event: KeyboardEvent): void => {
+      if (event.key !== 'Escape') return;
+
+      event.preventDefault();
+      setAboutMorePageOpen(false);
+    };
+
+    const onAboutMoreCloseRequest = (event: Event): void => {
+      const detail = (event as CustomEvent<{ restoreFocus?: boolean }>).detail;
+      setAboutMorePageOpen(false, detail?.restoreFocus ?? false);
+    };
+
     window.addEventListener('resize', onResize);
+    window.addEventListener('about-more:close', onAboutMoreCloseRequest as EventListener);
     if (toggle) toggle.addEventListener('click', onTogglePanel);
+    if (moreButton) moreButton.addEventListener('click', onMoreExpand);
+    if (moreBackButton) moreBackButton.addEventListener('click', onMoreBack);
+    if (morePage) morePage.addEventListener('keydown', onMorePageKeydown);
     if (skillCardList) {
       skillCardList.setAttribute('aria-live', 'polite');
     }
@@ -686,7 +767,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     this.cleanupFns.push(() => {
       revealObserver.disconnect();
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('about-more:close', onAboutMoreCloseRequest as EventListener);
       if (toggle) toggle.removeEventListener('click', onTogglePanel);
+      if (moreButton) moreButton.removeEventListener('click', onMoreExpand);
+      if (moreBackButton) moreBackButton.removeEventListener('click', onMoreBack);
+      if (morePage) morePage.removeEventListener('keydown', onMorePageKeydown);
+      setAboutMorePageOpen(false, false);
       skillCards.forEach((card) => {
         card.removeEventListener('click', onSkillCardClick);
         card.removeEventListener('keydown', onSkillCardKeydown);
@@ -1627,7 +1713,16 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const contactPopupCloseButtons = contactPopup
       ? Array.from(contactPopup.querySelectorAll<HTMLElement>('[data-contact-popup-close]'))
       : [];
+    const notesToggle = document.querySelector<HTMLButtonElement>('.notes-widget-toggle');
     let navUpdateFrame: number | null = null;
+    let routeTransition: HTMLElement | null = null;
+    let routeTransitionTimeline: gsap.core.Timeline | null = null;
+
+    const setNotesPillVisible = (isVisible: boolean): void => {
+      if (!notesToggle) return;
+      notesToggle.hidden = !isVisible;
+      notesToggle.style.display = isVisible ? '' : 'none';
+    };
 
     const refreshNavSectionOffsets = (): void => {
       const scrollY = window.scrollY || window.pageYOffset;
@@ -1685,6 +1780,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         : activeSection !== 'home';
       const notchThreshold = Math.min(64, Math.max(24, window.innerHeight * 0.05));
       pageCanvas?.classList.toggle('has-side-wall-notch', hasPassedHome);
+      setNotesPillVisible(!hasPassedHome);
       heroNav?.classList.toggle(
         'is-scrolled',
         scrollY > notchThreshold || activeSection !== 'home'
@@ -1705,6 +1801,55 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       requestNavUpdate();
     };
 
+    const getRouteTransition = (): HTMLElement => {
+      if (routeTransition) return routeTransition;
+
+      routeTransition = document.createElement('div');
+      routeTransition.className = 'page-route-transition';
+      routeTransition.setAttribute('aria-hidden', 'true');
+      routeTransition.innerHTML = '<span class="page-route-transition-label"></span>';
+      document.body.appendChild(routeTransition);
+      return routeTransition;
+    };
+
+    const playAboutMoreNavTransition = (section: string): void => {
+      const transition = getRouteTransition();
+      const label = transition.querySelector<HTMLElement>('.page-route-transition-label');
+      const reducedMotion = this.prefersReducedMotion();
+
+      try { routeTransitionTimeline?.kill(); } catch (_) {}
+      try { this.pageScrollTween?.kill(); } catch (_) {}
+      this.pageScrollTween = null;
+
+      if (label) label.textContent = section.toUpperCase();
+      pageCanvas?.classList.add('is-route-wrapping');
+      gsap.set(transition, { autoAlpha: 1, yPercent: 100 });
+      if (label) gsap.set(label, { autoAlpha: 0, y: 20 });
+
+      routeTransitionTimeline = gsap.timeline({
+        defaults: { ease: 'power3.inOut' },
+        onComplete: () => {
+          pageCanvas?.classList.remove('is-route-wrapping');
+          gsap.set(transition, { autoAlpha: 0, yPercent: 100 });
+          routeTransitionTimeline = null;
+        },
+      });
+
+      routeTransitionTimeline
+        .to(transition, { yPercent: 0, duration: reducedMotion ? 0.01 : 0.52 }, 0)
+        .to(label, { autoAlpha: 1, y: 0, duration: reducedMotion ? 0.01 : 0.22, ease: 'power2.out' }, reducedMotion ? 0 : 0.18)
+        .add(() => {
+          window.dispatchEvent(new CustomEvent('about-more:close', { detail: { restoreFocus: false } }));
+          this.scrollToPageSection(section, 'auto');
+          navOffsetsDirty = true;
+          setActiveLink(section);
+          setNotesPillVisible(section === 'home');
+          updateActiveLink();
+        }, reducedMotion ? 0.02 : 0.58)
+        .to(label, { autoAlpha: 0, y: -20, duration: reducedMotion ? 0.01 : 0.18, ease: 'power2.in' }, reducedMotion ? 0.03 : 0.78)
+        .to(transition, { yPercent: -100, duration: reducedMotion ? 0.01 : 0.5 }, reducedMotion ? 0.04 : 0.78);
+    };
+
     const onClick = (e: Event): void => {
       const link    = e.currentTarget as HTMLAnchorElement;
       const section = link.dataset['section'];
@@ -1715,7 +1860,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
       e.preventDefault();
       setActiveLink(section);
+      setNotesPillVisible(section === 'home');
       setContactOpen(false);
+      if (pageCanvas?.classList.contains('is-about-more-open')) {
+        playAboutMoreNavTransition(section);
+        return;
+      }
       this.scrollToPageSection(section, 'smooth');
     };
 
@@ -1772,7 +1922,13 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       contactPopupCloseButtons.forEach(button => button.removeEventListener('click', onContactPopupClose));
       document.removeEventListener('keydown', onContactPopupKeydown);
       pageCanvas?.classList.remove('has-side-wall-notch');
+      pageCanvas?.classList.remove('is-route-wrapping');
+      setNotesPillVisible(true);
       document.body.style.overflow = '';
+      try { routeTransitionTimeline?.kill(); } catch (_) {}
+      routeTransitionTimeline = null;
+      routeTransition?.remove();
+      routeTransition = null;
     });
   }
 
@@ -2176,6 +2332,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     if (!widget || !panel || !toggle) return;
 
+    const originalParent = widget.parentNode;
+    const originalNextSibling = widget.nextSibling;
+    if (widget.parentElement !== document.body) {
+      document.body.appendChild(widget);
+    }
+
     this.solariScopeAttr ??= this.getAngularScopeAttribute(widget);
 
     let isOpen = false;
@@ -2190,12 +2352,13 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       introMessage.textContent = '';
     }
 
-    const setOpen = (nextOpen: boolean): void => {
+    const setOpen = (nextOpen: boolean, floatingPanel = false): void => {
       isOpen = nextOpen;
       window.clearTimeout(morphTimer);
 
       widget.classList.remove('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--closing');
       if (isOpen) {
+        widget.classList.toggle('notes-widget--floating', floatingPanel);
         widget.classList.add('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--open');
         panel.classList.add('notes-widget-panel--visible');
         panel.setAttribute('aria-hidden', 'false');
@@ -2205,7 +2368,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         sideToggle?.setAttribute('aria-label', 'Close chat box');
       } else {
         widget.classList.add('notes-widget--morphing', 'notes-widget--closing');
-        widget.classList.remove('notes-widget--open');
+        widget.classList.remove('notes-widget--open', 'notes-widget--floating');
         panel.classList.remove('notes-widget-panel--visible');
         panel.setAttribute('aria-hidden', 'true');
         toggle.setAttribute('aria-expanded', 'false');
@@ -2403,6 +2566,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     };
 
     const onToggleClick = (): void => setOpen(!isOpen);
+    const onSideToggleClick = (): void => setOpen(!isOpen, !isOpen);
     const onCloseClick = (): void => setOpen(false);
     const onChatSubmit = (event: SubmitEvent): void => {
       event.preventDefault();
@@ -2413,18 +2577,29 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     sideToggle?.setAttribute('aria-expanded', 'false');
     this.triggerMobileNotesAnimation = null;
     toggle.addEventListener('click', onToggleClick);
-    sideToggle?.addEventListener('click', onToggleClick);
+    sideToggle?.addEventListener('click', onSideToggleClick);
     if (closeButton) closeButton.addEventListener('click', onCloseClick);
     if (chatForm) chatForm.addEventListener('submit', onChatSubmit);
 
     this.cleanupFns.push(() => {
       window.clearTimeout(introTypewriterTimeout);
       window.clearTimeout(morphTimer);
-      widget.classList.remove('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--closing');
+      widget.classList.remove('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--closing', 'notes-widget--floating');
       toggle.removeEventListener('click', onToggleClick);
-      sideToggle?.removeEventListener('click', onToggleClick);
+      sideToggle?.removeEventListener('click', onSideToggleClick);
       if (closeButton) closeButton.removeEventListener('click', onCloseClick);
       if (chatForm) chatForm.removeEventListener('submit', onChatSubmit);
+
+      if (widget.parentNode === document.body) {
+        if (originalParent?.isConnected) {
+          originalParent.insertBefore(
+            widget,
+            originalNextSibling?.parentNode === originalParent ? originalNextSibling : null
+          );
+        } else {
+          widget.remove();
+        }
+      }
     });
   }
 
@@ -2473,11 +2648,67 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       return Promise.resolve();
     }
 
-    const speed            = this.perfLite ? 0.82 : 1;
-    const previousOverflow = document.body.style.overflow;
+    const speed                = this.perfLite ? 0.82 : 1;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    type GraphemeSegmenter = { segment(value: string): Iterable<{ segment: string }> };
+    const Segmenter = (Intl as typeof Intl & {
+      Segmenter?: new (
+        locale?: string,
+        options?: { granularity: 'grapheme' }
+      ) => GraphemeSegmenter;
+    }).Segmenter;
+    const segmenter = Segmenter ? new Segmenter(undefined, { granularity: 'grapheme' }) : null;
+    const splitGraphemes = (value: string): string[] =>
+      segmenter
+        ? Array.from(segmenter.segment(value), part => part.segment)
+        : Array.from(value);
+
+    const renderLetters = (heading: HTMLElement, label: string): HTMLElement[] => {
+      heading.textContent = '';
+      heading.setAttribute('aria-label', label);
+
+      return splitGraphemes(label).map((character) => {
+        const letter = document.createElement('span');
+        letter.className = character === ' ' ? 'landing-letter landing-letter--space' : 'landing-letter';
+        letter.textContent = character === ' ' ? '\u00a0' : character;
+        heading.appendChild(letter);
+        return letter;
+      });
+    };
+
+    const textStates = welcomeTexts
+      .map((text) => {
+        const heading = text.querySelector<HTMLElement>('h2');
+        const dot = text.querySelector<HTMLElement>('.landing-dot');
+        const label = heading?.textContent?.trim() ?? '';
+
+        return heading && label
+          ? { text, heading, dot, letters: renderLetters(heading, label) }
+          : null;
+      })
+      .filter((state): state is {
+        text: HTMLElement;
+        heading: HTMLElement;
+        dot: HTMLElement | null;
+        letters: HTMLElement[];
+      } => Boolean(state));
+    const allLetters = textStates.flatMap(state => state.letters);
+    const dots = textStates.map(state => state.dot).filter((dot): dot is HTMLElement => Boolean(dot));
 
     gsap.set(welcomeTexts, { autoAlpha: 0 });
+    gsap.set(allLetters, {
+      autoAlpha: 0,
+      x: 0,
+      y: 0,
+      scaleX: 0.18,
+      scaleY: 1.16,
+      filter: 'blur(5px)',
+    });
+    gsap.set(dots, { autoAlpha: 0, scale: 0.35 });
     gsap.set(loaderText,   { y: 0, autoAlpha: 1, force3D: false });
     gsap.set(loaderRound,  { scaleY: 1 });
 
@@ -2486,7 +2717,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       const settle = () => {
         if (settled) return;
         settled = true;
-        document.body.style.overflow = previousOverflow;
+        document.body.style.overflow = previousBodyOverflow;
+        document.documentElement.style.overflow = previousHtmlOverflow;
         try { loader.remove(); } catch (_) {}
         resolve();
       };
@@ -2501,23 +2733,89 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         })
       );
 
-      welcomeTexts.forEach((text, index) => {
-        const isFirst    = index === 0;
-        const isLast     = index === welcomeTexts.length - 1;
-        const holdTime   = (isFirst || isLast ? 0.6 : 0.12) * speed;
+      let morphStart = 0.72 * speed;
+      const getGreetingPace = (index: number): number => {
+        const lastIndex = Math.max(0, textStates.length - 1);
+        if (index === 0 || index === lastIndex) return speed;
 
-        if (isFirst) {
-          timeline.to(text, {
+        const accelerationProgress = index / Math.max(1, lastIndex - 1);
+        return speed * Math.max(0.28, 0.82 - accelerationProgress * 0.54);
+      };
+
+      textStates.forEach((state, index) => {
+        const isFirst = index === 0;
+        const isLast = index === textStates.length - 1;
+        const pace = getGreetingPace(index);
+        const inDuration = (isFirst ? 0.46 : 0.32) * pace;
+        const outDuration = 0.26 * pace;
+        const inStagger = 0.02 * pace;
+        const outStagger = 0.014 * pace;
+        const holdTime = (isFirst || isLast ? 0.58 : 0.12) * pace;
+        const revealTime = inDuration + (state.letters.length - 1) * inStagger;
+        const exitTime = outDuration + (state.letters.length - 1) * outStagger;
+        const middleIndex = (state.letters.length - 1) / 2;
+        const collapseX = (letterIndex: number): number => (middleIndex - letterIndex) * 13;
+        const collapseY = (letterIndex: number): number =>
+          Math.sin((index + 1) * 1.4 + letterIndex * 0.9) * 5;
+
+        timeline
+          .set(state.text, { autoAlpha: 1 }, morphStart)
+          .to(state.dot, {
             autoAlpha: 1,
-            duration : 0.6 * speed,
-            ease     : 'power2.out',
-            delay    : 0.8 * speed,
-          });
-        } else {
-          timeline.set(text, { autoAlpha: 1 });
-        }
+            scale    : 1,
+            duration : 0.26 * pace,
+            ease     : 'back.out(2)',
+          }, morphStart + 0.02 * pace)
+          .fromTo(
+            state.letters,
+            {
+              autoAlpha: 0,
+              x        : collapseX,
+              y        : collapseY,
+              scaleX   : 0.18,
+              scaleY   : 1.16,
+              filter   : 'blur(5px)',
+            },
+            {
+              autoAlpha: 1,
+              x        : 0,
+              y        : 0,
+              scaleX   : 1,
+              scaleY   : 1,
+              filter   : 'blur(0px)',
+              duration : inDuration,
+              ease     : 'expo.out',
+              stagger  : { each: inStagger, from: 'center' },
+            },
+            morphStart
+          );
 
-        if (!isLast) timeline.set(text, { autoAlpha: 0 }, `+=${holdTime}`);
+        if (isLast) {
+          timeline.to(state.text, { scale: 1, duration: holdTime, ease: 'none' }, morphStart + revealTime);
+        } else {
+          const outStart = morphStart + revealTime + holdTime;
+          timeline
+            .to(state.letters, {
+              autoAlpha: 0,
+              x        : collapseX,
+              y        : (letterIndex: number) => collapseY(letterIndex) * -0.8,
+              scaleX   : 0.14,
+              scaleY   : 1.22,
+              filter   : 'blur(5px)',
+              duration : outDuration,
+              ease     : 'power3.in',
+              stagger  : { each: outStagger, from: 'edges' },
+            }, outStart)
+            .to(state.dot, {
+              autoAlpha: 0,
+              scale    : 0.35,
+              duration : 0.16 * pace,
+              ease     : 'power2.in',
+            }, outStart)
+            .set(state.text, { autoAlpha: 0 }, outStart + exitTime + 0.02 * pace);
+
+          morphStart = outStart + exitTime + 0.06 * pace;
+        }
       });
 
       timeline
@@ -2553,7 +2851,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         this.queueSolariTimer(() => this.playSolariIntroSequence(), 0);
       })
       .from('.hero-meta', { y: 8, autoAlpha: 0, duration: 0.56 * baseDuration }, '-=0.18')
-      .from('.notes-widget',    { x: 26, autoAlpha: 0, duration: 0.9  * baseDuration }, '-=0.24')
+      .fromTo(
+        '.notes-widget',
+        { x: 26, autoAlpha: 0 },
+        { x: 0, autoAlpha: 1, duration: 0.9 * baseDuration },
+        '-=0.24'
+      )
       .call(() => {
         if (this.triggerMobileNotesAnimation) {
           this.triggerMobileNotesAnimation();
