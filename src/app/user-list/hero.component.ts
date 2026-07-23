@@ -2522,7 +2522,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       const payload = await response.json().catch(() => ({} as ChatApiPayload)) as ChatApiPayload;
 
       if (!response.ok) {
-        throw new Error(payload.error?.trim() || `Chat request failed with ${response.status}`);
+        const deploymentHint = response.status === 405
+          ? 'The deployed /api/chat function is not active on Vercel. Push the api folder, confirm vercel.json is deployed, then redeploy.'
+          : response.status === 404
+            ? 'The deployed /api/chat function was not found. Make sure api/chat.js is included in the Vercel deployment.'
+            : '';
+        throw new Error(payload.error?.trim() || deploymentHint || `Chat request failed with ${response.status}`);
       }
 
       return payload.reply?.trim() || "I'm here, but I couldn't shape a reply just now.";
