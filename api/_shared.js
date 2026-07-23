@@ -276,6 +276,7 @@ const handleChatRequest = async (req, res) => {
     const reply = await createChatReply(body);
     sendJson(res, 200, { reply });
   } catch (error) {
+    console.error('Chat API error:', error);
     sendJson(res, 500, {
       error: error instanceof Error ? error.message : 'Request failed',
     });
@@ -304,6 +305,7 @@ const handleContactRequest = async (req, res) => {
     await sendContactEmail(body);
     sendJson(res, 200, { success: true });
   } catch (error) {
+    console.error('Contact API error:', error);
     const status = error instanceof ApiError ? error.status : 500;
     sendJson(res, status, {
       error: error instanceof Error ? error.message : 'Request failed',

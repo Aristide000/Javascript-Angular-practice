@@ -1717,11 +1717,35 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     let navUpdateFrame: number | null = null;
     let routeTransition: HTMLElement | null = null;
     let routeTransitionTimeline: gsap.core.Timeline | null = null;
+    let notesPillPassedY: number | null = null;
 
     const setNotesPillVisible = (isVisible: boolean): void => {
       if (!notesToggle) return;
       notesToggle.hidden = !isVisible;
       notesToggle.style.display = isVisible ? '' : 'none';
+    };
+
+    const refreshNotesPillThreshold = (): void => {
+      if (!notesToggle) {
+        notesPillPassedY = null;
+        return;
+      }
+
+      const wasHidden = notesToggle.hidden;
+      const previousDisplay = notesToggle.style.display;
+
+      if (wasHidden || previousDisplay === 'none') {
+        notesToggle.hidden = false;
+        notesToggle.style.display = '';
+      }
+
+      const rect = notesToggle.getBoundingClientRect();
+      notesPillPassedY = rect.width > 0 && rect.height > 0
+        ? rect.bottom + (window.scrollY || window.pageYOffset)
+        : null;
+
+      notesToggle.hidden = wasHidden;
+      notesToggle.style.display = previousDisplay;
     };
 
     const refreshNavSectionOffsets = (): void => {
@@ -1732,6 +1756,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
           ? [{ section, top: target.getBoundingClientRect().top + scrollY }]
           : [];
       });
+      refreshNotesPillThreshold();
       navOffsetsDirty = false;
     };
 
@@ -1775,9 +1800,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       const firstPostHomeTop = navSectionOffsets
         .filter(({ section }) => section !== 'home')
         .reduce((minTop, { top }) => Math.min(minTop, top), Number.POSITIVE_INFINITY);
-      const hasPassedHome = Number.isFinite(firstPostHomeTop)
+      const hasPassedHomePill = notesPillPassedY !== null
+        ? scrollY >= notesPillPassedY - 1
+        : null;
+      const hasPassedHome = hasPassedHomePill ?? (Number.isFinite(firstPostHomeTop)
         ? scrollY >= firstPostHomeTop - 1
-        : activeSection !== 'home';
+        : activeSection !== 'home');
       const notchThreshold = Math.min(64, Math.max(24, window.innerHeight * 0.05));
       pageCanvas?.classList.toggle('has-side-wall-notch', hasPassedHome);
       setNotesPillVisible(!hasPassedHome);
@@ -2971,6 +2999,55 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     board.addEventListener('click', onBoardClick);
     this.cleanupFns.push(() => board.removeEventListener('click', onBoardClick));
+    this.setupSolariViewportReplay(board);
+  }
+
+  private setupSolariViewportReplay(board: HTMLElement): void {
+    if (typeof IntersectionObserver === 'undefined') return;
+
+    let hasEnteredView = false;
+    let hasLeftView = false;
+    let replayQueued = false;
+
+    const replayOnReturn = (): void => {
+      replayQueued = false;
+      if (this.isDestroyed || this.solariIntroInProgress) return;
+      if (this.prefersReducedMotion()) {
+        this.showSolariTarget();
+        return;
+      }
+
+      this.replaySolariBoard();
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+
+        const isInView = entry.isIntersecting && entry.intersectionRatio >= 0.38;
+
+        if (isInView) {
+          if (hasEnteredView && hasLeftView && !replayQueued) {
+            replayQueued = true;
+            window.requestAnimationFrame(replayOnReturn);
+          }
+
+          hasEnteredView = true;
+          hasLeftView = false;
+          return;
+        }
+
+        if (hasEnteredView) {
+          hasLeftView = true;
+        }
+      },
+      {
+        threshold: [0, 0.38, 0.72],
+      }
+    );
+
+    observer.observe(board);
+    this.cleanupFns.push(() => observer.disconnect());
   }
 
   private getAngularScopeAttribute(element: HTMLElement): string | null {
