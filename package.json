@@ -7,6 +7,8 @@
     "start:web": "ng serve --proxy-config proxy.conf.json",
     "api": "node api-server.mjs",
     "build": "ng build",
+    "serve": "node api-server.mjs",
+    "start:prod": "npm run build && npm run serve",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

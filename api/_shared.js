@@ -1,53 +1,11 @@
-import { createReadStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
-import { createServer } from 'node:http';
-import { dirname, extname, isAbsolute, relative, resolve } from 'node:path';
-import { loadEnvFile } from 'node:process';
-import { fileURLToPath } from 'node:url';
-
-try {
-  loadEnvFile();
-} catch (error) {
-  if (error?.code !== 'ENOENT') throw error;
-}
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-const port = Number.parseInt(process.env.PORT ?? process.env.CHAT_API_PORT ?? '3001', 10);
-const staticSiteDir = resolve(
-  process.env.STATIC_SITE_DIR ?? resolve(__dirname, 'dist', 'angular-forms-demo', 'browser')
-);
-const geminiModel = process.env.GEMINI_MODEL ?? 'gemini-3.1-flash-lite';
-const geminiApiKey = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
-const resendApiKey = process.env.RESEND_API_KEY;
-const contactToEmail = process.env.CONTACT_TO_EMAIL ?? 'arystoto47@gmail.com';
-const contactFromEmail =
-  process.env.RESEND_FROM_EMAIL ?? 'Aristide Portfolio <onboarding@resend.dev>';
 const contactRateLimit = new Map();
+
 const chatSystemInstruction = [
   "You are Aristide's assistant, a concise portfolio chatbot for Aristide's website.",
   'Answer warmly in 1-3 short sentences.',
   'Help with questions about UX, design systems, frontend work, and contacting Aristide.',
   'If asked for private or unknown details, say you do not have that information and suggest using the contact section.',
 ].join(' ');
-
-const contentTypes = new Map([
-  ['.css', 'text/css; charset=utf-8'],
-  ['.gif', 'image/gif'],
-  ['.html', 'text/html; charset=utf-8'],
-  ['.ico', 'image/x-icon'],
-  ['.jpg', 'image/jpeg'],
-  ['.jpeg', 'image/jpeg'],
-  ['.js', 'text/javascript; charset=utf-8'],
-  ['.json', 'application/json; charset=utf-8'],
-  ['.pdf', 'application/pdf'],
-  ['.png', 'image/png'],
-  ['.svg', 'image/svg+xml; charset=utf-8'],
-  ['.txt', 'text/plain; charset=utf-8'],
-  ['.webp', 'image/webp'],
-  ['.woff', 'font/woff'],
-  ['.woff2', 'font/woff2'],
-]);
 
 class ApiError extends Error {
   constructor(status, message) {
@@ -66,92 +24,21 @@ const sendJson = (res, status, payload) => {
   res.end(JSON.stringify(payload));
 };
 
-const sendPlainText = (res, status, message) => {
-  res.writeHead(status, {
-    'Content-Type': 'text/plain; charset=utf-8',
-  });
-  res.end(message);
-};
-
-const getRequestPathname = (req) => {
-  try {
-    return new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`).pathname;
-  } catch (_) {
-    return '/';
-  }
-};
-
-const isApiPath = (req) => getRequestPathname(req).startsWith('/api/');
-
-const getStaticFilePath = async (pathname) => {
-  let safePathname = '/';
-
-  try {
-    safePathname = decodeURIComponent(pathname).replaceAll('\\', '/');
-  } catch (_) {
-    return null;
-  }
-
-  const requestedPath = safePathname === '/' ? '/index.html' : safePathname;
-  const candidatePath = resolve(staticSiteDir, `.${requestedPath}`);
-  const relativePath = relative(staticSiteDir, candidatePath);
-
-  if (relativePath.startsWith('..') || isAbsolute(relativePath)) {
-    return null;
-  }
-
-  try {
-    const fileStats = await stat(candidatePath);
-    if (fileStats.isFile()) return candidatePath;
-  } catch (_) {}
-
-  if (!extname(requestedPath)) {
-    return resolve(staticSiteDir, 'index.html');
-  }
-
-  return null;
-};
-
-const serveStaticSite = async (req, res) => {
-  const pathname = getRequestPathname(req);
-  const filePath = await getStaticFilePath(pathname);
-
-  if (!filePath) {
-    sendPlainText(res, 404, 'Not found');
+const readJsonBody = (req) => new Promise((resolve, reject) => {
+  if (req.body && typeof req.body === 'object') {
+    resolve(req.body);
     return;
   }
 
-  try {
-    const fileStats = await stat(filePath);
-    if (!fileStats.isFile()) {
-      sendPlainText(res, 404, 'Not found');
-      return;
+  if (typeof req.body === 'string') {
+    try {
+      resolve(req.body ? JSON.parse(req.body) : {});
+    } catch (error) {
+      reject(error);
     }
-
-    res.writeHead(200, {
-      'Cache-Control': extname(filePath) === '.html'
-        ? 'no-cache'
-        : 'public, max-age=31536000, immutable',
-      'Content-Length': fileStats.size,
-      'Content-Type': contentTypes.get(extname(filePath).toLowerCase()) ?? 'application/octet-stream',
-    });
-
-    if (req.method === 'HEAD') {
-      res.end();
-      return;
-    }
-
-    createReadStream(filePath).pipe(res);
-  } catch (_) {
-    sendPlainText(
-      res,
-      503,
-      'The Angular build was not found. Run "npm run build" before starting the production server.'
-    );
+    return;
   }
-};
 
-const readJsonBody = (req) => new Promise((resolve, reject) => {
   let body = '';
 
   req.on('data', (chunk) => {
@@ -195,11 +82,16 @@ const escapeHtml = (value) =>
 const isEmail = (value) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+const getClientIp = (req) => {
+  const forwardedFor = String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim();
+  return forwardedFor || req.socket?.remoteAddress || 'unknown';
+};
+
 const checkContactRateLimit = (req) => {
   const now = Date.now();
   const windowMs = 10 * 60 * 1000;
   const maxRequests = 5;
-  const key = req.socket.remoteAddress ?? 'unknown';
+  const key = getClientIp(req);
   const recent = (contactRateLimit.get(key) ?? []).filter(
     (timestamp) => now - timestamp < windowMs
   );
@@ -246,6 +138,9 @@ const getResponseText = (payload) => {
 };
 
 const createChatReply = async ({ message, history }) => {
+  const geminiApiKey = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
+  const geminiModel = process.env.GEMINI_MODEL ?? 'gemini-3.1-flash-lite';
+
   if (!geminiApiKey) {
     throw new Error('GEMINI_API_KEY is not set');
   }
@@ -288,12 +183,15 @@ const createChatReply = async ({ message, history }) => {
 };
 
 const sendContactEmail = async (body) => {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  const contactToEmail = process.env.CONTACT_TO_EMAIL ?? 'arystoto47@gmail.com';
+  const contactFromEmail =
+    process.env.RESEND_FROM_EMAIL ?? 'Aristide Portfolio <onboarding@resend.dev>';
   const name = cleanText(body?.name, 100);
   const email = cleanText(body?.email, 180).toLowerCase();
   const message = cleanMultilineText(body?.message, 5000);
   const website = cleanText(body?.website, 200);
 
-  // Honeypot fields are invisible to real visitors.
   if (website) return { id: 'filtered' };
 
   if (name.length < 2) {
@@ -308,7 +206,7 @@ const sendContactEmail = async (body) => {
   if (!resendApiKey) {
     throw new ApiError(
       503,
-      'Email service is not configured. Add RESEND_API_KEY to the .env file and restart the server.'
+      'Email service is not configured. Add RESEND_API_KEY to Vercel and redeploy.'
     );
   }
 
@@ -362,17 +260,29 @@ const sendContactEmail = async (body) => {
   return payload;
 };
 
-const server = createServer(async (req, res) => {
-  if (!isApiPath(req)) {
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      sendPlainText(res, 404, 'Not found');
-      return;
-    }
-
-    await serveStaticSite(req, res);
+const handleChatRequest = async (req, res) => {
+  if (req.method === 'OPTIONS') {
+    sendJson(res, 204, {});
     return;
   }
 
+  if (req.method !== 'POST') {
+    sendJson(res, 404, { error: 'Not found' });
+    return;
+  }
+
+  try {
+    const body = await readJsonBody(req);
+    const reply = await createChatReply(body);
+    sendJson(res, 200, { reply });
+  } catch (error) {
+    sendJson(res, 500, {
+      error: error instanceof Error ? error.message : 'Request failed',
+    });
+  }
+};
+
+const handleContactRequest = async (req, res) => {
   if (req.method === 'OPTIONS') {
     sendJson(res, 204, {});
     return;
@@ -386,32 +296,22 @@ const server = createServer(async (req, res) => {
   try {
     const body = await readJsonBody(req);
 
-    if (req.url === '/api/chat') {
-      const reply = await createChatReply(body);
-      sendJson(res, 200, { reply });
+    if (!checkContactRateLimit(req)) {
+      sendJson(res, 429, { error: 'Too many messages. Please try again in a few minutes.' });
       return;
     }
 
-    if (req.url === '/api/contact') {
-      if (!checkContactRateLimit(req)) {
-        sendJson(res, 429, { error: 'Too many messages. Please try again in a few minutes.' });
-        return;
-      }
-
-      await sendContactEmail(body);
-      sendJson(res, 200, { success: true });
-      return;
-    }
-
-    sendJson(res, 404, { error: 'Not found' });
+    await sendContactEmail(body);
+    sendJson(res, 200, { success: true });
   } catch (error) {
     const status = error instanceof ApiError ? error.status : 500;
     sendJson(res, status, {
       error: error instanceof Error ? error.message : 'Request failed',
     });
   }
-});
+};
 
-server.listen(port, () => {
-  console.log(`Portfolio site and API listening on http://localhost:${port}`);
-});
+module.exports = {
+  handleChatRequest,
+  handleContactRequest,
+};
