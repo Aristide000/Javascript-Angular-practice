@@ -63,10 +63,6 @@ body:has(.landing-loader) {
   overflow: hidden;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   scrollbar-width: thin;
   scrollbar-color: var(--ui-scrollbar-active) transparent;

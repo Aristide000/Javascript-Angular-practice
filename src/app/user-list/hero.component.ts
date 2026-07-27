@@ -1452,8 +1452,9 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         start              : 'top top',
         end                : () => `+=${Math.max(window.innerWidth * (reducedMotion ? 2.8 : 5.8), 2600)}`,
         pin                : true,
-        scrub              : reducedMotion || this.perfLite ? true : 0.32,
+        scrub              : reducedMotion || this.perfLite ? true : 0.4,
         anticipatePin      : 1,
+        fastScrollEnd      : true,
         invalidateOnRefresh: true,
         onUpdate           : (self) => {
           const currentX = Math.abs(Number(gsap.getProperty(track, 'x')) || 0);
@@ -1598,7 +1599,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
               trigger: section,
               start  : 'top 82%',
               end    : 'top 46%',
-              scrub  : this.perfLite ? true : 0.25,
+              scrub  : reducedMotion || this.perfLite ? true : 0.3,
             },
           }
         ))

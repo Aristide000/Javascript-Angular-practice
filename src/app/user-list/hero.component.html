@@ -131,23 +131,6 @@
   </div>
 
   <div class="notes-widget">
-    <svg class="notes-widget-goo-filter" aria-hidden="true" focusable="false">
-      <filter id="chat-gooey">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur" />
-        <feColorMatrix
-          in="blur"
-          mode="matrix"
-          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
-          result="goo"
-        />
-        <feBlend in="SourceGraphic" in2="goo" />
-      </filter>
-    </svg>
-    <span class="notes-widget-morph-layer" aria-hidden="true">
-      <span class="notes-widget-morph-blob notes-widget-morph-blob--button"></span>
-      <span class="notes-widget-morph-blob notes-widget-morph-blob--bridge"></span>
-      <span class="notes-widget-morph-blob notes-widget-morph-blob--panel"></span>
-    </span>
     <button type="button" class="notes-widget-toggle" aria-label="Open chat box">
       <span class="notes-widget-toggle-label">Talk to me</span>
     </button>
@@ -158,7 +141,10 @@
         </div>
         <div class="chatbox-title">
           <strong>Aristide's assistant</strong>
-          <span>online</span>
+          <span class="chatbox-status">
+            <span class="chatbox-status-dot" aria-hidden="true"></span>
+            Online
+          </span>
         </div>
         <button type="button" class="chatbox-close" aria-label="Close chat box">
           <svg class="chatbox-close-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
