@@ -9,10 +9,6 @@ import {
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import {
-  WorkServiceCardComponent,
-  type WorkServiceCard,
-} from '../shared/work-service-card/work-service-card.component';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -34,7 +30,6 @@ type SiteTheme = 'dark' | 'light';
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [WorkServiceCardComponent],
   templateUrl: 'hero.component.html',
   styleUrls: ['hero.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,40 +45,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly solariMisfireChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#*?';
   private readonly themeStorageKey = 'aristide-portfolio-theme';
   private readonly motionEase = 'expo.inOut';
-  public readonly workServices: readonly WorkServiceCard[] = [
-    {
-      variant: 'web',
-      index: '01',
-      category: 'Digital',
-      title: 'Web Design',
-      description: 'Thoughtful interfaces, responsive builds and digital experiences made to feel effortless.',
-      services: ['UI / UX', 'Development'],
-      icon: 'web',
-      surfaceBackground: '#f7f7f4',
-    },
-    {
-      variant: 'music',
-      index: '02',
-      category: 'Sound',
-      title: 'Music Production',
-      description: 'Original production, arrangement and sonic direction shaped around mood and story.',
-      services: ['Production', 'Sound design'],
-      icon: 'music',
-      surfaceBackground: '#000',
-      dark: true,
-    },
-    {
-      variant: 'art',
-      index: '03',
-      category: 'Visual',
-      title: 'Art',
-      description: 'Expressive visual concepts and crafted artwork where curiosity leads the composition.',
-      services: ['Art direction', 'Illustration'],
-      icon: 'art',
-      imageSrc: '/art-zigzag-card.jpg',
-      imageAlt: '',
-    },
-  ];
 
   private get solariFlipTotal(): number {
     return this.solariFlipMs * 2 + 25;
@@ -132,6 +93,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         if (this.isDestroyed) return;
         this.startHeroAnimations();
         this.setupSkillsReveal();
+        this.setupContactReveal();
         this.setupScrollTextReveals();
       });
     });
@@ -177,7 +139,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       'textarea',
       'select',
       '.service-link',
-      '.work-service-card',
       '.work-experience-card',
       '.tech-stack-card',
       '.skills-runway-row',
@@ -186,7 +147,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     ].join(', ');
     const cardSelector = [
       '.service-link',
-      '.work-service-card',
       '.work-experience-card',
       '.tech-stack-card',
       '.skills-runway-row',
@@ -746,12 +706,27 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       setAboutMorePageOpen(false, detail?.restoreFocus ?? false);
     };
 
+    // Native <details> allows every row to stay open at once, which is what made the list
+    // feel stacked/cluttered — keep it to one open row at a time, accordion-style.
+    const moreServiceDetails = morePage
+      ? Array.from(morePage.querySelectorAll<HTMLDetailsElement>('.about-more-service-detail'))
+      : [];
+    const onServiceDetailToggle = (event: Event): void => {
+      const target = event.currentTarget as HTMLDetailsElement;
+      if (!target.open) return;
+
+      moreServiceDetails.forEach((detail) => {
+        if (detail !== target) detail.open = false;
+      });
+    };
+
     window.addEventListener('resize', onResize);
     window.addEventListener('about-more:close', onAboutMoreCloseRequest as EventListener);
     if (toggle) toggle.addEventListener('click', onTogglePanel);
     if (moreButton) moreButton.addEventListener('click', onMoreExpand);
     if (moreBackButton) moreBackButton.addEventListener('click', onMoreBack);
     if (morePage) morePage.addEventListener('keydown', onMorePageKeydown);
+    moreServiceDetails.forEach((detail) => detail.addEventListener('toggle', onServiceDetailToggle));
     if (skillCardList) {
       skillCardList.setAttribute('aria-live', 'polite');
     }
@@ -772,6 +747,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       if (moreButton) moreButton.removeEventListener('click', onMoreExpand);
       if (moreBackButton) moreBackButton.removeEventListener('click', onMoreBack);
       if (morePage) morePage.removeEventListener('keydown', onMorePageKeydown);
+      moreServiceDetails.forEach((detail) => detail.removeEventListener('toggle', onServiceDetailToggle));
       setAboutMorePageOpen(false, false);
       skillCards.forEach((card) => {
         card.removeEventListener('click', onSkillCardClick);
@@ -1348,16 +1324,9 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       ? Array.from(track.querySelectorAll<HTMLElement>('.work-horizontal-panel'))
       : [];
     const title = track?.querySelector<HTMLElement>('.work-horizontal-title') ?? null;
-    const servicesHeading = track?.querySelector<HTMLElement>('.work-services-heading') ?? null;
     const servicesIndex = track?.querySelector<HTMLElement>('.work-services-index') ?? null;
-    const serviceDividers = track
-      ? Array.from(track.querySelectorAll<HTMLElement>('.work-service-divider'))
-      : [];
-    const cardSurfaces = track
-      ? Array.from(track.querySelectorAll<HTMLElement>('.work-card-surface'))
-      : [];
-    const cardContents = track
-      ? Array.from(track.querySelectorAll<HTMLElement>('.work-card-content'))
+    const scrollyLines = track
+      ? Array.from(track.querySelectorAll<HTMLElement>('.work-scrolly-line'))
       : [];
     const scrollNote = track?.querySelector<HTMLElement>('.work-services-scroll-note') ?? null;
     const experienceIndex = track?.querySelector<HTMLElement>('.work-experience-index') ?? null;
@@ -1385,16 +1354,11 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
     const reducedMotion = this.prefersReducedMotion();
 
-    gsap.set(serviceDividers, { scaleY: reducedMotion ? 1 : 0, transformOrigin: 'bottom center' });
-    gsap.set(cardSurfaces, { scaleX: reducedMotion ? 1 : 0, transformOrigin: 'left center' });
-    gsap.set(cardContents, { autoAlpha: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : 24 });
-    if (servicesHeading) {
-      gsap.set(servicesHeading, {
-        autoAlpha: reducedMotion ? 1 : 0,
-        y: reducedMotion ? 0 : 34,
-        clipPath: reducedMotion ? 'inset(0% 0% 0% 0%)' : 'inset(0% 0% 105% 0%)',
-      });
-    }
+    gsap.set(scrollyLines, {
+      autoAlpha: reducedMotion ? 1 : 0,
+      y: reducedMotion ? 0 : 22,
+      filter: reducedMotion ? 'none' : 'blur(6px)',
+    });
     if (servicesIndex) gsap.set(servicesIndex, { autoAlpha: reducedMotion ? 1 : 0, x: reducedMotion ? 0 : -16 });
     if (scrollNote) gsap.set(scrollNote, { autoAlpha: reducedMotion ? 0.42 : 0, y: reducedMotion ? 0 : 8 });
     if (experienceIndex) gsap.set(experienceIndex, { autoAlpha: reducedMotion ? 1 : 0, x: reducedMotion ? 0 : -14 });
@@ -1496,36 +1460,36 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     if (servicesIndex) {
       timeline.to(servicesIndex, { autoAlpha: 1, x: 0, duration: 0.18, ease: 'power2.out' }, 0.26);
     }
-    if (servicesHeading) {
-      timeline.to(servicesHeading, {
-        autoAlpha: 1,
-        y        : 0,
-        clipPath : 'inset(0% 0% 0% 0%)',
-        duration : reducedMotion ? 0.12 : 0.28,
-        ease     : 'power3.out',
-      }, 0.27);
-    }
-    if (!reducedMotion) {
-      timeline
-        .to(serviceDividers, {
-          scaleY : 1,
-          duration: 0.4,
-          stagger : 0.045,
-          ease    : 'power3.inOut',
-        }, 0.52)
-        .to(cardSurfaces, {
-          scaleX  : 1,
-          duration: 0.42,
-          stagger : 0.07,
-          ease    : 'power3.inOut',
-        }, 0.82)
-        .to(cardContents, {
+    if (!reducedMotion && scrollyLines.length > 0) {
+      // Scrollytelling beats: one line reveals, holds, then hands off to the
+      // next — each beat is an absolute time slot on the scrubbed timeline so
+      // scroll position maps directly to "which line is showing" rather than
+      // playing on a clock.
+      const beatStart = 0.46;
+      const beatSpacing = 0.23;
+
+      scrollyLines.forEach((line, index) => {
+        const previousLine = scrollyLines[index - 1];
+        const beatTime = beatStart + index * beatSpacing;
+
+        if (previousLine) {
+          timeline.to(previousLine, {
+            autoAlpha: 0,
+            y        : -18,
+            filter   : 'blur(6px)',
+            duration : 0.16,
+            ease     : 'power2.in',
+          }, beatTime);
+        }
+
+        timeline.to(line, {
           autoAlpha: 1,
           y        : 0,
-          duration : 0.3,
-          stagger  : 0.065,
+          filter   : 'blur(0px)',
+          duration : 0.22,
           ease     : 'power2.out',
-        }, 1.05);
+        }, beatTime);
+      });
     }
     if (scrollNote) {
       timeline.to(scrollNote, { autoAlpha: 0.42, y: 0, duration: 0.18, ease: 'power2.out' }, reducedMotion ? 0.48 : 1.31);
@@ -1615,15 +1579,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       gsap.set([
         track,
         title,
-        servicesHeading,
         servicesIndex,
         scrollNote,
         experienceIndex,
         experienceHeading,
         processHeading,
-        ...serviceDividers,
-        ...cardSurfaces,
-        ...cardContents,
+        ...scrollyLines,
         ...experienceBranches,
         ...experienceCards,
         ...techStackCards,
@@ -2214,6 +2175,83 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   }
 
   // ---------------------------------------------------------------------------
+  // Contact — scroll-triggered reveal for the form panel and social rail.
+  // Every other section on the page animates in on scroll; this one was the
+  // only exception, appearing instantly.
+  // ---------------------------------------------------------------------------
+
+  private setupContactReveal(): void {
+    const section = document.querySelector<HTMLElement>('.contact-section');
+    if (!section || this.prefersReducedMotion()) return;
+
+    const socialLinks = Array.from(section.querySelectorAll<HTMLElement>('.contact-social-rail a'));
+    const formPanel = section.querySelector<HTMLElement>('.contact-form-panel');
+    const formFields = formPanel
+      ? Array.from(
+          formPanel.querySelectorAll<HTMLElement>(':scope > label:not(.contact-honeypot), :scope > button')
+        )
+      : [];
+
+    if (!formPanel && socialLinks.length === 0) return;
+
+    if (formPanel) gsap.set(formPanel, { autoAlpha: 0, y: 28 });
+    gsap.set(formFields, { autoAlpha: 0, y: 14 });
+    gsap.set(socialLinks, { autoAlpha: 0, y: 14 });
+
+    const timeline = gsap.timeline({
+      defaults: { overwrite: 'auto' },
+      scrollTrigger: {
+        id: 'contact-section-reveal',
+        trigger: section,
+        start: 'top 78%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    if (formPanel) {
+      timeline.to(formPanel, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.6,
+        ease: 'power3.out',
+      });
+    }
+
+    if (formFields.length > 0) {
+      timeline.to(
+        formFields,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.42,
+          stagger: 0.06,
+          ease: 'power2.out',
+        },
+        formPanel ? '-=0.3' : 0
+      );
+    }
+
+    if (socialLinks.length > 0) {
+      timeline.to(
+        socialLinks,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.36,
+          stagger: 0.05,
+          ease: 'power2.out',
+        },
+        '-=0.2'
+      );
+    }
+
+    this.track(timeline);
+    this.cleanupFns.push(() => {
+      try { ScrollTrigger.getById('contact-section-reveal')?.kill(); } catch (_) {}
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // Site-wide scroll text reveal
   // ---------------------------------------------------------------------------
 
@@ -2228,6 +2266,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       '.page-section .section-kicker',
       '.page-section .section-title-row h2',
       '.page-section .section-lede',
+      '.contact-info-panel h2',
+      '.contact-info-panel p',
     ];
     const excludedContexts = [
       '.hero-nav',
@@ -2374,12 +2414,132 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     let hasTypedIntroMessage = false;
     let introTypewriterTimeout = 0;
     let morphTimer = 0;
+    let shapeMorphTween: gsap.core.Timeline | null = null;
     const chatHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
     const introText = String(introMessage?.textContent ?? '').replace(/\s+/g, ' ').trim();
 
     if (introMessage && !this.prefersReducedMotion()) {
       introMessage.textContent = '';
     }
+
+    // ---------------------------------------------------------------------
+    // Liquid morph — the panel's "closed" shape is computed live from the
+    // pill's actual on-screen rect (FLIP), so the panel always grows out of
+    // exactly where the pill sits rather than a guessed scale ratio. CSS
+    // transitions on both elements are suspended for the duration so they
+    // can't fight the per-frame inline styles GSAP is writing.
+    // ---------------------------------------------------------------------
+    const settleTogglePill = (): void => {
+      toggle.style.removeProperty('transition');
+      gsap.set(toggle, { clearProps: 'transform,opacity,transformOrigin' });
+    };
+
+    const settlePanelShape = (): void => {
+      panel.style.removeProperty('transition');
+      gsap.set(panel, { clearProps: 'transform,opacity,borderRadius,transformOrigin' });
+    };
+
+    const runLiquidMorph = (opening: boolean): void => {
+      try { shapeMorphTween?.kill(); } catch (_) {}
+
+      const toggleIsVisibleTrigger = toggle.offsetParent !== null
+        && window.getComputedStyle(toggle).display !== 'none';
+
+      if (this.prefersReducedMotion() || !toggleIsVisibleTrigger) {
+        settleTogglePill();
+        settlePanelShape();
+        return;
+      }
+
+      const toggleRect = toggle.getBoundingClientRect();
+      const widgetRect = widget.getBoundingClientRect();
+      const naturalWidth = panel.offsetWidth;
+      const naturalHeight = panel.offsetHeight;
+
+      if (naturalWidth <= 0 || naturalHeight <= 0 || toggleRect.width <= 0 || toggleRect.height <= 0) {
+        settleTogglePill();
+        settlePanelShape();
+        return;
+      }
+
+      // Panel is right:0 / bottom:0 within widget, so its natural (unscaled)
+      // box always shares the widget's right/bottom edge.
+      const naturalLeft = widgetRect.right - naturalWidth;
+      const naturalTop = widgetRect.bottom - naturalHeight;
+      const originX = toggleRect.left - naturalLeft;
+      const originY = toggleRect.top - naturalTop;
+      const originScaleX = toggleRect.width / naturalWidth;
+      const originScaleY = toggleRect.height / naturalHeight;
+      const pillRadius = Math.min(toggleRect.width, toggleRect.height) / 2;
+      const panelRadius = parseFloat(
+        window.getComputedStyle(panel).getPropertyValue('--chat-panel-radius')
+      ) || 16;
+      const morphDuration = 0.62;
+
+      panel.style.setProperty('transition', 'none');
+      toggle.style.setProperty('transition', 'none');
+      gsap.set([panel, toggle], { transformOrigin: '0% 0%' });
+
+      shapeMorphTween = this.track(gsap.timeline({
+        onComplete: () => {
+          settleTogglePill();
+          settlePanelShape();
+        },
+      }));
+
+      if (opening) {
+        shapeMorphTween
+          .set(panel, {
+            x: originX,
+            y: originY,
+            scaleX: originScaleX,
+            scaleY: originScaleY,
+            borderRadius: pillRadius,
+            opacity: 1,
+          }, 0)
+          .set(toggle, { opacity: 1 }, 0)
+          .to(toggle, {
+            opacity : 0,
+            scale   : 0.92,
+            duration: 0.15,
+            ease    : 'power2.in',
+          }, 0)
+          .to(panel, {
+            x        : 0,
+            y        : 0,
+            scaleX   : 1.015,
+            scaleY   : 1.015,
+            borderRadius: panelRadius,
+            duration : morphDuration * 0.72,
+            ease     : 'power3.out',
+          }, 0.02)
+          .to(panel, {
+            scaleX  : 1,
+            scaleY  : 1,
+            duration: morphDuration * 0.3,
+            ease    : 'power2.out',
+          }, 0.02 + morphDuration * 0.6);
+      } else {
+        shapeMorphTween
+          .set(toggle, { opacity: 0, scale: 0.92 }, 0)
+          .to(panel, {
+            x        : originX,
+            y        : originY,
+            scaleX   : originScaleX,
+            scaleY   : originScaleY,
+            borderRadius: pillRadius,
+            opacity  : 0,
+            duration : morphDuration,
+            ease     : 'power3.inOut',
+          }, 0)
+          .to(toggle, {
+            opacity : 1,
+            scale   : 1,
+            duration: 0.22,
+            ease    : 'power2.out',
+          }, morphDuration * 0.62);
+      }
+    };
 
     const setOpen = (nextOpen: boolean, floatingPanel = false): void => {
       isOpen = nextOpen;
@@ -2405,6 +2565,8 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         sideToggle?.setAttribute('aria-expanded', 'false');
         sideToggle?.setAttribute('aria-label', 'Open chat box');
       }
+
+      runLiquidMorph(isOpen);
 
       morphTimer = window.setTimeout(() => {
         widget.classList.remove('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--closing');
@@ -2618,6 +2780,9 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     this.cleanupFns.push(() => {
       window.clearTimeout(introTypewriterTimeout);
       window.clearTimeout(morphTimer);
+      try { shapeMorphTween?.kill(); } catch (_) {}
+      panel.style.removeProperty('transition');
+      toggle.style.removeProperty('transition');
       widget.classList.remove('notes-widget--morphing', 'notes-widget--opening', 'notes-widget--closing', 'notes-widget--floating');
       toggle.removeEventListener('click', onToggleClick);
       sideToggle?.removeEventListener('click', onSideToggleClick);
@@ -2708,7 +2873,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       return splitGraphemes(label).map((character) => {
         const letter = document.createElement('span');
         letter.className = character === ' ' ? 'landing-letter landing-letter--space' : 'landing-letter';
-        letter.textContent = character === ' ' ? '\u00a0' : character;
+        letter.textContent = character === ' ' ? ' ' : character;
         heading.appendChild(letter);
         return letter;
       });
@@ -2717,21 +2882,18 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     const textStates = welcomeTexts
       .map((text) => {
         const heading = text.querySelector<HTMLElement>('h2');
-        const dot = text.querySelector<HTMLElement>('.landing-dot');
         const label = heading?.textContent?.trim() ?? '';
 
         return heading && label
-          ? { text, heading, dot, letters: renderLetters(heading, label) }
+          ? { text, heading, letters: renderLetters(heading, label) }
           : null;
       })
       .filter((state): state is {
         text: HTMLElement;
         heading: HTMLElement;
-        dot: HTMLElement | null;
         letters: HTMLElement[];
       } => Boolean(state));
     const allLetters = textStates.flatMap(state => state.letters);
-    const dots = textStates.map(state => state.dot).filter((dot): dot is HTMLElement => Boolean(dot));
 
     gsap.set(welcomeTexts, { autoAlpha: 0 });
     gsap.set(allLetters, {
@@ -2742,7 +2904,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       scaleY: 1.16,
       filter: 'blur(5px)',
     });
-    gsap.set(dots, { autoAlpha: 0, scale: 0.35 });
     gsap.set(loaderText,   { y: 0, autoAlpha: 1, force3D: false });
     gsap.set(loaderRound,  { scaleY: 1 });
 
@@ -2794,12 +2955,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
 
         timeline
           .set(state.text, { autoAlpha: 1 }, morphStart)
-          .to(state.dot, {
-            autoAlpha: 1,
-            scale    : 1,
-            duration : 0.26 * pace,
-            ease     : 'back.out(2)',
-          }, morphStart + 0.02 * pace)
           .fromTo(
             state.letters,
             {
@@ -2839,12 +2994,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
               duration : outDuration,
               ease     : 'power3.in',
               stagger  : { each: outStagger, from: 'edges' },
-            }, outStart)
-            .to(state.dot, {
-              autoAlpha: 0,
-              scale    : 0.35,
-              duration : 0.16 * pace,
-              ease     : 'power2.in',
             }, outStart)
             .set(state.text, { autoAlpha: 0 }, outStart + exitTime + 0.02 * pace);
 

@@ -299,7 +299,6 @@ body .page-canvas.has-microinteractions :is(
 
 body .page-canvas.has-microinteractions :is(
   .service-link,
-  .work-service-card,
   .work-experience-card,
   .tech-stack-card,
   .contact-form-panel
@@ -359,7 +358,6 @@ body .page-canvas.has-microinteractions :is(
     .about-connect-button,
     .about-panel-toggle,
     .service-link,
-    .work-service-card,
     .work-experience-card,
     .tech-stack-card,
     .contact-form-panel,
@@ -1290,7 +1288,10 @@ body .page-canvas .hero-nav.is-scrolled {
   border-color: transparent;
   border-radius: 12px;
   background: rgba(8, 9, 11, 0.88) !important;
-  box-shadow: none;
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.36),
+    0 5px 16px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
