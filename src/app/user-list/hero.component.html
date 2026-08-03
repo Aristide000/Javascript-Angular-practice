@@ -1,0 +1,695 @@
+﻿<div class="landing-loader" aria-hidden="true">
+  <div class="landing-loader-text">
+    <div class="landing-welcome-text">
+      <h2>Hello</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>Bonjour</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>&#2360;&#2381;&#2357;&#2366;&#2327;&#2340;&#2350;</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>Ciao</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>Ol&aacute;</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>&#12371;&#12435;&#12395;&#12385;&#12399;</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>Hall&aring;</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>Guten Tag</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>Hallo</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>&#2488;&#2509;&#2476;&#2494;&#2455;&#2468;&#2478;</h2>
+    </div>
+    <div class="landing-welcome-text">
+      <h2>Muraho</h2>
+    </div>
+  </div>
+  <div class="landing-loader-round">
+    <div class="landing-loader-curve"></div>
+  </div>
+</div>
+
+<div class="page-canvas">
+  <div class="hero-bg">
+    <div class="bg-instrumentation" aria-hidden="true">
+      <span class="bg-signal bg-signal--coords">KGL 01 56 38 S / 030 03 34 E</span>
+      <span class="bg-signal bg-signal--date">DATE <span data-bg-current-date>-- --- ----</span></span>
+      <span class="bg-signal bg-signal--alt">ALT 1567 M / RWY 28</span>
+      <span class="bg-signal bg-signal--system">SYS DESIGN-BUILD / SIGNAL 04</span>
+      <span class="bg-route-line"></span>
+    </div>
+  </div>
+
+  <button type="button" class="side-wall-notch" aria-label="Open chat box" aria-expanded="false" data-side-chat-toggle>
+    <svg class="side-wall-notch-frame" viewBox="0 0 36 220" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path d="M36 21C34.9 45 31.2 58.2 22.8 64.6C15.4 70.2 4 68.7 1.2 84.7C0.4 89.4 0 94.5 0 100.3V119.7C0 125.5 0.4 130.6 1.2 135.3C4 151.3 15.4 149.8 22.8 155.4C31.2 161.8 34.9 175 36 199V21Z" />
+      <text class="side-wall-notch-svg-label side-wall-notch-svg-label--cta" x="16.2" y="110" text-anchor="middle" dominant-baseline="middle" textLength="48" lengthAdjust="spacingAndGlyphs" transform="rotate(-90 16.2 110)">Talk to me</text>
+      <text class="side-wall-notch-svg-label side-wall-notch-svg-label--time" x="16.2" y="110" text-anchor="middle" dominant-baseline="middle" textLength="48" lengthAdjust="spacingAndGlyphs" transform="rotate(-90 16.2 110)" data-side-notch-time>--:--:--</text>
+    </svg>
+  </button>
+
+  <nav class="hero-nav" aria-label="Primary navigation">
+    <div class="logo">
+      <img src="/aristide-mark-white.svg" alt="Iraguha Aristide logo" class="logo-image">
+      <span class="logo-divider" aria-hidden="true"></span>
+      <span class="logo-wordmark" aria-hidden="true">IRAGUHA Aristide</span>
+    </div>
+
+    <ul class="nav-links nav-links--center">
+      <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
+      <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+      <li><a href="#work" class="nav-link" data-section="work">Work</a></li>
+      <li><a href="#skills" class="nav-link" data-section="skills">Skills</a></li>
+      <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions nav-contact">
+      <button
+        type="button"
+        class="theme-toggle"
+        aria-label="Switch to light theme"
+        aria-pressed="false"
+        title="Switch to light theme"
+        data-theme-toggle
+      >
+        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M21 12.8A8.6 8.6 0 1 1 11.2 3 6.7 6.7 0 0 0 21 12.8Z" />
+        </svg>
+        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2.8v2.1M12 19.1v2.1M4.9 4.9l1.5 1.5M17.6 17.6l1.5 1.5M2.8 12h2.1M19.1 12h2.1M4.9 19.1l1.5-1.5M17.6 6.4l1.5-1.5" />
+        </svg>
+      </button>
+
+      <div class="contact-expander">
+        <button
+          type="button"
+          class="nav-cta contact-toggle"
+          aria-expanded="false"
+          aria-controls="contact-popup"
+          aria-label="Open quick links"
+        >
+          <span class="contact-toggle-line contact-toggle-line--top" aria-hidden="true"></span>
+          <span class="contact-toggle-line contact-toggle-line--bottom" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="contact-popup" id="contact-popup" role="dialog" aria-label="Quick links" aria-hidden="true">
+    <div class="contact-popup-backdrop" data-contact-popup-close></div>
+    <nav class="contact-popup-links" aria-label="Quick links">
+      <a href="/resume.pdf" download class="contact-action-card contact-action-card--cv">
+        <svg class="contact-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4.5 19h15" />
+        </svg>
+        <span class="contact-action-copy">
+          <span class="contact-action-label">Download CV</span>
+          <span class="contact-action-meta">PDF &middot; Direct download</span>
+        </span>
+      </a>
+      <a href="https://cal.com/iraguha-aristide-fi62ue/secret" target="_blank" rel="noopener noreferrer" class="contact-action-card contact-action-card--call">
+        <svg class="contact-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6.6 10.2c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1v3.6c0 .6-.4 1-1 1C10.6 20.5 3.5 13.4 3.5 4.7c0-.6.4-1 1-1H8c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1L6.6 10.2Z" />
+        </svg>
+        <span class="contact-action-copy">
+          <span class="contact-action-label">Book a call</span>
+          <span class="contact-action-meta">Schedule via Cal.com</span>
+        </span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="notes-widget">
+    <button type="button" class="notes-widget-toggle" aria-label="Open chat box">
+      <span class="notes-widget-toggle-label">Talk to me</span>
+    </button>
+    <div class="notes-widget-panel chatbox" role="dialog" aria-label="Chat with Aristide's assistant" aria-hidden="true">
+      <div class="chatbox-header">
+        <div class="chatbox-avatar" aria-hidden="true">
+          <img src="/chat-profile.png" alt="">
+        </div>
+        <div class="chatbox-title">
+          <strong>Aristide's assistant</strong>
+          <span class="chatbox-status">
+            <span class="chatbox-status-dot" aria-hidden="true"></span>
+            Online
+          </span>
+        </div>
+        <button type="button" class="chatbox-close" aria-label="Close chat box">
+          <svg class="chatbox-close-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="chatbox-body" aria-live="polite">
+        <div class="chatbox-typing" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="chatbox-message chatbox-message--bot chatbox-message--intro">
+Hi! I’m Aristide’s assistant. I’m here to help you learn more about him, his skills, projects, and creative work. Feel free to ask me anything about his web design, development or just say hello!        </div>
+
+      <form class="chatbox-input-row" aria-label="Start chat">
+        <input type="text" aria-label="Chat message" placeholder="Your message..." />
+        <button type="submit" aria-label="Send message">
+          <svg class="chatbox-send-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M5.5 6.75 18.5 12 5.5 17.25v-3.7L12.35 12 5.5 10.45v-3.7Z" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <section class="hero" id="home">
+
+    <div class="hero-content">
+      <h1 class="hero-name">Hi, I'm <span class="hero-name-accent">Aristide</span></h1>
+
+      <p class="hero-professions">
+        I work across
+        <span class="profession-rotator" aria-live="polite">
+          <span>product designer</span>
+          <span>web developer</span>
+          <span>brand designer</span>
+        </span>
+      </p>
+
+      <span class="hero-portfolio">
+        <span class="solari-board" aria-label="Portfolio split flap display"></span>
+        <span class="hero-meta" aria-label="Location and current date">
+          <span>Kigali, Rwanda</span>
+          <time data-hero-current-date datetime="">-- --- ----</time>
+        </span>
+      </span>
+    </div>
+
+    <button type="button" class="scroll-hint" aria-label="Scroll to about section" (click)="scrollToNextSection()">
+      <span class="scroll-text">Scroll to explore</span>
+      <div class="scroll-line"></div>
+    </button>
+
+    <div class="hero-local-time" aria-label="Local time">
+      <div class="flight-cell">
+        <div class="fl-label">Local Time</div>
+        <div class="fl-value local-time-value">--:--:--</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section" id="about" aria-label="About">
+    <div class="about-reveal-box">
+      <div class="about-platform" aria-hidden="true">
+        <span class="about-platform-light-surface"></span>
+      </div>
+      <div class="about-content-mask">
+        <div class="about-section-tab" aria-hidden="true">
+          <span>About</span>
+        </div>
+        <div class="about-corner-marker" aria-hidden="true">
+          <span class="about-corner-index">01</span>
+          <span class="about-corner-word">ABOUT</span>
+        </div>
+        <button
+          type="button"
+          class="about-panel-toggle"
+          aria-label="Expand about panel"
+          aria-pressed="false"
+        >
+          <svg class="about-panel-toggle-icon about-panel-toggle-icon--expand" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M21 16v5h-5" />
+          </svg>
+          <svg class="about-panel-toggle-icon about-panel-toggle-icon--collapse" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6" />
+          </svg>
+        </button>
+        <article class="about-description about-profile-panel" aria-label="About Iraguha Aristide">
+          <section class="about-copy-section about-profile-card" data-about-section="profile" aria-label="Profile introduction">
+            <div class="about-product-card">
+              <h2 class="about-rotating-title" aria-label="Product Designer, Music Producer, Art Enthusiast, Branding, CRO">
+                <span class="about-title-option about-title-option--one" aria-hidden="true">Product<br>Designer</span>
+                <span class="about-title-option about-title-option--two" aria-hidden="true">Music<br>Producer</span>
+                <span class="about-title-option about-title-option--three" aria-hidden="true">Art<br>Enthusiast</span>
+                <span class="about-title-option about-title-option--four" aria-hidden="true">Branding</span>
+                <span class="about-title-option about-title-option--five" aria-hidden="true">CRO</span>
+              </h2>
+              <button type="button" class="about-connect-button" aria-label="Open more about Aristide" aria-expanded="false" aria-controls="about-more-page" data-about-more-open>
+                <span>More</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M7 17 17 7M9 7h8v8" />
+                </svg>
+              </button>
+            </div>
+
+            <figure class="about-portrait about-profile-photo">
+              <img
+                src="/about-portrait-transparent.png"
+                alt="Portrait of Iraguha Aristide"
+                class="about-portrait-image"
+              >
+            </figure>
+
+            <p class="about-profile-note">
+              Hi, I'm Aristide IRAGUHA, a Product Designer focused on clean and meaningful digital experiences.
+            </p>
+          </section>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-more-page" id="about-more-page" aria-labelledby="about-more-title" aria-hidden="true" hidden data-about-more-page>
+    <button type="button" class="about-more-back" data-about-more-back>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M15 6 9 12l6 6" />
+      </svg>
+      <span>Back to About</span>
+    </button>
+
+    <div class="about-more-shell">
+      <h2 id="about-more-title" class="about-more-heading">More</h2>
+      <div class="about-more-services" aria-label="More about Aristide's work">
+        <details class="about-more-service-detail">
+          <summary class="about-more-service-row">
+            <span class="about-more-service-index">01</span>
+            <span class="about-more-service-title">Product Design</span>
+            <span class="about-more-service-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="about-more-service-expanded">
+            <div class="about-more-service-copy">
+              <h3>I design interfaces people actually enjoy using.</h3>
+              <p>
+                From wireframe to shipped product, I focus on flows that feel obvious the first time —
+                clean layouts, considered typography, and interactions that respond the way you'd expect.
+              </p>
+            </div>
+            <div class="about-more-service-results">
+              <span>Focus areas</span>
+              <strong>UI systems</strong>
+              <strong>Figma → code</strong>
+              <strong>Design QA</strong>
+            </div>
+          </div>
+        </details>
+        <details class="about-more-service-detail">
+          <summary class="about-more-service-row">
+            <span class="about-more-service-index">02</span>
+            <span class="about-more-service-title">Branding</span>
+            <span class="about-more-service-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="about-more-service-expanded">
+            <div class="about-more-service-copy">
+              <h3>I build visual identities with a clear point of view.</h3>
+              <p>
+                Logo systems, color, and type — every piece is chosen to say something specific
+                about a brand, not just to look nice in a deck.
+              </p>
+            </div>
+            <div class="about-more-service-results">
+              <span>Focus areas</span>
+              <strong>Logo systems</strong>
+              <strong>Brand guides</strong>
+              <strong>Art direction</strong>
+            </div>
+          </div>
+        </details>
+        <details class="about-more-service-detail">
+          <summary class="about-more-service-row">
+            <span class="about-more-service-index">03</span>
+            <span class="about-more-service-title">Conversion Design</span>
+            <span class="about-more-service-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="about-more-service-expanded">
+            <div class="about-more-service-copy">
+              <h3>I turn a good-looking page into one that converts.</h3>
+              <p>
+                Copy, layout, and flow all get tested against real behavior — small, deliberate
+                changes that add up to a meaningfully better result.
+              </p>
+            </div>
+            <div class="about-more-service-results">
+              <span>Focus areas</span>
+              <strong>A/B testing</strong>
+              <strong>Funnel audits</strong>
+              <strong>Analytics</strong>
+            </div>
+          </div>
+        </details>
+        <details class="about-more-service-detail">
+          <summary class="about-more-service-row">
+            <span class="about-more-service-index">04</span>
+            <span class="about-more-service-title">Music Production</span>
+            <span class="about-more-service-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="about-more-service-expanded">
+            <div class="about-more-service-copy">
+              <h3>I produce and arrange music outside of client work.</h3>
+              <p>
+                Beat-making, sound design, full arrangements — a different kind of problem-solving
+                that keeps the design side of my brain sharp too.
+              </p>
+            </div>
+            <div class="about-more-service-results">
+              <span>Focus areas</span>
+              <strong>Arrangement</strong>
+              <strong>Sound design</strong>
+              <strong>Mixing</strong>
+            </div>
+          </div>
+        </details>
+        <details class="about-more-service-detail">
+          <summary class="about-more-service-row">
+            <span class="about-more-service-index">05</span>
+            <span class="about-more-service-title">Art</span>
+            <span class="about-more-service-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="about-more-service-expanded">
+            <div class="about-more-service-copy">
+              <h3>I sketch and paint when I'm away from the screen.</h3>
+              <p>
+                Illustration and mixed-media work I make for myself — it's where a lot of the
+                color and composition instincts in my design work actually come from.
+              </p>
+            </div>
+            <div class="about-more-service-results">
+              <span>Focus areas</span>
+              <strong>Illustration</strong>
+              <strong>Mixed media</strong>
+              <strong>Personal practice</strong>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="work-horizontal-section" id="work" aria-label="Work">
+    <div class="work-horizontal-viewport">
+      <div class="work-horizontal-track">
+        <section class="work-horizontal-panel work-horizontal-panel--intro" aria-label="Work introduction">
+          <h2 class="work-horizontal-title">WORK</h2>
+        </section>
+        <section class="work-horizontal-panel work-services-panel" id="work-with" aria-label="Why hire me">
+          <div class="work-services-shell">
+            <p class="work-services-index" aria-hidden="true">01 / WHY ME</p>
+
+            <div class="work-scrolly-stage">
+              <p class="work-scrolly-line" data-scrolly-line>There are 100 reasons to hire me. You probably already know yours.</p>
+              <p class="work-scrolly-line" data-scrolly-line>My skills, creativity, experience, and attention to detail are just the beginning.</p>
+              <p class="work-scrolly-line" data-scrolly-line>Most clients wait too long when they need the right person. I&rsquo;m not here to lecture you about that.</p>
+              <p class="work-scrolly-line" data-scrolly-line>I&rsquo;m here to make choosing me feel less like a big deal, because it isn&rsquo;t.</p>
+            </div>
+
+            <p class="work-services-scroll-note" aria-hidden="true">Scroll to read / 01</p>
+          </div>
+        </section>
+
+        <section class="work-horizontal-panel work-experience-panel" id="work-experience" aria-labelledby="work-experience-title">
+          <div class="work-experience-shell">
+            <div class="work-experience-stage">
+              <header class="work-experience-heading">
+                <div class="work-experience-pills" aria-label="Timeline categories">
+                  <span>Work</span>
+                  <span>Experience timeline</span>
+                </div>
+                <h2 id="work-experience-title">My experience</h2>
+              </header>
+
+              <article class="work-experience-milestone" style="--experience-position: 17%;">
+                <span class="work-experience-duration" aria-hidden="true">2024</span>
+                <span class="work-experience-branch" aria-hidden="true"></span>
+                <div class="work-experience-card work-experience-card--creative">
+                  <div class="work-experience-card-visual" aria-hidden="true">
+                    <span>Selected work</span>
+                    <strong>Creative<br>direction</strong>
+                  </div>
+                  <div class="work-experience-card-body">
+                    <p class="work-experience-card-label">Art + Sound</p>
+                    <h3>Creative Foundations</h3>
+                    <p class="work-experience-card-description">Visual studies, music concepts and identity experiments.</p>
+                    <div class="work-experience-card-footer">
+                      <time datetime="2024"><strong>24</strong><span>20</span></time>
+                      <span>Creative direction</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="work-experience-milestone" style="--experience-position: 50%;">
+                <span class="work-experience-duration" aria-hidden="true">2025</span>
+                <span class="work-experience-branch" aria-hidden="true"></span>
+                <div class="work-experience-card work-experience-card--interface">
+                  <div class="work-experience-card-visual" aria-hidden="true">
+                    <span>Selected work</span>
+                    <strong>Product<br>interface</strong>
+                  </div>
+                  <div class="work-experience-card-body">
+                    <p class="work-experience-card-label">UI / UX + Angular</p>
+                    <h3>Internship UI Builds</h3>
+                    <p class="work-experience-card-description">Responsive components and clear front-end product flows.</p>
+                    <div class="work-experience-card-footer">
+                      <time datetime="2025"><strong>25</strong><span>20</span></time>
+                      <span>Product interface</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="work-experience-milestone" style="--experience-position: 83%;">
+                <span class="work-experience-duration" aria-hidden="true">2026 — NOW</span>
+                <span class="work-experience-branch" aria-hidden="true"></span>
+                <div class="work-experience-card work-experience-card--portfolio">
+                  <div class="work-experience-card-visual" aria-hidden="true">
+                    <span>Selected work</span>
+                    <strong>Design +<br>development</strong>
+                  </div>
+                  <div class="work-experience-card-body">
+                    <p class="work-experience-card-label">Angular + GSAP</p>
+                    <h3>Interactive Portfolio</h3>
+                    <p class="work-experience-card-description">Editorial design, custom development and scroll-led motion.</p>
+                    <div class="work-experience-card-footer">
+                      <time datetime="2026"><strong>26</strong><span>20</span></time>
+                      <span>Design + development</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="work-horizontal-panel work-process-panel" id="work-process" aria-labelledby="work-process-title">
+          <div class="tech-stack-shell">
+            <header class="work-process-heading">
+              <p class="work-process-index">03 / HOW I WORK</p>
+              <div class="work-process-title-row">
+                <h2 id="work-process-title">How I work</h2>
+                <p>Tools and technologies</p>
+              </div>
+            </header>
+
+            <div class="tech-stack-grid" aria-label="Tools and technologies">
+              <article class="tech-stack-card" aria-label="Languages: TypeScript, JavaScript, HTML, CSS, Python and SQL">
+                <header class="tech-stack-card-header">
+                  <span>01</span>
+                  <h3>Languages</h3>
+                </header>
+                <div class="tech-stack-marquee" aria-hidden="true">
+                  <div class="tech-stack-loop tech-stack-loop--up">
+                    <div class="tech-stack-group">
+                      <span>TypeScript</span><span>JavaScript</span><span>HTML5</span>
+                      <span>CSS3</span><span>Python</span><span>SQL</span>
+                    </div>
+                    <div class="tech-stack-group">
+                      <span>TypeScript</span><span>JavaScript</span><span>HTML5</span>
+                      <span>CSS3</span><span>Python</span><span>SQL</span>
+                    </div>
+                  </div>
+                </div>
+                <footer><span>Core</span><span>06 tools</span></footer>
+              </article>
+
+              <article class="tech-stack-card" aria-label="Frameworks: Angular, Node.js, GSAP, RxJS, Express and Sass">
+                <header class="tech-stack-card-header">
+                  <span>02</span>
+                  <h3>Frameworks</h3>
+                </header>
+                <div class="tech-stack-marquee" aria-hidden="true">
+                  <div class="tech-stack-loop tech-stack-loop--down">
+                    <div class="tech-stack-group">
+                      <span>Angular</span><span>Node.js</span><span>GSAP</span>
+                      <span>RxJS</span><span>Express</span><span>Sass</span>
+                    </div>
+                    <div class="tech-stack-group">
+                      <span>Angular</span><span>Node.js</span><span>GSAP</span>
+                      <span>RxJS</span><span>Express</span><span>Sass</span>
+                    </div>
+                  </div>
+                </div>
+                <footer><span>Build</span><span>06 tools</span></footer>
+              </article>
+
+              <article class="tech-stack-card" aria-label="Workflow tools: Git, GitHub, Figma, VS Code, npm and REST APIs">
+                <header class="tech-stack-card-header">
+                  <span>03</span>
+                  <h3>Workflow</h3>
+                </header>
+                <div class="tech-stack-marquee" aria-hidden="true">
+                  <div class="tech-stack-loop tech-stack-loop--up tech-stack-loop--slow">
+                    <div class="tech-stack-group">
+                      <span>Git</span><span>GitHub</span><span>Figma</span>
+                      <span>VS Code</span><span>npm</span><span>REST APIs</span>
+                    </div>
+                    <div class="tech-stack-group">
+                      <span>Git</span><span>GitHub</span><span>Figma</span>
+                      <span>VS Code</span><span>npm</span><span>REST APIs</span>
+                    </div>
+                  </div>
+                </div>
+                <footer><span>Ship</span><span>06 tools</span></footer>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <div class="skills-contact-sequence">
+    <span class="skills-contact-backdrop" aria-hidden="true"></span>
+
+  <section class="page-section skills-runway-section" id="skills" aria-label="Skills">
+    <div class="skills-runway-shell">
+      <div class="skills-runway-frame">
+        <header class="skills-runway-header">
+          <p class="skills-runway-eyebrow">RUNWAY</p>
+          <h2 class="skills-runway-title">Skills</h2>
+          <p class="skills-runway-status">CLEARED FOR DEPARTURE.</p>
+        </header>
+
+        <div class="skills-runway-chart" aria-label="Skills timeline">
+          <div class="skills-years" aria-hidden="true">
+            <span></span>
+            <span class="skills-year">2021</span>
+            <span class="skills-year">2022</span>
+            <span class="skills-year">2023</span>
+            <span class="skills-year">2024</span>
+            <span class="skills-year">2025</span>
+            <span class="skills-year skills-year--now">NOW</span>
+            <span></span>
+          </div>
+
+          <ul class="skills-runway-list">
+            <li class="skills-runway-row" style="--skill-start: 20%; --skill-width: 80%;">
+              <span class="skills-row-name">Design</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">4 YRS</span>
+            </li>
+            <li class="skills-runway-row" style="--skill-start: 20%; --skill-width: 80%;">
+              <span class="skills-row-name">Photography</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">4 YRS</span>
+            </li>
+            <li class="skills-runway-row" style="--skill-start: 60%; --skill-width: 40%;">
+              <span class="skills-row-name">Interaction Design</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">2 YRS</span>
+            </li>
+            <li class="skills-runway-row" style="--skill-start: 60%; --skill-width: 40%;">
+              <span class="skills-row-name">Prototyping &amp; User Testing</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">2 YRS</span>
+            </li>
+            <li class="skills-runway-row" style="--skill-start: 80%; --skill-width: 20%;">
+              <span class="skills-row-name">Design Systems</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">1 YR</span>
+            </li>
+            <li class="skills-runway-row" style="--skill-start: 80%; --skill-width: 20%;">
+              <span class="skills-row-name">Design Leadership</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">1 YR</span>
+            </li>
+            <li class="skills-runway-row" style="--skill-start: 80%; --skill-width: 20%;">
+              <span class="skills-row-name">Information Architecture</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">1 YR</span>
+            </li>
+            <li class="skills-runway-row" style="--skill-start: 80%; --skill-width: 20%;">
+              <span class="skills-row-name">UX Strategy</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">1 YR</span>
+            </li>
+            <li class="skills-runway-row" style="--skill-start: 90%; --skill-width: 10%;">
+              <span class="skills-row-name">AI-Assisted Design</span>
+              <span class="skills-bar" aria-hidden="true"><span class="skills-bar-fill"></span></span>
+              <span class="skills-row-years">&lt;1 YR</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-section contact-section" id="contact" aria-label="Contact">
+    <div class="contact-shell">
+      <header class="contact-info-panel">
+        <h2>Let&rsquo;s Work Together.</h2>
+        <p class="contact-typewriter" data-contact-typewriter>Have a project or need help? Fill out the form, and I&rsquo;ll get back to you soon.</p>
+      </header>
+
+      <nav class="contact-social-rail" aria-label="Social profiles">
+        <a href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path></svg>
+        </a>
+        <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.98-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+        </a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
+        </a>
+        <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+        </a>
+      </nav>
+
+      <form class="contact-form-panel" aria-label="Contact form" data-contact-form>
+        <label>
+          <span>Name</span>
+          <input type="text" name="name" autocomplete="name" placeholder="Enter your name" required>
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="email" placeholder="Enter your email" required>
+        </label>
+
+        <label>
+          <span>Your Project</span>
+          <textarea name="message" rows="5" placeholder="Tell us about your project" minlength="10" required></textarea>
+        </label>
+
+        <label class="contact-honeypot" aria-hidden="true">
+          <span>Website</span>
+          <input type="text" name="website" tabindex="-1" autocomplete="off">
+        </label>
+        <p class="contact-form-status" aria-live="polite"></p>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </section>
+  </div>
+</div>
