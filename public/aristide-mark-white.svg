@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Aristide Portfolio">
   <text
-    x="31"
-    y="40"
+    x="32"
+    y="41"
     fill="#ffffff"
     font-family="Arial, Helvetica, sans-serif"
     font-size="29"
@@ -9,5 +9,5 @@
     letter-spacing="-2"
     text-anchor="middle"
   >A</text>
-  <path d="M38 18L29 47" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M41 11 24 53" fill="none" stroke="#ffffff" stroke-width="4.4" stroke-linecap="round"/>
 </svg>

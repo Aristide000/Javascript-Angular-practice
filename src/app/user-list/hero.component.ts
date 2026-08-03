@@ -94,6 +94,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         this.startHeroAnimations();
         this.setupSkillsReveal();
         this.setupContactReveal();
+        this.setupContactTypewriter();
         this.setupScrollTextReveals();
       });
     });
@@ -1279,7 +1280,7 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       ? Math.max(18, panelState.width * 0.055)
       : Math.min(Math.max(panelState.width * 0.055, 44), 78);
     const topPad = isMobile
-      ? Math.max(54, panelState.height * 0.09)
+      ? Math.max(36, panelState.height * 0.055)
       : Math.max(64, panelState.height * 0.11);
     const bottomPad = isMobile
       ? Math.max(28, panelState.height * 0.05)
@@ -2251,6 +2252,54 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  private setupContactTypewriter(): void {
+    const paragraph = document.querySelector<HTMLElement>('.contact-typewriter');
+    if (!paragraph) return;
+
+    const fullText = paragraph.textContent?.trim() ?? '';
+    if (!fullText) return;
+
+    if (this.prefersReducedMotion()) {
+      paragraph.textContent = fullText;
+      return;
+    }
+
+    const characters = Array.from(fullText);
+    const typeState = { count: 0 };
+    let cursorTimer: number | null = null;
+
+    paragraph.textContent = '';
+    paragraph.classList.add('contact-typewriter-cursor');
+
+    const tween = gsap.to(typeState, {
+      count: characters.length,
+      duration: gsap.utils.clamp(0.9, 2.6, characters.length * 0.028),
+      ease: 'none',
+      onUpdate: () => {
+        paragraph.textContent = characters.slice(0, Math.round(typeState.count)).join('');
+      },
+      onComplete: () => {
+        paragraph.textContent = fullText;
+        cursorTimer = window.setTimeout(() => {
+          cursorTimer = null;
+          paragraph.classList.remove('contact-typewriter-cursor');
+        }, 650);
+      },
+      scrollTrigger: {
+        id: 'contact-typewriter',
+        trigger: paragraph,
+        start: 'top 85%',
+        once: true,
+      },
+    });
+
+    this.track(tween);
+    this.cleanupFns.push(() => {
+      try { ScrollTrigger.getById('contact-typewriter')?.kill(); } catch (_) {}
+      if (cursorTimer !== null) window.clearTimeout(cursorTimer);
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // Site-wide scroll text reveal
   // ---------------------------------------------------------------------------
@@ -2267,7 +2316,6 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       '.page-section .section-title-row h2',
       '.page-section .section-lede',
       '.contact-info-panel h2',
-      '.contact-info-panel p',
     ];
     const excludedContexts = [
       '.hero-nav',
@@ -2895,6 +2943,50 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       } => Boolean(state));
     const allLetters = textStates.flatMap(state => state.letters);
 
+    const minGreetingPace = 0.55;
+    const getPaceForSpeed = (index: number, baseSpeed: number): number => {
+      const lastIndex = Math.max(0, textStates.length - 1);
+      if (index === 0 || index === lastIndex) return baseSpeed;
+
+      const accelerationProgress = index / Math.max(1, lastIndex - 1);
+      return baseSpeed * Math.max(minGreetingPace, 0.82 - accelerationProgress * 0.54);
+    };
+    // Duration of just the language morph loop (first letter-in to last
+    // letter's hold) — excludes the loader's own open delay and its
+    // slide-away close, which are the tab's chrome, not the morph itself.
+    const projectMorphDuration = (baseSpeed: number): number => {
+      const lastIndex = Math.max(0, textStates.length - 1);
+      let cursor = 0;
+
+      textStates.forEach((state, index) => {
+        const isFirst = index === 0;
+        const isLast = index === lastIndex;
+        const pace = getPaceForSpeed(index, baseSpeed);
+        const inDuration = (isFirst ? 0.34 : 0.22) * pace;
+        const outDuration = 0.18 * pace;
+        const inStagger = 0.014 * pace;
+        const outStagger = 0.01 * pace;
+        const holdTime = (isFirst || isLast ? 0.42 : 0.08) * pace;
+        const revealTime = inDuration + (state.letters.length - 1) * inStagger;
+        const exitTime = outDuration + (state.letters.length - 1) * outStagger;
+
+        if (isLast) {
+          cursor += revealTime + holdTime;
+        } else {
+          const outStart = cursor + revealTime + holdTime;
+          cursor = outStart + exitTime + 0.06 * pace;
+        }
+      });
+
+      return cursor;
+    };
+
+    const targetMorphSeconds = 3;
+    const projectedMorphDuration = projectMorphDuration(speed);
+    const effectiveSpeed = projectedMorphDuration > 0
+      ? speed * (targetMorphSeconds / projectedMorphDuration)
+      : speed;
+
     gsap.set(welcomeTexts, { autoAlpha: 0 });
     gsap.set(allLetters, {
       autoAlpha: 0,
@@ -2929,23 +3021,17 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
       );
 
       let morphStart = 0.72 * speed;
-      const getGreetingPace = (index: number): number => {
-        const lastIndex = Math.max(0, textStates.length - 1);
-        if (index === 0 || index === lastIndex) return speed;
-
-        const accelerationProgress = index / Math.max(1, lastIndex - 1);
-        return speed * Math.max(0.28, 0.82 - accelerationProgress * 0.54);
-      };
+      const getGreetingPace = (index: number): number => getPaceForSpeed(index, effectiveSpeed);
 
       textStates.forEach((state, index) => {
         const isFirst = index === 0;
         const isLast = index === textStates.length - 1;
         const pace = getGreetingPace(index);
-        const inDuration = (isFirst ? 0.46 : 0.32) * pace;
-        const outDuration = 0.26 * pace;
-        const inStagger = 0.02 * pace;
-        const outStagger = 0.014 * pace;
-        const holdTime = (isFirst || isLast ? 0.58 : 0.12) * pace;
+        const inDuration = (isFirst ? 0.34 : 0.22) * pace;
+        const outDuration = 0.18 * pace;
+        const inStagger = 0.014 * pace;
+        const outStagger = 0.01 * pace;
+        const holdTime = (isFirst || isLast ? 0.42 : 0.08) * pace;
         const revealTime = inDuration + (state.letters.length - 1) * inStagger;
         const exitTime = outDuration + (state.letters.length - 1) * outStagger;
         const middleIndex = (state.letters.length - 1) / 2;
